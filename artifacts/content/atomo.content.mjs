@@ -23,10 +23,10 @@ export const ATOMO = {
      "proyección" o "scope". Cierra con esos mismos términos como puente hacia
      la sección técnica que sigue. */
   intro: {
-    es: "Imaginá que le pedís lo mismo a tres mensajeros distintos — una línea de "
+    es: "Imaginá que le pides lo mismo a tres mensajeros distintos — una línea de "
       + "comandos, un asistente de IA, un formulario web — y cada uno lo resuelve "
       + "un poco distinto: uno te pide confirmar antes de actuar, otro revisa "
-      + "primero si tenés permiso, el tercero todavía no revisa nada. Es la misma "
+      + "primero si tienes permiso, el tercero todavía no revisa nada. Es la misma "
       + "orden, dicha de tres formas, con tres niveles de cuidado distintos. Eso es "
       + "lo que vas a ver acá, ya con su nombre técnico: una Operación, proyectada "
       + "a tres puertas.",
@@ -71,7 +71,7 @@ export const ATOMO = {
   },
 
   surfaceControls: {
-    groupLabel: { es: "Elegir superficie", en: "Choose surface" },
+    groupLabel: { es: "Eliger superficie", en: "Choose surface" },
     buttons: {
       cli: { es: "coa · CLI", en: "coa · CLI" },
       mcp: { es: "MCP · agente", en: "MCP · agent" },
@@ -121,7 +121,7 @@ export const ATOMO = {
       },
       /* Sintaxis real de invocación — identificador, no se traduce. */
       invocation: "coa crear:tarea --titulo=… --yes",
-      initialStatus: { es: "Elegí una puerta para proyectar.", en: "Pick a door to project." },
+      initialStatus: { es: "Elige una puerta para proyectar.", en: "Pick a door to project." },
     },
     mcp: {
       columnTitle: { es: "MCP · agente", en: "MCP · agent" },
@@ -131,7 +131,7 @@ export const ATOMO = {
         en: "Pipeline resolve, validate, authorize, execute, audit (MCP)",
       },
       invocation: "tools/call · crear:tarea",
-      initialStatus: { es: "Elegí una puerta para proyectar.", en: "Pick a door to project." },
+      initialStatus: { es: "Elige una puerta para proyectar.", en: "Pick a door to project." },
     },
     http: {
       columnTitle: { es: "POST · HTTP", en: "POST · HTTP" },
@@ -141,7 +141,7 @@ export const ATOMO = {
         en: "Pipeline resolve, validate, authorize, execute, audit (POST)",
       },
       invocation: "POST /crear/tarea",
-      initialStatus: { es: "Elegí una puerta para proyectar.", en: "Pick a door to project." },
+      initialStatus: { es: "Elige una puerta para proyectar.", en: "Pick a door to project." },
     },
   },
 
