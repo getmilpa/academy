@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const catalog = require("./catalog.js");
 const labsCatalog = require("../labs/catalog.js");
+const { pick } = require("../i18n.js");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("el catálogo público tiene cuatro rutas completas y IDs estables", () => {
@@ -82,6 +83,16 @@ test("todos los destinos locales del currículo existen y sus artifacts/labs con
       }
     }
   }
+});
+
+test("catalog track metadata and unit titles are bilingual", () => {
+  for (const track of catalog.tracks) {
+    for (const f of ["title", "eyebrow", "summary", "level", "audience"]) {
+      assert.ok(track[f] && track[f].es && track[f].en, `track ${track.id}.${f}`);
+    }
+    for (const unit of track.units) assert.ok(unit.title.es && unit.title.en, `unit ${unit.id}.title`);
+  }
+  assert.equal(typeof pick(catalog.tracks[0].title, "en"), "string");
 });
 
 test("un pack privado requiere visibilidad interna y no colisiona con lo público", () => {

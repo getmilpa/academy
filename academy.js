@@ -2,8 +2,11 @@
   "use strict";
   var catalog = window.MilpaCurriculum;
   var progress = window.MilpaProgress;
-  if (!catalog || !progress) return;
+  var i18n = window.MilpaI18n;
+  if (!catalog || !progress || !i18n) return;
 
+  var lang = i18n.currentLang();
+  var pick = i18n.pick;
   var store = progress.createStore(window.localStorage);
   var state = store.read();
   var allUnits = catalog.allUnits();
@@ -44,16 +47,16 @@
       }) || track.units[track.units.length - 1];
       return "<a class=\"mui-card mui-card--interactive ac-route\" href=\"./learn/#" + track.id + "/" + next.id + "\">" +
         "<div class=\"mui-card__body\">" +
-          "<span class=\"mui-section__kicker\">" + escapeHtml(track.eyebrow) + "</span>" +
-          "<h3>" + escapeHtml(track.title) + "</h3>" +
-          "<p>" + escapeHtml(track.summary) + "</p>" +
+          "<span class=\"mui-section__kicker\">" + escapeHtml(pick(track.eyebrow, lang)) + "</span>" +
+          "<h3>" + escapeHtml(pick(track.title, lang)) + "</h3>" +
+          "<p>" + escapeHtml(pick(track.summary, lang)) + "</p>" +
           "<div class=\"ac-route__meta\">" +
-            "<span class=\"mui-badge\">" + escapeHtml(track.level) + "</span>" +
+            "<span class=\"mui-badge\">" + escapeHtml(pick(track.level, lang)) + "</span>" +
             "<span class=\"mui-badge mui-badge--secondary\">" + escapeHtml(minutes(track.durationMinutes)) + "</span>" +
           "</div>" +
           "<div class=\"ac-route__progress\">" +
             "<div class=\"ac-route__progress-copy\"><span>" + completed + " de " + track.units.length + " aprobadas</span><span>" + value + "%</span></div>" +
-            "<div class=\"mui-progress\" role=\"progressbar\" aria-label=\"Progreso en " + escapeHtml(track.title) + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"" + value + "\">" +
+            "<div class=\"mui-progress\" role=\"progressbar\" aria-label=\"Progreso en " + escapeHtml(pick(track.title, lang)) + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"" + value + "\">" +
               "<div class=\"mui-progress__bar\" style=\"width:" + value + "%\"></div>" +
             "</div>" +
           "</div>" +
@@ -84,7 +87,7 @@
     var found = parts.length === 2 ? catalog.getUnit(parts[0], parts[1]) : null;
     if (found) {
       primary.href = "./learn/#" + parts[0] + "/" + parts[1];
-      primary.textContent = "Continuar: " + found.unit.title;
+      primary.textContent = "Continuar: " + pick(found.unit.title, lang);
     }
   }
 

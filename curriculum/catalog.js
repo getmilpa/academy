@@ -9,17 +9,17 @@
   var tracks = [
     {
       id: "fundamentos",
-      title: "Fundamentos",
-      eyebrow: "Empieza aquí",
-      level: "Inicial",
-      audience: "Devs y agentes",
+      title: { es: "Fundamentos", en: "Fundamentals" },
+      eyebrow: { es: "Empieza aquí", en: "Start here" },
+      level: { es: "Inicial", en: "Beginner" },
+      audience: { es: "Devs y agentes", en: "Devs and agents" },
       durationMinutes: 60,
-      summary: "Lee la arquitectura como un sistema de contratos, dependencias y decisiones verificables.",
+      summary: { es: "Lee la arquitectura como un sistema de contratos, dependencias y decisiones verificables.", en: "Read the architecture as a system of contracts, dependencies and verifiable decisions." },
       prerequisites: [],
       units: [
         {
           id: "sistema-vivo",
-          title: "La metáfora es el diseño",
+          title: { es: "La metáfora es el diseño", en: "The metaphor is the design" },
           durationMinutes: 15,
           objectives: ["Distinguir ecosistema, framework y host", "Ubicar las responsabilidades de Core, Runtime, Plugin y Workflow"],
           understand: [
@@ -37,7 +37,7 @@
         },
         {
           id: "contratos-grafo",
-          title: "Contratos antes que acoplamiento",
+          title: { es: "Contratos antes que acoplamiento", en: "Contracts before coupling" },
           durationMinutes: 20,
           objectives: ["Reconocer provides/requires", "Detectar una capacidad ausente y un ciclo"],
           understand: [
@@ -55,7 +55,7 @@
         },
         {
           id: "pipeline-gates",
-          title: "Una acción, políticas explícitas",
+          title: { es: "Una acción, políticas explícitas", en: "One action, explicit policies" },
           durationMinutes: 25,
           objectives: ["Separar entrada, acción y política", "Distinguir validación automática de decisión humana"],
           understand: [
@@ -77,17 +77,17 @@
     },
     {
       id: "construye",
-      title: "Construye con Milpa",
-      eyebrow: "Del cero al plugin",
-      level: "Inicial a intermedio",
-      audience: "Implementadores",
+      title: { es: "Construye con Milpa", en: "Build with Milpa" },
+      eyebrow: { es: "Del cero al plugin", en: "From zero to plugin" },
+      level: { es: "Inicial a intermedio", en: "Beginner to intermediate" },
+      audience: { es: "Implementadores", en: "Implementers" },
       durationMinutes: 120,
-      summary: "Arranca el skeleton público, crea capacidades y comprueba el resultado con inspección real.",
+      summary: { es: "Arranca el skeleton público, crea capacidades y comprueba el resultado con inspección real.", en: "Boot the public skeleton, create capabilities and verify the result with real inspection." },
       prerequisites: ["fundamentos"],
       units: [
         {
           id: "skeleton-boot",
-          title: "Arranca un host verificable",
+          title: { es: "Arranca un host verificable", en: "Boot a verifiable host" },
           durationMinutes: 25,
           objectives: ["Crear el skeleton público", "Leer doctor como evidencia del boot"],
           understand: [
@@ -105,7 +105,7 @@
         },
         {
           id: "plugin-request",
-          title: "Crea una capacidad y una ruta",
+          title: { es: "Crea una capacidad y una ruta", en: "Create a capability and a route" },
           durationMinutes: 35,
           objectives: ["Generar un plugin con contrato", "Inspeccionar la ruta resultante"],
           understand: [
@@ -123,7 +123,7 @@
         },
         {
           id: "agent-tools",
-          title: "Habilita herramientas para agentes",
+          title: { es: "Habilita herramientas para agentes", en: "Enable tools for agents" },
           durationMinutes: 30,
           objectives: ["Entender el opt-in agent-ready", "Registrar e inspeccionar una tool"],
           understand: [
@@ -141,7 +141,7 @@
         },
         {
           id: "consume-design",
-          title: "Compón con @milpa/design",
+          title: { es: "Compón con @milpa/design", en: "Compose with @milpa/design" },
           durationMinutes: 30,
           objectives: ["Cargar los seis bundles en orden", "Separar contrato visual de lógica de producto"],
           understand: [
@@ -161,17 +161,17 @@
     },
     {
       id: "arquitectura",
-      title: "Arquitectura auditable",
-      eyebrow: "Para profundizar",
-      level: "Intermedio a senior",
-      audience: "Arquitectos y maintainers",
+      title: { es: "Arquitectura auditable", en: "Auditable architecture" },
+      eyebrow: { es: "Para profundizar", en: "Go deeper" },
+      level: { es: "Intermedio a senior", en: "Intermediate to senior" },
+      audience: { es: "Arquitectos y maintainers", en: "Architects and maintainers" },
       durationMinutes: 180,
-      summary: "Sigue límites, estado y decisiones desde el mapa conceptual hasta la evidencia ejecutable.",
+      summary: { es: "Sigue límites, estado y decisiones desde el mapa conceptual hasta la evidencia ejecutable.", en: "Trace boundaries, state and decisions from the conceptual map to executable evidence." },
       prerequisites: ["fundamentos"],
       units: [
         {
           id: "atlas-limites",
-          title: "Atlas de límites",
+          title: { es: "Atlas de límites", en: "Atlas of boundaries" },
           durationMinutes: 35,
           objectives: ["Seguir dependencias entre paquetes", "Diferenciar contrato público de detalle interno"],
           understand: ["Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar."],
@@ -183,7 +183,7 @@
         },
         {
           id: "runtime-boot",
-          title: "Radiografía del runtime",
+          title: { es: "Radiografía del runtime", en: "X-ray of the runtime" },
           durationMinutes: 35,
           objectives: ["Reconstruir la secuencia de boot", "Identificar los registries derivados"],
           understand: ["El kernel carga manifiestos, resuelve el grafo, registra servicios y expone rutas. La secuencia importa porque cada fase valida una condición para la siguiente."],
@@ -195,7 +195,7 @@
         },
         {
           id: "estado-log",
-          title: "El proceso es el log",
+          title: { es: "El proceso es el log", en: "The process is the log" },
           durationMinutes: 35,
           objectives: ["Distinguir evento de snapshot", "Reconstruir estado por replay"],
           understand: ["Cuando cada transición significativa queda como evento, el estado puede reconstruirse y una decisión puede explicarse. El snapshot acelera lectura; no reemplaza la historia."],
@@ -207,7 +207,7 @@
         },
         {
           id: "contrato-ejecutable",
-          title: "El contrato visual se ejecuta",
+          title: { es: "El contrato visual se ejecuta", en: "The visual contract is executable" },
           durationMinutes: 35,
           objectives: ["Leer estructura, estados y a11y como un contrato", "Comprobar paridad dark/light"],
           understand: ["Una clase CSS no es suficiente contrato. Milpa Design documenta anatomía, estados, tokens, accesibilidad, motion y ejemplos, y los gates comprueban que el paquete publicado preserve esas promesas."],
@@ -219,7 +219,7 @@
         },
         {
           id: "plan-disco",
-          title: "El plan antes del disco",
+          title: { es: "El plan antes del disco", en: "The plan before disk" },
           durationMinutes: 40,
           objectives: ["Separar preflight, escritura y verificación", "Evitar atribuir --dry-run al CLI público"],
           understand: ["Los generadores actuales hacen preflight, escriben y verifican ciertos resultados. Internamente producen un GenerationResult inspeccionable, pero el skeleton público no expone --dry-run.", "La lección es revisar alcance y conflictos antes de mutar, no documentar una bandera inexistente."],
@@ -233,17 +233,17 @@
     },
     {
       id: "disena",
-      title: "Diseña con Milpa",
-      eyebrow: "Sistema visual",
-      level: "Intermedio",
-      audience: "Frontend y diseño",
+      title: { es: "Diseña con Milpa", en: "Design with Milpa" },
+      eyebrow: { es: "Sistema visual", en: "Visual system" },
+      level: { es: "Intermedio", en: "Intermediate" },
+      audience: { es: "Frontend y diseño", en: "Frontend and design" },
       durationMinutes: 90,
-      summary: "Usa el lenguaje visual publicado, compón comportamiento en la aplicación y promueve patrones con evidencia.",
+      summary: { es: "Usa el lenguaje visual publicado, compón comportamiento en la aplicación y promueve patrones con evidencia.", en: "Use the published visual language, compose behavior in the application and promote patterns with evidence." },
       prerequisites: ["fundamentos"],
       units: [
         {
           id: "capas-visuales",
-          title: "Las seis capas",
+          title: { es: "Las seis capas", en: "The six layers" },
           durationMinutes: 25,
           objectives: ["Reconocer la cascada publicada", "Elegir la capa correcta para cada pieza"],
           understand: ["Tokens nombran decisiones; motion define movimiento; primitives resuelven controles; components forman piezas; artifacts expresan contenido; layouts organizan páginas."],
@@ -255,7 +255,7 @@
         },
         {
           id: "composicion-app",
-          title: "Design da lenguaje; Academy da conducta",
+          title: { es: "Design da lenguaje; Academy da conducta", en: "Design gives language; Academy gives behavior" },
           durationMinutes: 30,
           objectives: ["Mantener lógica fuera del paquete CSS", "Crear composición local sin duplicar anatomía mui-*"],
           understand: ["Milpa Design publica CSS y contratos, no JavaScript. Academy controla rutas, progreso, datos del currículo y verificadores. Sus clases ac-* cosen el caso educativo sin redefinir componentes estables."],
@@ -267,7 +267,7 @@
         },
         {
           id: "promocion-patron",
-          title: "De candidato local a patrón público",
+          title: { es: "De candidato local a patrón público", en: "From local candidate to public pattern" },
           durationMinutes: 35,
           objectives: ["Aplicar la regla de promoción", "Reunir evidencia antes de generalizar"],
           understand: ["Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks."],

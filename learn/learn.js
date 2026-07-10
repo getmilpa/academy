@@ -6,8 +6,11 @@
   var quizBank = window.MilpaQuizBank;
   var quizEngine = window.MilpaQuiz;
   var inlineCode = window.MilpaInlineCode;
-  if (!catalog || !progress || !quizBank || !quizEngine || !inlineCode) return;
+  var i18n = window.MilpaI18n;
+  if (!catalog || !progress || !quizBank || !quizEngine || !inlineCode || !i18n) return;
 
+  var lang = MilpaI18n.currentLang();
+  var pick = i18n.pick;
   var store = progress.createStore(window.localStorage);
   var retakeUnits = new Set();
   var lessonRoot = document.getElementById("lesson");
@@ -61,12 +64,12 @@
     var state = store.read();
     var html = "<div class=\"mui-docs__nav-group ac-nav-home\"><a class=\"mui-docs__nav-item\" href=\"./\"" + (!route ? " aria-current=\"page\"" : "") + ">Todas las rutas</a></div>";
     catalog.tracks.forEach(function (track) {
-      html += "<div class=\"mui-docs__nav-group\"><p class=\"mui-docs__nav-heading\">" + escapeHtml(track.title) + "</p>";
+      html += "<div class=\"mui-docs__nav-group\"><p class=\"mui-docs__nav-heading\">" + escapeHtml(pick(track.title, lang)) + "</p>";
       track.units.forEach(function (unit) {
         var key = progress.unitKey(track.id, unit.id);
         var current = route && route.track.id === track.id && route.unit.id === unit.id;
         var done = state.completed[key] === true;
-        html += "<a class=\"mui-docs__nav-item ac-nav-unit\" href=\"" + unitHref(track.id, unit.id) + "\"" + (current ? " aria-current=\"page\"" : "") + "><span>" + escapeHtml(unit.title) + "</span><span class=\"ac-nav-status\" aria-label=\"" + (done ? "Completada" : "Pendiente") + "\" title=\"" + (done ? "Completada" : "Pendiente") + "\">" + (done ? "✓" : "·") + "</span></a>";
+        html += "<a class=\"mui-docs__nav-item ac-nav-unit\" href=\"" + unitHref(track.id, unit.id) + "\"" + (current ? " aria-current=\"page\"" : "") + "><span>" + escapeHtml(pick(unit.title, lang)) + "</span><span class=\"ac-nav-status\" aria-label=\"" + (done ? "Completada" : "Pendiente") + "\" title=\"" + (done ? "Completada" : "Pendiente") + "\">" + (done ? "✓" : "·") + "</span></a>";
       });
       html += "</div>";
     });
@@ -89,7 +92,7 @@
     var parts = state.lastUnit.split("/");
     var found = parts.length === 2 ? catalog.getUnit(parts[0], parts[1]) : null;
     if (!found) return "";
-    return "<div class=\"mui-callout mui-callout--note\" role=\"note\"><span class=\"mui-callout__icon\" aria-hidden=\"true\">↗</span><div class=\"mui-callout__content\"><p class=\"mui-callout__title\">Continúa donde estabas</p><p class=\"mui-callout__body\">" + escapeHtml(found.track.title + " · " + found.unit.title) + "</p><div class=\"ac-action-row\"><a class=\"mui-btn mui-btn--primary mui-btn--sm\" href=\"" + unitHref(found.track.id, found.unit.id) + "\">Continuar</a></div></div></div>";
+    return "<div class=\"mui-callout mui-callout--note\" role=\"note\"><span class=\"mui-callout__icon\" aria-hidden=\"true\">↗</span><div class=\"mui-callout__content\"><p class=\"mui-callout__title\">Continúa donde estabas</p><p class=\"mui-callout__body\">" + escapeHtml(pick(found.track.title, lang) + " · " + pick(found.unit.title, lang)) + "</p><div class=\"ac-action-row\"><a class=\"mui-btn mui-btn--primary mui-btn--sm\" href=\"" + unitHref(found.track.id, found.unit.id) + "\">Continuar</a></div></div></div>";
   }
 
   function renderDashboard() {
@@ -100,7 +103,7 @@
       var value = trackProgress(track, state);
       var completed = progress.countCompleted(state, unitsForTrack(track));
       var firstPending = track.units.find(function (unit) { return !state.completed[progress.unitKey(track.id, unit.id)]; }) || track.units[track.units.length - 1];
-      return "<a class=\"mui-card mui-card--interactive ac-track-card\" href=\"" + unitHref(track.id, firstPending.id) + "\"><div class=\"mui-card__body\"><p class=\"mui-section__kicker\">" + escapeHtml(track.eyebrow) + "</p><h2>" + escapeHtml(track.title) + "</h2><p>" + escapeHtml(track.summary) + "</p><div class=\"ac-track-meta\"><span class=\"mui-badge\">" + escapeHtml(track.level) + "</span><span class=\"mui-badge mui-badge--secondary\">" + escapeHtml(minutes(track.durationMinutes)) + "</span></div><div class=\"ac-track-progress\"><div class=\"ac-progress-copy\"><span>" + completed + " de " + track.units.length + " unidades</span><span>" + value + "%</span></div>" + progressMarkup(value, "Progreso en " + track.title) + "</div></div></a>";
+      return "<a class=\"mui-card mui-card--interactive ac-track-card\" href=\"" + unitHref(track.id, firstPending.id) + "\"><div class=\"mui-card__body\"><p class=\"mui-section__kicker\">" + escapeHtml(pick(track.eyebrow, lang)) + "</p><h2>" + escapeHtml(pick(track.title, lang)) + "</h2><p>" + escapeHtml(pick(track.summary, lang)) + "</p><div class=\"ac-track-meta\"><span class=\"mui-badge\">" + escapeHtml(pick(track.level, lang)) + "</span><span class=\"mui-badge mui-badge--secondary\">" + escapeHtml(minutes(track.durationMinutes)) + "</span></div><div class=\"ac-track-progress\"><div class=\"ac-progress-copy\"><span>" + completed + " de " + track.units.length + " unidades</span><span>" + value + "%</span></div>" + progressMarkup(value, "Progreso en " + pick(track.title, lang)) + "</div></div></a>";
     }).join("");
 
     lessonRoot.innerHTML = "<section class=\"ac-dashboard-head\"><p class=\"mui-section__kicker\">Currículo público · v" + catalog.version + "</p><h1>Aprende la arquitectura haciéndola visible</h1><p>Elige una ruta. Cada unidad conecta una explicación breve, un artifact, una práctica y una evaluación calificable con la fuente primaria.</p><div class=\"ac-dashboard-meta\"><span class=\"mui-badge mui-badge--accent\">" + all.length + " unidades</span><span class=\"mui-badge\">" + done + " aprobadas</span><span class=\"mui-badge mui-badge--secondary\">progreso validado</span></div></section>" + resumeMarkup(state) + "<section aria-labelledby=\"tracksTitle\" style=\"margin-top:var(--space-8)\"><h2 id=\"tracksTitle\" class=\"mui-section__title\">Rutas públicas</h2><div class=\"ac-track-list\">" + cards + "</div></section><div class=\"mui-callout mui-callout--version\" role=\"note\" style=\"margin-top:var(--space-8)\"><span class=\"mui-callout__icon\" aria-hidden=\"true\">i</span><div class=\"mui-callout__content\"><p class=\"mui-callout__title\">Academy pública, contexto privado separado</p><p class=\"mui-callout__body\">TeamX puede añadir un catálogo interno durante su propio deploy. El pack privado no se publica ni se esconde dentro de este bundle.</p></div></div><div class=\"ac-reset\"><button class=\"mui-btn mui-btn--ghost mui-btn--sm\" id=\"resetProgress\" type=\"button\">Reiniciar progreso</button></div>";
@@ -127,8 +130,8 @@
     var previous = index > 0 ? track.units[index - 1] : null;
     var next = index < track.units.length - 1 ? track.units[index + 1] : null;
     var html = "<nav class=\"mui-pager\" aria-label=\"Paginación de la ruta\">";
-    if (previous) html += "<a class=\"mui-pager__link\" href=\"" + unitHref(track.id, previous.id) + "\"><span class=\"mui-pager__dir\">← Anterior</span><span class=\"mui-pager__title\">" + escapeHtml(previous.title) + "</span></a>";
-    if (next) html += "<a class=\"mui-pager__link mui-pager__link--next\" href=\"" + unitHref(track.id, next.id) + "\"><span class=\"mui-pager__dir\">Siguiente →</span><span class=\"mui-pager__title\">" + escapeHtml(next.title) + "</span></a>";
+    if (previous) html += "<a class=\"mui-pager__link\" href=\"" + unitHref(track.id, previous.id) + "\"><span class=\"mui-pager__dir\">← Anterior</span><span class=\"mui-pager__title\">" + escapeHtml(pick(previous.title, lang)) + "</span></a>";
+    if (next) html += "<a class=\"mui-pager__link mui-pager__link--next\" href=\"" + unitHref(track.id, next.id) + "\"><span class=\"mui-pager__dir\">Siguiente →</span><span class=\"mui-pager__title\">" + escapeHtml(pick(next.title, lang)) + "</span></a>";
     return html + "</nav>";
   }
 
@@ -176,8 +179,8 @@
     var assessmentMarkup = complete && !retakeUnits.has(key)
       ? passedAssessmentMarkup(assessment)
       : quizMarkup(key, quiz, assessment);
-    var breadcrumbs = "<nav class=\"mui-breadcrumbs\" aria-label=\"Migas de pan\"><ol class=\"mui-breadcrumbs__list\"><li class=\"mui-breadcrumbs__item\"><a class=\"mui-breadcrumbs__link\" href=\"./\">Rutas</a></li><li class=\"mui-breadcrumbs__item\"><span aria-current=\"page\">" + escapeHtml(track.title) + "</span></li></ol></nav>";
-    var header = "<header class=\"ac-lesson-header mui-not-prose\"><p class=\"ac-lesson-kicker\">" + escapeHtml(track.title) + " · Unidad " + (route.index + 1) + " de " + track.units.length + "</p><h1>" + escapeHtml(unit.title) + "</h1><p class=\"ac-lesson-summary\">" + escapeHtml(unit.understand[0]) + "</p><div class=\"ac-lesson-meta\"><span class=\"mui-badge\">" + escapeHtml(track.level) + "</span><span class=\"mui-badge mui-badge--secondary\">" + unit.durationMinutes + " min</span>" + (complete ? "<span class=\"mui-badge mui-badge--success\">Evaluación aprobada</span>" : "") + "</div></header>";
+    var breadcrumbs = "<nav class=\"mui-breadcrumbs\" aria-label=\"Migas de pan\"><ol class=\"mui-breadcrumbs__list\"><li class=\"mui-breadcrumbs__item\"><a class=\"mui-breadcrumbs__link\" href=\"./\">Rutas</a></li><li class=\"mui-breadcrumbs__item\"><span aria-current=\"page\">" + escapeHtml(pick(track.title, lang)) + "</span></li></ol></nav>";
+    var header = "<header class=\"ac-lesson-header mui-not-prose\"><p class=\"ac-lesson-kicker\">" + escapeHtml(pick(track.title, lang)) + " · Unidad " + (route.index + 1) + " de " + track.units.length + "</p><h1>" + escapeHtml(pick(unit.title, lang)) + "</h1><p class=\"ac-lesson-summary\">" + escapeHtml(unit.understand[0]) + "</p><div class=\"ac-lesson-meta\"><span class=\"mui-badge\">" + escapeHtml(pick(track.level, lang)) + "</span><span class=\"mui-badge mui-badge--secondary\">" + unit.durationMinutes + " min</span>" + (complete ? "<span class=\"mui-badge mui-badge--success\">Evaluación aprobada</span>" : "") + "</div></header>";
     var objectivesMarkup = "<section class=\"ac-objectives mui-not-prose\" aria-labelledby=\"objectivesTitle\"><h2 id=\"objectivesTitle\">Al terminar podrás</h2><ul>" + objectives + "</ul></section>";
     var understandMarkup = "<section class=\"ac-phase\" id=\"entender\"><h2><span class=\"ac-phase-index\" aria-hidden=\"true\">1</span>Entender</h2>" + body + "</section>";
     var seeMarkup = "<section class=\"ac-phase\" id=\"ver\"><h2><span class=\"ac-phase-index\" aria-hidden=\"true\">2</span>Ver</h2><div class=\"mui-callout mui-callout--note mui-not-prose\" role=\"note\"><span class=\"mui-callout__icon\" aria-hidden=\"true\">↗</span><div class=\"mui-callout__content\"><p class=\"mui-callout__title\">" + escapeHtml(unit.see.label) + "</p><p class=\"mui-callout__body\">" + escapeHtml(unit.see.note) + "</p><div class=\"ac-action-row\"><a class=\"mui-btn mui-btn--primary mui-btn--sm\" href=\"" + escapeHtml(unit.see.href) + "\">Abrir artifact</a></div></div></div></section>";
@@ -186,8 +189,8 @@
     var sourcesMarkup = "<section class=\"ac-sources\" id=\"fuentes\"><h2>Fuentes primarias</h2><ul>" + sources + "</ul><p class=\"ac-verified\">Contenido verificado: " + escapeHtml(unit.lastVerified) + "</p></section>";
 
     lessonRoot.innerHTML = breadcrumbs + "<details class=\"mui-docs__toc-inline ac-mobile-toc\"><summary>En esta página</summary>" + toc + "</details><article class=\"mui-prose\">" + header + objectivesMarkup + understandMarkup + seeMarkup + doMarkup + verifyMarkup + sourcesMarkup + "</article>" + pagerMarkup(track, route.index);
-    asideRoot.innerHTML = "<div class=\"ac-aside-block\"><p class=\"ac-aside-title\">En esta página</p>" + toc + "</div><div class=\"ac-aside-block\"><p class=\"ac-aside-title\">Progreso de la ruta</p>" + progressMarkup(trackProgress(track, state), "Progreso en " + track.title) + "<p class=\"ac-aside-copy\">" + progress.countCompleted(state, unitsForTrack(track)) + " de " + track.units.length + " unidades</p></div>";
-    document.title = unit.title + " · Milpa Academy";
+    asideRoot.innerHTML = "<div class=\"ac-aside-block\"><p class=\"ac-aside-title\">En esta página</p>" + toc + "</div><div class=\"ac-aside-block\"><p class=\"ac-aside-title\">Progreso de la ruta</p>" + progressMarkup(trackProgress(track, state), "Progreso en " + pick(track.title, lang)) + "<p class=\"ac-aside-copy\">" + progress.countCompleted(state, unitsForTrack(track)) + " de " + track.units.length + " unidades</p></div>";
+    document.title = pick(unit.title, lang) + " · Milpa Academy";
 
     if (complete && !retakeUnits.has(key)) {
       document.getElementById("retakeQuiz").addEventListener("click", function () {
