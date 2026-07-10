@@ -54,7 +54,7 @@ test("machine identifiers are byte-identical between es and en (only visible tex
 });
 
 test("initial status lines are static (no-JS renders them, not empty)", () => {
-  assert.match(es, /id="status-cli"[^>]*>Elegí una puerta para proyectar\.</);
+  assert.match(es, /id="status-cli"[^>]*>Elige una puerta para proyectar\.</);
   assert.match(en, /id="status-cli"[^>]*>Pick a door to project\.</);
 });
 
