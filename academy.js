@@ -5,8 +5,52 @@
   var i18n = window.MilpaI18n;
   if (!catalog || !progress || !i18n) return;
 
+  /* Script clásico (sin import/export): no puede importar el módulo ESM
+     PORTAL, así que el runtime que hidrata el portal trae su propia tabla
+     {es,en} — mismo enfoque que artifacts/milpa-artifact.js. Todo el texto
+     que academy.js genera en el cliente (botón de tema, conectores de las
+     tarjetas de ruta, prefijo de "continuar") vive acá. */
+  var STRINGS = {
+    es: {
+      themeDark: "Tema: oscuro",
+      themeLight: "Tema: claro",
+      themeAriaSwitch: function (toTheme) {
+        return "Cambiar a tema " + (toTheme === "light" ? "claro" : "oscuro");
+      },
+      routeProgress: function (completed, total) {
+        return completed + " de " + total + " aprobadas";
+      },
+      routeProgressAria: function (trackTitle) {
+        return "Progreso en " + trackTitle;
+      },
+      completionMeta: function (completed, total) {
+        return completed + " de " + total + " evaluaciones";
+      },
+      continuePrefix: "Continuar: "
+    },
+    en: {
+      themeDark: "Theme: dark",
+      themeLight: "Theme: light",
+      themeAriaSwitch: function (toTheme) {
+        return "Switch to " + (toTheme === "light" ? "light" : "dark") + " theme";
+      },
+      routeProgress: function (completed, total) {
+        return completed + " of " + total + " passed";
+      },
+      routeProgressAria: function (trackTitle) {
+        return "Progress in " + trackTitle;
+      },
+      completionMeta: function (completed, total) {
+        return completed + " of " + total + " assessments";
+      },
+      continuePrefix: "Continue: "
+    }
+  };
+
   var lang = i18n.currentLang();
+  var strings = STRINGS[lang];
   var pick = i18n.pick;
+  window.localStorage.setItem(i18n.LANG_KEY, lang); // solo preferencia — la URL manda, esto no redirige
   var store = progress.createStore(window.localStorage);
   var state = store.read();
   var allUnits = catalog.allUnits();
@@ -55,8 +99,8 @@
             "<span class=\"mui-badge mui-badge--secondary\">" + escapeHtml(minutes(track.durationMinutes)) + "</span>" +
           "</div>" +
           "<div class=\"ac-route__progress\">" +
-            "<div class=\"ac-route__progress-copy\"><span>" + completed + " de " + track.units.length + " aprobadas</span><span>" + value + "%</span></div>" +
-            "<div class=\"mui-progress\" role=\"progressbar\" aria-label=\"Progreso en " + escapeHtml(pick(track.title, lang)) + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"" + value + "\">" +
+            "<div class=\"ac-route__progress-copy\"><span>" + escapeHtml(strings.routeProgress(completed, track.units.length)) + "</span><span>" + value + "%</span></div>" +
+            "<div class=\"mui-progress\" role=\"progressbar\" aria-label=\"" + escapeHtml(strings.routeProgressAria(pick(track.title, lang))) + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"" + value + "\">" +
               "<div class=\"mui-progress__bar\" style=\"width:" + value + "%\"></div>" +
             "</div>" +
           "</div>" +
@@ -68,8 +112,8 @@
   function setTheme(theme) {
     var selected = theme === "light" ? "light" : "dark";
     document.documentElement.dataset.theme = selected;
-    themeButton.textContent = selected === "dark" ? "Tema: oscuro" : "Tema: claro";
-    themeButton.setAttribute("aria-label", "Cambiar a tema " + (selected === "dark" ? "claro" : "oscuro"));
+    themeButton.textContent = selected === "dark" ? strings.themeDark : strings.themeLight;
+    themeButton.setAttribute("aria-label", strings.themeAriaSwitch(selected === "dark" ? "light" : "dark"));
     try {
       window.localStorage.setItem("milpa-academy-theme", selected);
     } catch (error) {
@@ -80,14 +124,14 @@
   document.getElementById("trackCount").textContent = catalog.tracks.length;
   document.getElementById("unitCount").textContent = allUnits.length;
   document.getElementById("completionCount").textContent = progress.percent(state, allUnits) + "%";
-  document.getElementById("completionMeta").textContent = progress.countCompleted(state, allUnits) + " de " + allUnits.length + " evaluaciones";
+  document.getElementById("completionMeta").textContent = strings.completionMeta(progress.countCompleted(state, allUnits), allUnits.length);
 
   if (state.lastUnit) {
     var parts = state.lastUnit.split("/");
     var found = parts.length === 2 ? catalog.getUnit(parts[0], parts[1]) : null;
     if (found) {
       primary.href = "./learn/#" + parts[0] + "/" + parts[1];
-      primary.textContent = "Continuar: " + pick(found.unit.title, lang);
+      primary.textContent = strings.continuePrefix + pick(found.unit.title, lang);
     }
   }
 
