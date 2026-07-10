@@ -9,11 +9,11 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { htmlOpen, renderHead } from "./gen/page.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["es", "en"];
 const BASE = "https://academy.milpa.lat"; // canonical origin
-const CDN = "https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0";
 
 function urlFor(lang) {
   return lang === "es" ? `${BASE}/` : `${BASE}/en/`;
@@ -136,26 +136,17 @@ function jsonld(lang) {
 
 function page(lang) {
   const asset = assetPrefix(lang);
-  return `<!doctype html>
-<html lang="${lang}${lang === "es" ? "-MX" : ""}" data-theme="dark">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${ATOMO.title[lang]} · Milpa</title>
-<meta name="description" content="${ATOMO.hero[lang]}">
-<link rel="canonical" href="${urlFor(lang)}">
-<link rel="alternate" hreflang="es" href="${urlFor("es")}">
-<link rel="alternate" hreflang="en" href="${urlFor("en")}">
-<link rel="alternate" hreflang="x-default" href="${urlFor("es")}">
-<link rel="stylesheet" href="${CDN}/dist/milpa-tokens.css">
-<link rel="stylesheet" href="${CDN}/motion/milpa-motion.css">
-<link rel="stylesheet" href="${CDN}/primitives/milpa-primitives.css">
-<link rel="stylesheet" href="${CDN}/components/milpa-components.css">
-<link rel="stylesheet" href="${CDN}/artifacts/milpa-artifacts.css">
-<link rel="stylesheet" href="${CDN}/layouts/milpa-layouts.css">
-<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">
-<script type="application/ld+json">${jsonld(lang)}</script>
-</head>
+  const head = renderHead({
+    lang,
+    title: `${ATOMO.title[lang]} · Milpa`,
+    description: ATOMO.hero[lang],
+    canonical: urlFor(lang),
+    alternates: { es: urlFor("es"), en: urlFor("en"), "x-default": urlFor("es") },
+    jsonld: jsonld(lang),
+    extraHead: `<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">`,
+  });
+  return `${htmlOpen(lang)}
+${head}
 <body>
 <main>
 <h1 class="wb-hero">${ATOMO.hero[lang]}</h1>
