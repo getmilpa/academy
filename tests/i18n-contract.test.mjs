@@ -156,11 +156,32 @@ test("llms.txt per language links only to same-language URLs", () => {
   assert.match(llmsEn, /\/en\//, "en llms.txt points at /en/ pages");
 });
 
+/* Fix for a Task 6a review finding: the bilingual portal (/, /en/) is the
+   home/canonical entry point of the site but was absent from sitemap.xml
+   and both llms.txt files — only the atom (/atomo/, /en/atomo/) was listed.
+   These assertions pin the portal's presence alongside the atom. */
+test("llms.txt per language links the portal (home) as well as the atom", () => {
+  const llmsEs = readFileSync(new URL("../site/llms.txt", import.meta.url), "utf8");
+  const llmsEn = readFileSync(new URL("../site/en/llms.txt", import.meta.url), "utf8");
+  assert.match(llmsEs, /\(https:\/\/academy\.milpa\.lat\/\)/, "es llms.txt must link the es portal");
+  assert.match(llmsEs, /\(https:\/\/academy\.milpa\.lat\/atomo\/\)/, "es llms.txt must still link the atom");
+  assert.match(llmsEn, /\(https:\/\/academy\.milpa\.lat\/en\/\)/, "en llms.txt must link the en portal");
+  assert.match(llmsEn, /\(https:\/\/academy\.milpa\.lat\/en\/atomo\/\)/, "en llms.txt must still link the atom");
+});
+
 test("sitemap + robots exist and reference the canonical origin", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
   assert.match(sm, /hreflang="es"/); assert.match(sm, /hreflang="en"/);
   const rb = readFileSync(new URL("../site/robots.txt", import.meta.url), "utf8");
   assert.match(rb, /Sitemap:/);
+});
+
+test("sitemap.xml lists the portal (home) as well as the atom, per language", () => {
+  const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/<\/loc>/, "sitemap must list the es portal root");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/<\/loc>/, "sitemap must list the en portal root");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/atomo\/<\/loc>/, "sitemap must still list the es atom");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/atomo\/<\/loc>/, "sitemap must still list the en atom");
 });
 
 /* Refuerzo más allá del brief: la neutralidad de la lógica pura (projectOperation)

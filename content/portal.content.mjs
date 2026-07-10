@@ -128,7 +128,7 @@ export const PORTAL = {
        review de Task 4. */
     disclaimer: {
       es: "El contenido privado nunca se publica ni se oculta con CSS en el bundle público.",
-      en: "Private content is never published, nor hidden with CSS inside the public bundle.",
+      en: "Private content is never published or hidden with CSS in the public bundle.",
     },
   },
 

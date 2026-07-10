@@ -389,13 +389,25 @@ ${renderPortalFooter(lang)}
 /* Sitemap + robots + llms.txt: los archivos que hacen el sitio legible por
    crawlers y agentes. Determinismo: sitemap.xml NO lleva <lastmod> — un
    timestamp real rompería la salida byte-idéntica que exige la regla de oro
-   de este generador (ver comentario de arriba). */
+   de este generador (ver comentario de arriba).
+
+   SITEMAP_PAGES: un {es, en} por cada página emitida que deba listarse en
+   sitemap.xml. El portal es la home/entrada canónica del sitio — va primero;
+   el átomo (Artifact 09) le sigue. Agregar una página nueva al sitemap es
+   agregar un elemento acá, no duplicar el bloque <url>. */
+const SITEMAP_PAGES = [
+  { es: portalUrlFor("es"), en: portalUrlFor("en") },
+  { es: urlFor("es"), en: urlFor("en") },
+];
+
 function sitemap() {
-  const urls = LANGS.map(
-    (lang) => `  <url>
-    <loc>${urlFor(lang)}</loc>
-${LANGS.map((alt) => `    <xhtml:link rel="alternate" hreflang="${alt}" href="${urlFor(alt)}"/>`).join("\n")}
+  const urls = SITEMAP_PAGES.flatMap((page) =>
+    LANGS.map(
+      (lang) => `  <url>
+    <loc>${page[lang]}</loc>
+${LANGS.map((alt) => `    <xhtml:link rel="alternate" hreflang="${alt}" href="${page[alt]}"/>`).join("\n")}
   </url>`,
+    ),
   ).join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -418,6 +430,10 @@ const LLMS_COPY = {
   pageLinkNote: {
     es: "Artifact 09: el mismo handler, proyectado a tres puertas, con sus garantías por superficie.",
     en: "Artifact 09: the same handler, projected through three doors, with its guarantees per surface.",
+  },
+  portalLinkNote: {
+    es: "El home del currículo: rutas de aprendizaje, laboratorios verificables y artifacts de arquitectura.",
+    en: "The curriculum home: learning tracks, verifiable labs, and architecture artifacts.",
   },
   what: {
     es: "Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines "
@@ -449,6 +465,7 @@ ${LLMS_COPY.what[lang]}
 
 ## ${LLMS_COPY.pagesHeading[lang]}
 
+- [${PORTAL.meta.title[lang]}](${portalUrlFor(lang)}): ${LLMS_COPY.portalLinkNote[lang]}
 - [${ATOMO.title[lang]}](${urlFor(lang)}): ${LLMS_COPY.pageLinkNote[lang]}
 
 ## ${LLMS_COPY.reposHeading[lang]}
