@@ -6,7 +6,7 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 
 ## Páginas
 
-- [El átomo y sus puertas](https://academy.milpa.lat/): Artifact 09: el mismo handler, proyectado a tres puertas, con sus garantías por superficie.
+- [El átomo y sus puertas](https://academy.milpa.lat/atomo/): Artifact 09: el mismo handler, proyectado a tres puertas, con sus garantías por superficie.
 
 ## Repositorios del paquete
 

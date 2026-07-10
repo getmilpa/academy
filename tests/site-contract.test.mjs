@@ -23,11 +23,12 @@ const bundleOrder = [
 
 /* Páginas generadas por scripts/gen-site.mjs (SSG-lite, una por idioma). A
    diferencia de las páginas fuente de htmlFiles (siempre es-MX, contenido
-   editorial), site/en/index.html declara lang="en" — es la superficie en
-   inglés, no un descuido de locale. site/index.html sigue siendo es-MX. */
+   editorial), site/en/atomo/index.html declara lang="en" — es la superficie
+   en inglés, no un descuido de locale. site/atomo/index.html sigue siendo
+   es-MX. */
 const generatedHtmlFiles = [
-  { relative: "site/index.html", lang: "es-MX" },
-  { relative: "site/en/index.html", lang: "en" },
+  { relative: "site/atomo/index.html", lang: "es-MX" },
+  { relative: "site/en/atomo/index.html", lang: "en" },
 ];
 
 function localTarget(sourceFile, reference) {

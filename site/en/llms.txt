@@ -6,7 +6,7 @@ Milpa is a PHP framework whose distinguishing trait is that it opens pluggable p
 
 ## Pages
 
-- [The atom and its doors](https://academy.milpa.lat/en/): Artifact 09: the same handler, projected through three doors, with its guarantees per surface.
+- [The atom and its doors](https://academy.milpa.lat/en/atomo/): Artifact 09: the same handler, projected through three doors, with its guarantees per surface.
 
 ## Package repositories
 

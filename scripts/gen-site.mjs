@@ -1,4 +1,4 @@
-/* SSG-lite: genera site/index.html (es) y site/en/index.html (en) para el
+/* SSG-lite: genera site/atomo/index.html (es) y site/en/atomo/index.html (en) para el
    artifact #atomo a partir de la fuente bilingüe única artifacts/content/atomo.content.mjs.
 
    Node ESM, cero dependencias, determinista: nada de Date/timestamps, orden de
@@ -16,18 +16,18 @@ const LANGS = ["es", "en"];
 const BASE = "https://academy.milpa.lat"; // canonical origin
 
 function urlFor(lang) {
-  return lang === "es" ? `${BASE}/` : `${BASE}/en/`;
+  return lang === "es" ? `${BASE}/atomo/` : `${BASE}/en/atomo/`;
 }
 
 function pathFor(lang) {
-  return lang === "es" ? "site/index.html" : "site/en/index.html";
+  return lang === "es" ? "site/atomo/index.html" : "site/en/atomo/index.html";
 }
 
 /* Prefijo relativo hacia academy/artifacts/ desde cada página emitida.
-   site/index.html (es) está a un nivel de academy/; site/en/index.html (en)
-   está a dos niveles. Hardcodear "../artifacts/" en ambas rompe la página en. */
+   site/atomo/index.html (es) está a dos niveles de academy/; site/en/atomo/index.html
+   (en) está a tres niveles. Hardcodear "../../artifacts/" en ambas rompe la página en. */
 function assetPrefix(lang) {
-  return lang === "es" ? ".." : "../..";
+  return lang === "es" ? "../.." : "../../..";
 }
 
 function stage(lang, id, label) {

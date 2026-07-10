@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 
 execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
-const es = readFileSync(new URL("../site/index.html", import.meta.url), "utf8");
-const en = readFileSync(new URL("../site/en/index.html", import.meta.url), "utf8");
+const es = readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8");
+const en = readFileSync(new URL("../site/en/atomo/index.html", import.meta.url), "utf8");
 
 test("es page: lang, hero line, canonical, hreflang", () => {
   assert.match(es, /<html lang="es[^"]*"/);
@@ -37,14 +37,14 @@ test("neither page ships a hidden artifact (standalone page renders with zero JS
 });
 
 test("relative asset refs resolve at the right depth per language", () => {
-  assert.match(es, /href="\.\.\/artifacts\/artifacts\.css"/);
-  assert.match(es, /src="\.\.\/artifacts\/artifacts-core\.js" defer/);
-  assert.match(es, /src="\.\.\/artifacts\/milpa-artifact\.js" defer/);
-  assert.doesNotMatch(es, /\.\.\/\.\.\/artifacts\//);
+  assert.match(es, /href="\.\.\/\.\.\/artifacts\/artifacts\.css"/);
+  assert.match(es, /src="\.\.\/\.\.\/artifacts\/artifacts-core\.js" defer/);
+  assert.match(es, /src="\.\.\/\.\.\/artifacts\/milpa-artifact\.js" defer/);
+  assert.doesNotMatch(es, /\.\.\/\.\.\/\.\.\/artifacts\//);
 
-  assert.match(en, /href="\.\.\/\.\.\/artifacts\/artifacts\.css"/);
-  assert.match(en, /src="\.\.\/\.\.\/artifacts\/artifacts-core\.js" defer/);
-  assert.match(en, /src="\.\.\/\.\.\/artifacts\/milpa-artifact\.js" defer/);
+  assert.match(en, /href="\.\.\/\.\.\/\.\.\/artifacts\/artifacts\.css"/);
+  assert.match(en, /src="\.\.\/\.\.\/\.\.\/artifacts\/artifacts-core\.js" defer/);
+  assert.match(en, /src="\.\.\/\.\.\/\.\.\/artifacts\/milpa-artifact\.js" defer/);
 });
 
 test("machine identifiers are byte-identical between es and en (only visible text differs)", () => {
@@ -79,8 +79,8 @@ test("re-running the generator is idempotent (byte-identical output)", () => {
   const before = { es, en };
   execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
   const after = {
-    es: readFileSync(new URL("../site/index.html", import.meta.url), "utf8"),
-    en: readFileSync(new URL("../site/en/index.html", import.meta.url), "utf8"),
+    es: readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8"),
+    en: readFileSync(new URL("../site/en/atomo/index.html", import.meta.url), "utf8"),
   };
   assert.equal(after.es, before.es);
   assert.equal(after.en, before.en);

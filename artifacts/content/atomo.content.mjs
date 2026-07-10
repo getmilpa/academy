@@ -1,6 +1,6 @@
 /* Fuente bilingüe única para el artifact #atomo (Artifact 09: command-as-atom
    projection). Todo string visible vive acá como { es, en }. scripts/gen-site.mjs
-   lo consume para emitir site/index.html (es) y site/en/index.html (en) — sin
+   lo consume para emitir site/atomo/index.html (es) y site/en/atomo/index.html (en) — sin
    dependencias, determinista.
 
    Regla de oro: los identificadores de dominio (nombre de la Operation, flags de
