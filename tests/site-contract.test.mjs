@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const htmlFiles = [
-  "index.html",
   "learn/index.html",
   "labs/index.html",
   "artifacts/index.html",
@@ -29,6 +28,8 @@ const bundleOrder = [
 const generatedHtmlFiles = [
   { relative: "site/atomo/index.html", lang: "es-MX" },
   { relative: "site/en/atomo/index.html", lang: "en" },
+  { relative: "site/index.html", lang: "es-MX" },
+  { relative: "site/en/index.html", lang: "en" },
 ];
 
 function localTarget(sourceFile, reference) {
@@ -117,7 +118,6 @@ test("los hashes estáticos apuntan a IDs y no hay IDs duplicados", () => {
 
 test("no reaparecen rutas ni claves de tema anteriores", () => {
   const files = [
-    "index.html",
     "academy.js",
     "artifacts/index.html",
     "artifacts/artifacts.js",

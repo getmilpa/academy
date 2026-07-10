@@ -3,10 +3,13 @@ import test from "node:test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { PORTAL } from "../content/portal.content.mjs";
 
 execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
 const es = readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8");
 const en = readFileSync(new URL("../site/en/atomo/index.html", import.meta.url), "utf8");
+const portalEs = readFileSync(new URL("../site/index.html", import.meta.url), "utf8");
+const portalEn = readFileSync(new URL("../site/en/index.html", import.meta.url), "utf8");
 
 test("es page: lang, hero line, canonical, hreflang", () => {
   assert.match(es, /<html lang="es[^"]*"/);
@@ -76,14 +79,18 @@ test("JSON-LD LearningResource carries per-language name/description and shared 
 });
 
 test("re-running the generator is idempotent (byte-identical output)", () => {
-  const before = { es, en };
+  const before = { es, en, portalEs, portalEn };
   execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
   const after = {
     es: readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8"),
     en: readFileSync(new URL("../site/en/atomo/index.html", import.meta.url), "utf8"),
+    portalEs: readFileSync(new URL("../site/index.html", import.meta.url), "utf8"),
+    portalEn: readFileSync(new URL("../site/en/index.html", import.meta.url), "utf8"),
   };
   assert.equal(after.es, before.es);
   assert.equal(after.en, before.en);
+  assert.equal(after.portalEs, before.portalEs);
+  assert.equal(after.portalEn, before.portalEn);
 });
 
 test("translation completeness: every leaf string has es and en", () => {
@@ -102,6 +109,44 @@ test("translation completeness: every leaf string has es and en", () => {
     }
   })(ATOMO, "ATOMO");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
+});
+
+/* Portal (Task 6a): site/index.html (es) + site/en/index.html (en),
+   generados desde content/portal.content.mjs. La completeness walk sobre
+   PORTAL ya la cubre tests/portal-contract.test.mjs — acá se verifica lo
+   que esa unit test NO cubre: el HTML efectivamente emitido por el SSG. */
+test("portal es page: lang, thesis line, canonical, hreflang", () => {
+  assert.match(portalEs, /<html lang="es-MX"/);
+  assert.match(portalEs, /enseñarte a pensar mientras construyes/);
+  assert.match(portalEs, /rel="canonical" href="https:\/\/academy\.milpa\.lat\/"/);
+  assert.match(portalEs, /rel="alternate" hreflang="en"/);
+});
+
+test("portal en page: lang, thesis line, hreflang reciprocal", () => {
+  assert.match(portalEn, /<html lang="en"/);
+  assert.match(portalEn, /teach you to think while you build/);
+  assert.match(portalEn, /rel="canonical" href="https:\/\/academy\.milpa\.lat\/en\/"/);
+  assert.match(portalEn, /rel="alternate" hreflang="es"/);
+});
+
+test("portal pages carry a JSON-LD EducationalOrganization per language", () => {
+  for (const [html, lang] of [[portalEs, "es"], [portalEn, "en"]]) {
+    const match = html.match(/<script type="application\/ld\+json">(.+?)<\/script>/);
+    assert.ok(match, "missing JSON-LD block");
+    const data = JSON.parse(match[1]);
+    assert.equal(data["@type"], "EducationalOrganization");
+    assert.equal(data.inLanguage, lang);
+    assert.ok(data.name.length > 0);
+    assert.ok(data.description.length > 0);
+    assert.deepEqual(data.sameAs, PORTAL.jsonld.sameAs);
+  }
+});
+
+test("portal: no webinar card or nav link leaked into the generated markup", () => {
+  for (const html of [portalEs, portalEn]) {
+    assert.doesNotMatch(html, /webinars\//);
+    assert.doesNotMatch(html, /Webinar/);
+  }
 });
 
 test("llms.txt per language links only to same-language URLs", () => {

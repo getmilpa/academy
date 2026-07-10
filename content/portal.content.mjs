@@ -18,7 +18,7 @@ export const PORTAL = {
     ogTitle: { es: "Milpa Academy", en: "Milpa Academy" },
     ogDescription: {
       es: "Currículo público para entender la arquitectura y construir con Milpa.",
-      en: "Public curriculum for understanding the architecture and building with Milpa.",
+      en: "Public curriculum to understand the architecture and build with Milpa.",
     },
   },
 
@@ -27,6 +27,21 @@ export const PORTAL = {
     labs: { es: "Laboratorios", en: "Labs" },
     artifacts: { es: "Artifacts", en: "Artifacts" },
     source: { es: "Código fuente", en: "Source code" },
+  },
+
+  /* Chrome del portal (header/drawer/footer) que index.html traía como texto
+     literal fuera de PORTAL. No estaba entre los tres carries señalados por
+     el review de Task 4, pero sin él la página en inglés mostraría botones
+     ("Tema", "Menú", "Cerrar") y aria-labels en español — rompe la promesa
+     de "todo string visible vive acá" del comentario de cabecera. */
+  chrome: {
+    skipLink: { es: "Saltar al contenido", en: "Skip to content" },
+    brandHome: { es: "inicio", en: "home" },
+    sectionsAriaLabel: { es: "Secciones principales", en: "Main sections" },
+    themeBtn: { es: "Tema", en: "Theme" },
+    menuToggle: { es: "Menú", en: "Menu" },
+    menuClose: { es: "Cerrar", en: "Close" },
+    statsAriaLabel: { es: "Resumen del currículo", en: "Curriculum summary" },
   },
 
   hero: {
@@ -54,6 +69,13 @@ export const PORTAL = {
     tracks: { es: "Rutas públicas", en: "Public tracks" },
     units: { es: "Unidades", en: "Units" },
     progress: { es: "Tu avance", en: "Your progress" },
+    /* Meta captions bajo cada valor (.mui-stat__meta en index.html); son el
+       estado pre-hidratación — academy.js reescribe completionMeta luego de
+       calcular el progreso real, pero el markup estático debe llevar texto,
+       no quedar vacío antes de que corra el JS. */
+    tracksMeta: { es: "de inicial a senior", en: "beginner to senior" },
+    unitsMeta: { es: "con fuente primaria", en: "with a primary source" },
+    progressMeta: { es: "evaluaciones aprobadas", en: "assessments passed" },
   },
 
   routes: {
@@ -100,6 +122,13 @@ export const PORTAL = {
     body: {
       es: "Este repo contiene el motor y el currículo verificable para cualquier developer. TeamX puede inyectar un catálogo privado durante su propio deploy para procesos, repos y credenciales internas.",
       en: "This repo contains the engine and the verifiable curriculum for any developer. TeamX can inject a private catalog during its own deploy for internal processes, repos, and credentials.",
+    },
+    /* Segundo párrafo del boundary en index.html (era <strong>, ver
+       renderPortalBoundary en gen-site.mjs). Carry #2 señalado por el
+       review de Task 4. */
+    disclaimer: {
+      es: "El contenido privado nunca se publica ni se oculta con CSS en el bundle público.",
+      en: "Private content is never published, nor hidden with CSS inside the public bundle.",
     },
   },
 

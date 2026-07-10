@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Milpa Academy</title>
+<meta name="description" content="Learn Milpa's architecture through verifiable tracks, artifacts, and labs.">
+<link rel="canonical" href="https://academy.milpa.lat/en/">
+<link rel="alternate" hreflang="es" href="https://academy.milpa.lat/">
+<link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/">
+<link rel="alternate" hreflang="x-default" href="https://academy.milpa.lat/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<meta property="og:title" content="Milpa Academy">
+<meta property="og:description" content="Public curriculum to understand the architecture and build with Milpa.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../../assets/milpa-app-icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../academy.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","inLanguage":"en","name":"Milpa Academy","description":"Learn Milpa's architecture through verifiable tracks, artifacts, and labs.","sameAs":["https://milpa.lat","https://github.com/getmilpa","https://www.npmjs.com/package/@milpa/design"]}</script>
+</head>
+<body class="mui-page">
+  <a class="mui-shell__skip" href="#main">Skip to content</a>
+
+  <header class="mui-header">
+    <div class="mui-container mui-header__row">
+      <a class="mui-header__brand ac-brand" href="./" aria-label="Milpa Academy, home">
+        <img src="../../assets/milpa-symbol-color.svg" width="24" height="24" alt="">
+        <span>Milpa Academy</span>
+      </a>
+      <nav class="mui-header__nav" aria-label="Main sections">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../learn/">Learn</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../labs/">Labs</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../artifacts/">Artifacts</a>
+      </nav>
+      <div class="mui-header__actions">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" id="langSwitch" href="../" hreflang="es" rel="alternate">ES</a>
+        <button class="mui-btn mui-btn--ghost mui-btn--sm" id="themeBtn" type="button">Theme</button>
+        <button class="mui-btn mui-btn--ghost mui-btn--sm mui-header__toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainMenu">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="mui-drawer mui-drawer--end" id="mainMenu" aria-labelledby="mainMenuTitle">
+    <header class="mui-drawer__header">
+      <h2 class="mui-drawer__title" id="mainMenuTitle">Academy</h2>
+      <button class="mui-btn mui-btn--ghost mui-btn--sm" id="menuClose" type="button">Close</button>
+    </header>
+    <div class="mui-drawer__body">
+      <nav class="ac-mobile-nav" aria-label="Main sections">
+        <a class="mui-docs__nav-item" href="../../learn/">Learn</a>
+        <a class="mui-docs__nav-item" href="../../labs/">Labs</a>
+        <a class="mui-docs__nav-item" href="../../artifacts/">Artifacts</a>
+        <a class="mui-docs__nav-item" href="https://github.com/getmilpa">Source code</a>
+      </nav>
+    </div>
+  </dialog>
+
+  <main id="main">
+    <section class="ac-overview" aria-labelledby="academyTitle">
+      <div class="mui-container">
+        <p class="mui-section__kicker">Public curriculum · verifiable architecture</p>
+        <h1 id="academyTitle">Milpa Academy</h1>
+        <p class="ac-overview__lede">Learn how Milpa is composed, build a real host, and validate each unit with graded scenarios and primary sources.</p>
+        <div class="mui-callout mui-callout--tip ac-overview__mantra" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content"><p class="mui-callout__body">“Milpa doesn't promise to save you from thinking; it promises to teach you to think while you build.”</p></div>
+        </div>
+        <div class="ac-overview__actions">
+          <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="../../learn/">Start Fundamentals</a>
+          <a class="mui-btn" href="../../labs/">Open labs</a>
+        </div>
+        <div class="ac-overview__stats" aria-label="Curriculum summary">
+          <div class="mui-stat"><span class="mui-stat__label">Public tracks</span><strong class="mui-stat__value" id="trackCount">4</strong><span class="mui-stat__meta">beginner to senior</span></div>
+          <div class="mui-stat"><span class="mui-stat__label">Units</span><strong class="mui-stat__value" id="unitCount">0</strong><span class="mui-stat__meta">with a primary source</span></div>
+          <div class="mui-stat"><span class="mui-stat__label">Your progress</span><strong class="mui-stat__value" id="completionCount">0%</strong><span class="mui-stat__meta" id="completionMeta">assessments passed</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mui-section ac-curriculum" aria-labelledby="routesTitle">
+      <div class="mui-container">
+        <div class="ac-section-head">
+          <div><p class="mui-section__kicker">Choose a track</p><h2 class="mui-section__title" id="routesTitle">Learning tracks</h2></div>
+          <p>In every track: Understand → See → Do → Verify.</p>
+        </div>
+        <div class="ac-route-grid" id="routeGrid"></div>
+      </div>
+    </section>
+
+    <section class="mui-section ac-practice" aria-labelledby="practiceTitle">
+      <div class="mui-container">
+        <p class="mui-section__kicker">Work with evidence</p>
+        <h2 class="mui-section__title" id="practiceTitle">Practice, inspection, and teaching</h2>
+        <div class="ac-tool-grid">
+          <a class="mui-card mui-card--interactive ac-tool" href="../../labs/">
+            <div class="mui-card__body"><span class="mui-badge mui-badge--accent">Do</span><h3>Verifiable labs</h3><p>Run the real CLI, paste its output, and check concrete signals for boot, capabilities, routes, and tools.</p><span class="ac-tool__link">Open 4 exercises →</span></div>
+          </a>
+          <a class="mui-card mui-card--interactive ac-tool" href="../../artifacts/">
+            <div class="mui-card__body"><span class="mui-badge mui-badge--secondary">See</span><h3>Architecture artifacts</h3><p>Manipulate the graph, the pipeline, the gates, the event log, and the contracts without reducing them to slides.</p><span class="ac-tool__link">Open 9 artifacts →</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ac-boundary" aria-labelledby="boundaryTitle">
+      <div class="mui-container ac-boundary__grid">
+        <div><p class="mui-section__kicker">One foundation, two contexts</p><h2 id="boundaryTitle">Public by default. Internal by extension.</h2></div>
+        <div><p>This repo contains the engine and the verifiable curriculum for any developer. TeamX can inject a private catalog during its own deploy for internal processes, repos, and credentials.</p><p><strong>Private content is never published, nor hidden with CSS inside the public bundle.</strong></p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mui-footer">
+    <div class="mui-footer__grid">
+      <div class="mui-footer__brand"><strong>Milpa Academy</strong><p class="mui-footer__mantra">Learning architecture through evidence.</p></div>
+      <nav aria-labelledby="footerEcosystem"><p class="mui-footer__heading" id="footerEcosystem">Ecosystem</p><ul class="mui-footer__links"><li><a href="https://milpa.lat">milpa.lat</a></li><li><a href="https://github.com/getmilpa">GitHub</a></li><li><a href="https://www.npmjs.com/package/@milpa/design">@milpa/design</a></li></ul></nav>
+    </div>
+    <div class="mui-footer__legal"><p>© 2026 Milpa · Apache-2.0</p></div>
+  </footer>
+
+  <script src="../../i18n.js"></script>
+  <script src="../../curriculum/catalog.js"></script>
+  <script src="../../curriculum/progress.js"></script>
+  <script src="../../academy.js"></script>
+</body>
+</html>

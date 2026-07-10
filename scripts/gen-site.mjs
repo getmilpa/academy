@@ -9,6 +9,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { PORTAL } from "../content/portal.content.mjs";
 import { htmlOpen, renderHead } from "./gen/page.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -162,6 +163,229 @@ ${head}
 `;
 }
 
+/* Portal (home de Milpa Academy): site/index.html (es) + site/en/index.html
+   (en), generados desde content/portal.content.mjs (PORTAL). Mismo patrón
+   que el átomo de arriba — reusa htmlOpen/renderHead — pero reproduce la
+   estructura completa de index.html (header, drawer, hero, curriculum,
+   practice, boundary, footer) en vez de un solo componente. Toda la prosa
+   queda estática por idioma; #routeGrid queda vacío a propósito (lo
+   hidrata academy.js con el catálogo). La card/link de webinar se omite
+   deliberadamente (orfanado en esta fase). */
+
+function portalUrlFor(lang) {
+  return lang === "es" ? `${BASE}/` : `${BASE}/en/`;
+}
+
+function portalPathFor(lang) {
+  return lang === "es" ? "site/index.html" : "site/en/index.html";
+}
+
+/* Prefijo relativo hacia la raíz de academy/ (learn/, labs/, artifacts/,
+   assets/, academy.css, i18n.js, curriculum/, academy.js) desde cada
+   portal emitido. site/index.html (es) está a un nivel de academy/;
+   site/en/index.html (en) está a dos niveles. Mismo criterio que
+   assetPrefix() arriba, aplicado a la profundidad del portal. */
+function portalAssetPrefix(lang) {
+  return lang === "es" ? ".." : "../..";
+}
+
+/* Switch de idioma: <a href> real, sin JS, hacia el portal del otro
+   idioma. Ruta relativa ENTRE los dos portales generados (site/index.html
+   <-> site/en/index.html) — no hacia la raíz de academy/, por eso es un
+   prefijo propio y no portalAssetPrefix(). */
+function portalLangSwitch(lang) {
+  return lang === "es"
+    ? { href: "en/", hreflang: "en", label: "EN" }
+    : { href: "../", hreflang: "es", label: "ES" };
+}
+
+function portalJsonLd(lang) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": PORTAL.jsonld.type,
+    inLanguage: lang,
+    name: PORTAL.meta.title[lang],
+    description: PORTAL.meta.description[lang],
+    sameAs: PORTAL.jsonld.sameAs,
+  });
+}
+
+function portalExtraHead(lang, asset) {
+  return [
+    '<link rel="preconnect" href="https://fonts.googleapis.com">',
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+    '<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">',
+    `<meta property="og:title" content="${PORTAL.meta.ogTitle[lang]}">`,
+    `<meta property="og:description" content="${PORTAL.meta.ogDescription[lang]}">`,
+    '<meta property="og:type" content="website">',
+    `<link rel="icon" href="${asset}/assets/milpa-app-icon.svg" type="image/svg+xml">`,
+    `<link rel="stylesheet" href="${asset}/academy.css">`,
+  ].join("\n");
+}
+
+function renderPortalHeader(lang, asset, sw) {
+  const c = PORTAL.chrome;
+  return `  <header class="mui-header">
+    <div class="mui-container mui-header__row">
+      <a class="mui-header__brand ac-brand" href="./" aria-label="${PORTAL.meta.title[lang]}, ${c.brandHome[lang]}">
+        <img src="${asset}/assets/milpa-symbol-color.svg" width="24" height="24" alt="">
+        <span>${PORTAL.meta.title[lang]}</span>
+      </a>
+      <nav class="mui-header__nav" aria-label="${c.sectionsAriaLabel[lang]}">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/learn/">${PORTAL.nav.learn[lang]}</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/labs/">${PORTAL.nav.labs[lang]}</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/artifacts/">${PORTAL.nav.artifacts[lang]}</a>
+      </nav>
+      <div class="mui-header__actions">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" id="langSwitch" href="${sw.href}" hreflang="${sw.hreflang}" rel="alternate">${sw.label}</a>
+        <button class="mui-btn mui-btn--ghost mui-btn--sm" id="themeBtn" type="button">${c.themeBtn[lang]}</button>
+        <button class="mui-btn mui-btn--ghost mui-btn--sm mui-header__toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainMenu">${c.menuToggle[lang]}</button>
+      </div>
+    </div>
+  </header>`;
+}
+
+function renderPortalDrawer(lang, asset) {
+  const c = PORTAL.chrome;
+  const sourceHref = PORTAL.jsonld.sameAs[1]; // https://github.com/getmilpa — mismo repo que el nav del footer
+  return `  <dialog class="mui-drawer mui-drawer--end" id="mainMenu" aria-labelledby="mainMenuTitle">
+    <header class="mui-drawer__header">
+      <h2 class="mui-drawer__title" id="mainMenuTitle">Academy</h2>
+      <button class="mui-btn mui-btn--ghost mui-btn--sm" id="menuClose" type="button">${c.menuClose[lang]}</button>
+    </header>
+    <div class="mui-drawer__body">
+      <nav class="ac-mobile-nav" aria-label="${c.sectionsAriaLabel[lang]}">
+        <a class="mui-docs__nav-item" href="${asset}/learn/">${PORTAL.nav.learn[lang]}</a>
+        <a class="mui-docs__nav-item" href="${asset}/labs/">${PORTAL.nav.labs[lang]}</a>
+        <a class="mui-docs__nav-item" href="${asset}/artifacts/">${PORTAL.nav.artifacts[lang]}</a>
+        <a class="mui-docs__nav-item" href="${sourceHref}">${PORTAL.nav.source[lang]}</a>
+      </nav>
+    </div>
+  </dialog>`;
+}
+
+function renderPortalHero(lang, asset) {
+  const s = PORTAL.stats;
+  return `    <section class="ac-overview" aria-labelledby="academyTitle">
+      <div class="mui-container">
+        <p class="mui-section__kicker">${PORTAL.hero.kicker[lang]}</p>
+        <h1 id="academyTitle">${PORTAL.hero.h1[lang]}</h1>
+        <p class="ac-overview__lede">${PORTAL.hero.lede[lang]}</p>
+        <div class="mui-callout mui-callout--tip ac-overview__mantra" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content"><p class="mui-callout__body">“${PORTAL.hero.thesis[lang]}”</p></div>
+        </div>
+        <div class="ac-overview__actions">
+          <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="${asset}/learn/">${PORTAL.hero.ctaPrimary[lang]}</a>
+          <a class="mui-btn" href="${asset}/labs/">${PORTAL.hero.ctaSecondary[lang]}</a>
+        </div>
+        <div class="ac-overview__stats" aria-label="${PORTAL.chrome.statsAriaLabel[lang]}">
+          <div class="mui-stat"><span class="mui-stat__label">${s.tracks[lang]}</span><strong class="mui-stat__value" id="trackCount">4</strong><span class="mui-stat__meta">${s.tracksMeta[lang]}</span></div>
+          <div class="mui-stat"><span class="mui-stat__label">${s.units[lang]}</span><strong class="mui-stat__value" id="unitCount">0</strong><span class="mui-stat__meta">${s.unitsMeta[lang]}</span></div>
+          <div class="mui-stat"><span class="mui-stat__label">${s.progress[lang]}</span><strong class="mui-stat__value" id="completionCount">0%</strong><span class="mui-stat__meta" id="completionMeta">${s.progressMeta[lang]}</span></div>
+        </div>
+      </div>
+    </section>`;
+}
+
+function renderPortalCurriculum(lang) {
+  const r = PORTAL.routes;
+  return `    <section class="mui-section ac-curriculum" aria-labelledby="routesTitle">
+      <div class="mui-container">
+        <div class="ac-section-head">
+          <div><p class="mui-section__kicker">${r.kicker[lang]}</p><h2 class="mui-section__title" id="routesTitle">${r.title[lang]}</h2></div>
+          <p>${r.method[lang]}</p>
+        </div>
+        <div class="ac-route-grid" id="routeGrid"></div>
+      </div>
+    </section>`;
+}
+
+function renderPortalPractice(lang, asset) {
+  const p = PORTAL.practice;
+  return `    <section class="mui-section ac-practice" aria-labelledby="practiceTitle">
+      <div class="mui-container">
+        <p class="mui-section__kicker">${p.kicker[lang]}</p>
+        <h2 class="mui-section__title" id="practiceTitle">${p.title[lang]}</h2>
+        <div class="ac-tool-grid">
+          <a class="mui-card mui-card--interactive ac-tool" href="${asset}/labs/">
+            <div class="mui-card__body"><span class="mui-badge mui-badge--accent">${p.labs.badge[lang]}</span><h3>${p.labs.h3[lang]}</h3><p>${p.labs.body[lang]}</p><span class="ac-tool__link">${p.labs.link[lang]}</span></div>
+          </a>
+          <a class="mui-card mui-card--interactive ac-tool" href="${asset}/artifacts/">
+            <div class="mui-card__body"><span class="mui-badge mui-badge--secondary">${p.artifacts.badge[lang]}</span><h3>${p.artifacts.h3[lang]}</h3><p>${p.artifacts.body[lang]}</p><span class="ac-tool__link">${p.artifacts.link[lang]}</span></div>
+          </a>
+        </div>
+      </div>
+    </section>`;
+}
+
+function renderPortalBoundary(lang) {
+  const b = PORTAL.boundary;
+  return `    <section class="ac-boundary" aria-labelledby="boundaryTitle">
+      <div class="mui-container ac-boundary__grid">
+        <div><p class="mui-section__kicker">${b.kicker[lang]}</p><h2 id="boundaryTitle">${b.h1[lang]}</h2></div>
+        <div><p>${b.body[lang]}</p><p><strong>${b.disclaimer[lang]}</strong></p></div>
+      </div>
+    </section>`;
+}
+
+function renderPortalFooter(lang) {
+  const f = PORTAL.footer;
+  const linkLabels = ["milpa.lat", "GitHub", "@milpa/design"]; // literales, mismos en ambos idiomas
+  const links = PORTAL.jsonld.sameAs
+    .map((href, i) => `<li><a href="${href}">${linkLabels[i]}</a></li>`)
+    .join("");
+  return `  <footer class="mui-footer">
+    <div class="mui-footer__grid">
+      <div class="mui-footer__brand"><strong>${PORTAL.meta.title[lang]}</strong><p class="mui-footer__mantra">${f.mantra[lang]}</p></div>
+      <nav aria-labelledby="footerEcosystem"><p class="mui-footer__heading" id="footerEcosystem">${f.ecosystem[lang]}</p><ul class="mui-footer__links">${links}</ul></nav>
+    </div>
+    <div class="mui-footer__legal"><p>© 2026 Milpa · Apache-2.0</p></div>
+  </footer>`;
+}
+
+function portalPage(lang) {
+  const asset = portalAssetPrefix(lang);
+  const sw = portalLangSwitch(lang);
+  const head = renderHead({
+    lang,
+    title: PORTAL.meta.title[lang],
+    description: PORTAL.meta.description[lang],
+    canonical: portalUrlFor(lang),
+    alternates: { es: portalUrlFor("es"), en: portalUrlFor("en"), "x-default": portalUrlFor("es") },
+    jsonld: portalJsonLd(lang),
+    extraHead: portalExtraHead(lang, asset),
+  });
+  return `${htmlOpen(lang)}
+${head}
+<body class="mui-page">
+  <a class="mui-shell__skip" href="#main">${PORTAL.chrome.skipLink[lang]}</a>
+
+${renderPortalHeader(lang, asset, sw)}
+
+${renderPortalDrawer(lang, asset)}
+
+  <main id="main">
+${renderPortalHero(lang, asset)}
+
+${renderPortalCurriculum(lang)}
+
+${renderPortalPractice(lang, asset)}
+
+${renderPortalBoundary(lang)}
+  </main>
+
+${renderPortalFooter(lang)}
+
+  <script src="${asset}/i18n.js"></script>
+  <script src="${asset}/curriculum/catalog.js"></script>
+  <script src="${asset}/curriculum/progress.js"></script>
+  <script src="${asset}/academy.js"></script>
+</body>
+</html>
+`;
+}
+
 /* Sitemap + robots + llms.txt: los archivos que hacen el sitio legible por
    crawlers y agentes. Determinismo: sitemap.xml NO lleva <lastmod> — un
    timestamp real rompería la salida byte-idéntica que exige la regla de oro
@@ -239,6 +463,12 @@ for (const lang of LANGS) {
   writeFileSync(path.join(ROOT, out), page(lang), "utf8");
 }
 
+for (const lang of LANGS) {
+  const out = portalPathFor(lang);
+  mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
+  writeFileSync(path.join(ROOT, out), portalPage(lang), "utf8");
+}
+
 writeFileSync(path.join(ROOT, "site/sitemap.xml"), sitemap(), "utf8");
 writeFileSync(path.join(ROOT, "site/robots.txt"), robots(), "utf8");
 for (const lang of LANGS) {
@@ -249,5 +479,11 @@ for (const lang of LANGS) {
 
 console.log(
   "gen-site: emitted",
-  [...LANGS.map(pathFor), "site/sitemap.xml", "site/robots.txt", ...LANGS.map(llmsPath)].join(", "),
+  [
+    ...LANGS.map(pathFor),
+    ...LANGS.map(portalPathFor),
+    "site/sitemap.xml",
+    "site/robots.txt",
+    ...LANGS.map(llmsPath),
+  ].join(", "),
 );
