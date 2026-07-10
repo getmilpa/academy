@@ -1,0 +1,15 @@
+# Milpa
+
+> Milpa doesn't promise to save you from thinking. Milpa promises to teach you to think while you build.
+
+Milpa is a PHP framework whose distinguishing trait is that it opens pluggable pipelines through clear contracts for humans and agents: one operation is declared once (the Command-as-atom) and projected to the CLI, MCP and HTTP surfaces without being rewritten.
+
+## Pages
+
+- [The atom and its doors](https://academy.milpa.lat/en/): Artifact 09: the same handler, projected through three doors, with its guarantees per surface.
+
+## Package repositories
+
+- [milpa/command](https://github.com/getmilpa/command)
+- [milpa/runtime](https://github.com/getmilpa/runtime)
+- [milpa/skeleton](https://github.com/getmilpa/skeleton)

@@ -1,0 +1,12 @@
+{
+  "name": "milpa-academy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "El Almácigo — el semillero educativo del ecosistema Milpa: docs, webinars y artifacts interactivos de arquitectura.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "python3 -m http.server 4325",
+    "gen": "node scripts/gen-site.mjs",
+    "test": "node --test artifacts/*.test.mjs curriculum/*.test.mjs labs/*.test.mjs tests/*.test.mjs"
+  }
+}

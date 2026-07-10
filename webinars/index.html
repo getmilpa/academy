@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es-MX" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kit de facilitación · Milpa Academy</title>
+  <meta name="description" content="Sala de control para facilitar el webinar de arquitectura de Milpa en 60 minutos.">
+  <link rel="icon" href="../assets/milpa-app-icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+  <link rel="stylesheet" href="./webinars.css">
+  <script src="./webinars.js" defer></script>
+</head>
+<body class="mui-page">
+  <a class="mui-shell__skip" href="#main">Saltar a la agenda</a>
+
+  <header class="mui-docs__topbar ac-topbar">
+    <button class="mui-btn mui-btn--ghost mui-btn--icon mui-docs__nav-toggle" id="nav-toggle" type="button" aria-label="Abrir navegación" aria-controls="webinar-menu" aria-expanded="false">☰</button>
+    <a class="mui-docs__brand" href="../index.html" aria-label="Milpa Academy, inicio">
+      <img class="ac-brand-mark" src="../assets/milpa-symbol-color.svg" alt="" width="24" height="24">
+      <span>Milpa Academy</span>
+    </a>
+    <nav class="mui-docs__topbar-nav" aria-label="Secciones del kit">
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="#agenda">Agenda</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="#artifacts">Artifacts</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="#preflight">Preparación</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="#notes">Notas</a>
+    </nav>
+    <div class="mui-docs__topbar-actions">
+      <output class="ac-clock" id="topbar-clock" aria-label="Tiempo restante">60:00</output>
+      <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="theme-toggle" type="button" aria-label="Cambiar a tema claro" data-tip="Cambiar tema">◐</button>
+      <button class="mui-btn mui-btn--secondary ac-present-button" id="presentation-toggle" type="button" aria-pressed="false">
+        <span aria-hidden="true">▣</span><span class="ac-present-label">Presentar</span>
+      </button>
+    </div>
+  </header>
+
+  <dialog class="mui-drawer mui-drawer--start" id="webinar-menu" aria-labelledby="webinar-menu-title">
+    <header class="mui-drawer__header">
+      <h2 class="mui-drawer__title" id="webinar-menu-title">Kit de facilitación</h2>
+      <button class="mui-btn mui-btn--ghost mui-btn--icon" id="nav-close" type="button" aria-label="Cerrar navegación">×</button>
+    </header>
+    <div class="mui-drawer__body">
+      <nav aria-label="Navegación móvil">
+        <div class="mui-docs__nav-group">
+          <p class="mui-docs__nav-heading">Agenda · 60 min</p>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-hook" data-block-link="block-hook" aria-current="location">00–05 · El gancho</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-interfaces" data-block-link="block-interfaces">05–12 · Interfaces</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-siembra" data-block-link="block-siembra">12–22 · La milpa</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-pipeline" data-block-link="block-pipeline">22–32 · Dos callers</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-contract" data-block-link="block-contract">32–40 · Contratos</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-gate" data-block-link="block-gate">40–48 · La compuerta</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-close" data-block-link="block-close">48–52 · Cosecha</a>
+          <a class="mui-docs__nav-item ac-drawer-link ac-drawer-block" href="#block-qa" data-block-link="block-qa">52–60 · Q&amp;A</a>
+        </div>
+        <div class="mui-docs__nav-group">
+          <p class="mui-docs__nav-heading">Recursos</p>
+          <a class="mui-docs__nav-item ac-drawer-link" href="#roles">Roles</a>
+          <a class="mui-docs__nav-item ac-drawer-link" href="#artifacts">Artifacts</a>
+          <a class="mui-docs__nav-item ac-drawer-link" href="#preflight">Preparación</a>
+          <a class="mui-docs__nav-item ac-drawer-link" href="#notes">Notas</a>
+          <a class="mui-docs__nav-item" href="../artifacts/index.html#siembra">Abrir Siembra</a>
+        </div>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="mui-docs ac-workbench">
+    <nav class="mui-docs__nav" aria-label="Bloques del webinar">
+      <div class="ac-nav-progress">
+        <span class="ac-eyebrow">Sesión</span>
+        <strong id="agenda-progress-label">0 de 8 bloques</strong>
+        <div class="mui-progress" id="agenda-progress" role="progressbar" aria-label="Bloques cubiertos" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" aria-valuetext="0 de 8 bloques">
+          <div class="mui-progress__bar" id="agenda-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="mui-docs__nav-group">
+        <p class="mui-docs__nav-heading">Entender · 0–12</p>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-hook" data-block-link="block-hook" aria-current="location"><span class="ac-nav-time">00–05</span><span>El gancho</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-interfaces" data-block-link="block-interfaces"><span class="ac-nav-time">05–12</span><span>Interfaces</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+      </div>
+      <div class="mui-docs__nav-group">
+        <p class="mui-docs__nav-heading">Ver · 12–40</p>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-siembra" data-block-link="block-siembra"><span class="ac-nav-time">12–22</span><span>La milpa</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-pipeline" data-block-link="block-pipeline"><span class="ac-nav-time">22–32</span><span>Dos callers</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-contract" data-block-link="block-contract"><span class="ac-nav-time">32–40</span><span>Contratos</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+      </div>
+      <div class="mui-docs__nav-group">
+        <p class="mui-docs__nav-heading">Hacer · 40–52</p>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-gate" data-block-link="block-gate"><span class="ac-nav-time">40–48</span><span>La compuerta</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-close" data-block-link="block-close"><span class="ac-nav-time">48–52</span><span>Cosecha</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+      </div>
+      <div class="mui-docs__nav-group">
+        <p class="mui-docs__nav-heading">Verificar · 52–60</p>
+        <a class="mui-docs__nav-item ac-block-link" href="#block-qa" data-block-link="block-qa"><span class="ac-nav-time">52–60</span><span>Q&amp;A</span><span class="ac-nav-mark" aria-hidden="true">✓</span></a>
+      </div>
+    </nav>
+
+    <main class="mui-docs__main" id="main" tabindex="-1">
+      <div class="ac-standard-only">
+        <nav class="mui-breadcrumbs" aria-label="Migas de pan">
+          <ol class="mui-breadcrumbs__list">
+            <li class="mui-breadcrumbs__item"><a class="mui-breadcrumbs__link" href="../index.html">Academy</a></li>
+            <li class="mui-breadcrumbs__item"><span aria-current="page">Webinar</span></li>
+          </ol>
+        </nav>
+
+        <header class="ac-session-head">
+          <div>
+            <p class="ac-eyebrow">Sala de control · 60 min</p>
+            <h1>Cómo un palo de madera diseñó un framework</h1>
+            <p>Arquitectura para juniors mediante historias, decisiones y contratos ejecutables.</p>
+          </div>
+          <span class="mui-badge mui-badge--secondary">Facilitación pública</span>
+        </header>
+
+        <section class="ac-control-strip" aria-labelledby="timer-title">
+          <div>
+            <span class="ac-eyebrow" id="timer-title">Cronómetro de sesión</span>
+            <output class="ac-timer" id="session-timer" aria-live="off">60:00</output>
+          </div>
+          <div class="mui-cluster mui-cluster--sm">
+            <button class="mui-btn mui-btn--primary" id="timer-toggle" type="button" aria-pressed="false"><span aria-hidden="true">▶</span> Iniciar</button>
+            <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="timer-reset" type="button" aria-label="Reiniciar cronómetro" data-tip="Reiniciar cronómetro">↺</button>
+          </div>
+          <div class="mui-progress ac-time-progress" id="time-progress" role="progressbar" aria-label="Tiempo transcurrido" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0" aria-valuetext="0 de 60 minutos">
+            <div class="mui-progress__bar" id="time-progress-bar" style="width:0%"></div>
+          </div>
+        </section>
+        <div class="mui-alert mui-alert--info ac-time-alert" id="time-alert" role="status" aria-live="polite" hidden>
+          <span class="mui-alert__icon" aria-hidden="true">i</span>
+          <div class="mui-alert__content"><p class="mui-alert__title">La sesión llegó a 60 minutos</p><p class="mui-alert__desc">Cierra la última respuesta y comparte los retos.</p></div>
+        </div>
+      </div>
+
+      <section id="agenda" aria-labelledby="agenda-title">
+        <header class="ac-section-head ac-agenda-head">
+          <div><p class="ac-eyebrow">Guion operativo</p><h2 id="agenda-title">Agenda de 60 minutos</h2></div>
+          <span class="mui-badge" id="current-block-badge">Bloque 1 de 8</span>
+        </header>
+
+        <nav class="ac-moment-path" aria-label="Momentos didácticos">
+          <a href="#block-hook" data-block-link="block-hook"><span>01</span><strong>Entender</strong><small>0–12 min</small></a>
+          <a href="#block-siembra" data-block-link="block-siembra"><span>02</span><strong>Ver</strong><small>12–40 min</small></a>
+          <a href="#block-gate" data-block-link="block-gate"><span>03</span><strong>Hacer</strong><small>40–52 min</small></a>
+          <a href="#block-qa" data-block-link="block-qa"><span>04</span><strong>Verificar</strong><small>52–60 min</small></a>
+        </nav>
+
+        <div class="ac-agenda-list">
+          <article class="mui-card ac-run-card" id="block-hook" data-slide data-active="true" data-complete="false" aria-labelledby="block-hook-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">01</span><div><p class="ac-eyebrow">Entender · 00–05</p><h2 class="mui-card__title" id="block-hook-title" tabindex="-1">El gancho</h2></div></div>
+              <span class="mui-badge mui-badge--accent">5 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">Una herramienta agrícola y una frase sobre reparar carros abren la pregunta: ¿qué hace reparable a un sistema?</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Entrada</span><p>Entra sin slides. Cuenta la frase de tu papá antes de nombrar Milpa.</p></div>
+                <div><span class="ac-cue-label">Interacción</span><p>Pide 2 o 3 predicciones. Cada participación siembra un grano.</p></div>
+                <div><span class="ac-cue-label">Salida</span><p>“Hoy vamos a leer por qué un sistema se puede reparar.”</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-hook" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-interfaces" data-slide data-active="false" data-complete="false" aria-labelledby="block-interfaces-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">02</span><div><p class="ac-eyebrow">Entender · 05–12</p><h2 class="mui-card__title" id="block-interfaces-title" tabindex="-1">Arquitectura son conexiones</h2></div></div>
+              <span class="mui-badge mui-badge--accent">7 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">Las piezas pueden cambiar cuando la forma de conectarlas es explícita y estable.</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Historia</span><p>Batería, filtro y alternador: no necesitas su código fuente para sustituirlos.</p></div>
+                <div><span class="ac-cue-label">Encuesta</span><p>10,000 líneas brillantes sin docs o 10,000 líneas normales con contratos claros.</p></div>
+                <div><span class="ac-cue-label">Revelación</span><p>“Nada se siembra sin contrato” es una decisión de arquitectura.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#atlas" target="_blank" rel="noopener">Abrir atlas</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-interfaces" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-siembra" data-slide data-active="false" data-complete="false" aria-labelledby="block-siembra-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">03</span><div><p class="ac-eyebrow">Ver · 12–22</p><h2 class="mui-card__title" id="block-siembra-title" tabindex="-1">La milpa: módulos que crecen juntos</h2></div></div>
+              <span class="mui-badge mui-badge--accent">10 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">El grupo construye un grafo válido antes de escuchar “orden topológico” o “detección de ciclos”.</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Pregunta</span><p>¿Qué semilla debe entrar primero para que la tienda tenga correo y pagos?</p></div>
+                <div><span class="ac-cue-label">Fallo útil</span><p>Deja marchitar una dependencia y pide al grupo leer la capacidad faltante.</p></div>
+                <div><span class="ac-cue-label">Remate</span><p>Activa modo caos y nombra Kahn solo después de resolver el tablero.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--primary" href="../artifacts/index.html#siembra" target="_blank" rel="noopener">Abrir Siembra</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-siembra" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-pipeline" data-slide data-active="false" data-complete="false" aria-labelledby="block-pipeline-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">04</span><div><p class="ac-eyebrow">Ver · 22–32</p><h2 class="mui-card__title" id="block-pipeline-title" tabindex="-1">Una acción, dos callers</h2></div></div>
+              <span class="mui-badge mui-badge--accent">10 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">Humano y agente recorren resolver → validar → autorizar → ejecutar → auditar; el contexto cambia, el tubo no.</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Predicción</span><p>Pregunta dónde debería detenerse una llamada sin <code>correo:enviar</code>.</p></div>
+                <div><span class="ac-cue-label">Prueba</span><p>Ejecuta ambos callers y después retira el permiso.</p></div>
+                <div><span class="ac-cue-label">Evidencia</span><p>Señala que la denegación también llega a auditoría.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--primary" href="../artifacts/index.html#pipeline" target="_blank" rel="noopener">Abrir Pipeline</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-pipeline" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-contract" data-slide data-active="false" data-complete="false" aria-labelledby="block-contract-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">05</span><div><p class="ac-eyebrow">Ver · 32–40</p><h2 class="mui-card__title" id="block-contract-title" tabindex="-1">El contrato permite reemplazar la piel</h2></div></div>
+              <span class="mui-badge mui-badge--accent">8 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">El theme-swap demuestra que una implementación puede cambiar completa sin romper estructura, estados ni accesibilidad.</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Antes</span><p>Pide al grupo predecir qué componente se romperá.</p></div>
+                <div><span class="ac-cue-label">Durante</span><p>Cambia de skin y deja que comparen navegación, botones y foco.</p></div>
+                <div><span class="ac-cue-label">Después</span><p>Une el contrato visual con los contratos de módulos.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--primary" href="../artifacts/index.html#design-contract" target="_blank" rel="noopener">Abrir contrato</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-contract" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-gate" data-slide data-active="false" data-complete="false" aria-labelledby="block-gate-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">06</span><div><p class="ac-eyebrow">Hacer · 40–48</p><h2 class="mui-card__title" id="block-gate-title" tabindex="-1">La IA con frenos</h2></div></div>
+              <span class="mui-badge mui-badge--accent">8 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">El público decide aprobar, rechazar o exonerar una acción; cada decisión deja evidencia.</p>
+              <div class="ac-cue-grid">
+                <div><span class="ac-cue-label">Votación</span><p>“Borrar 500 usuarios inactivos”: recoge razones antes de contar votos.</p></div>
+                <div><span class="ac-cue-label">Segunda vuelta</span><p>Haz que el agente intente autoaprobarse.</p></div>
+                <div><span class="ac-cue-label">Principio</span><p>La confianza no se pide; se verifica y se audita.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--primary" href="../artifacts/index.html#compuerta" target="_blank" rel="noopener">Abrir Compuerta</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-gate" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-close" data-slide data-active="false" data-complete="false" aria-labelledby="block-close-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">07</span><div><p class="ac-eyebrow">Hacer · 48–52</p><h2 class="mui-card__title" id="block-close-title" tabindex="-1">Cosecha y retos</h2></div></div>
+              <span class="mui-badge mui-badge--accent">4 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">Convierte el webinar en práctica: arrancar, extender y romper el sistema a propósito.</p>
+              <ol class="ac-challenges">
+                <li><strong>Arrancar:</strong> crea el skeleton y corre <code>php bin/coa doctor</code>.</li>
+                <li><strong>Extender:</strong> genera un plugin y observa sus capacidades.</li>
+                <li><strong>Romper:</strong> crea una dependencia inválida y lee la explicación.</li>
+              </ol>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--primary" href="../artifacts/index.html#plan" target="_blank" rel="noopener">Abrir Plan</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-close" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+
+          <article class="mui-card ac-run-card" id="block-qa" data-slide data-active="false" data-complete="false" aria-labelledby="block-qa-title">
+            <header class="mui-card__header">
+              <div class="ac-run-card__heading"><span class="ac-block-number">08</span><div><p class="ac-eyebrow">Verificar · 52–60</p><h2 class="mui-card__title" id="block-qa-title" tabindex="-1">Q&amp;A: comprobar el modelo mental</h2></div></div>
+              <span class="mui-badge mui-badge--accent">8 min</span>
+            </header>
+            <div class="mui-card__body ac-run-card__body">
+              <p class="ac-thesis">Responde desde las decisiones de arquitectura y devuelve cada pregunta al sistema observable.</p>
+              <div class="ac-qa-grid">
+                <div><strong>¿Por qué PHP?</strong><p>Nació en producción PHP; contratos, pipelines y gates son conceptos agnósticos.</p></div>
+                <div><strong>¿Reemplaza Laravel o Symfony?</strong><p>No compite en features; reutiliza piezas resueltas y prioriza operabilidad.</p></div>
+                <div><strong>¿Puedo contribuir siendo junior?</strong><p>Sí: docs, tests, ejemplos e issues reproducibles son trabajo de arquitectura.</p></div>
+              </div>
+            </div>
+            <footer class="mui-card__footer ac-run-card__footer"><a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#event-log" target="_blank" rel="noopener">Abrir Event log</a><button class="mui-btn mui-btn--ghost ac-complete-button" type="button" data-mark-block="block-qa" aria-pressed="false">Marcar cubierto</button></footer>
+          </article>
+        </div>
+      </section>
+
+      <div class="ac-standard-only">
+        <section class="ac-section" id="artifacts" aria-labelledby="artifacts-title">
+          <header class="ac-section-head"><div><p class="ac-eyebrow">Mesa de arquitectura</p><h2 id="artifacts-title">Artifacts disponibles</h2></div><span class="mui-badge mui-badge--since">8 modelos</span></header>
+          <div class="ac-artifact-grid">
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#siembra" target="_blank" rel="noopener"><span class="ac-artifact-index">01</span> Siembra</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#pipeline" target="_blank" rel="noopener"><span class="ac-artifact-index">02</span> Pipeline</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#compuerta" target="_blank" rel="noopener"><span class="ac-artifact-index">03</span> Compuerta</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#atlas" target="_blank" rel="noopener"><span class="ac-artifact-index">04</span> Atlas</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#runtime" target="_blank" rel="noopener"><span class="ac-artifact-index">05</span> Runtime</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#event-log" target="_blank" rel="noopener"><span class="ac-artifact-index">06</span> Event log</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#design-contract" target="_blank" rel="noopener"><span class="ac-artifact-index">07</span> Contrato</a>
+            <a class="mui-btn mui-btn--secondary" href="../artifacts/index.html#plan" target="_blank" rel="noopener"><span class="ac-artifact-index">08</span> Plan</a>
+          </div>
+          <div class="mui-callout mui-callout--tip" role="note">
+            <span class="mui-callout__icon" aria-hidden="true">✓</span>
+            <div class="mui-callout__content"><p class="mui-callout__title">Una conversación, dos profundidades</p><div class="mui-callout__body"><p>Usa Siembra, Pipeline y Compuerta en la sesión base. Atlas, Runtime, Event log, Contrato y Plan sostienen preguntas de ingeniería sin cambiar de lenguaje visual.</p></div></div>
+          </div>
+        </section>
+
+        <section class="ac-section" id="roles" aria-labelledby="roles-title">
+          <header class="ac-section-head"><div><p class="ac-eyebrow">Equipo de sesión</p><h2 id="roles-title">Roles y señales</h2></div></header>
+          <div class="ac-role-grid">
+            <article class="mui-card mui-card--compact"><div class="mui-card__body"><span class="ac-role-code">F</span><h3>Facilitación</h3><p>Cuenta la historia, pregunta antes de explicar y decide cuándo cortar.</p><small>Señal: “una última voz”.</small></div></article>
+            <article class="mui-card mui-card--compact"><div class="mui-card__body"><span class="ac-role-code">A</span><h3>Artifacts</h3><p>Opera el laboratorio, prepara pestañas y recupera una demo fallida.</p><small>Señal: mano abierta = pausa.</small></div></article>
+            <article class="mui-card mui-card--compact"><div class="mui-card__body"><span class="ac-role-code">T</span><h3>Tiempo</h3><p>Avisa a 2 minutos del cambio y protege los 8 minutos de Q&amp;A.</p><small>Señal: dos dedos / puño.</small></div></article>
+            <article class="mui-card mui-card--compact"><div class="mui-card__body"><span class="ac-role-code">R</span><h3>Relatoría</h3><p>Cuida preguntas, granos sembrados y acuerdos para seguimiento.</p><small>Señal: tarjeta ámbar.</small></div></article>
+          </div>
+        </section>
+
+        <section class="ac-section" id="preflight" aria-labelledby="preflight-title">
+          <header class="ac-section-head">
+            <div><p class="ac-eyebrow">Antes de abrir la sala</p><h2 id="preflight-title">Checklist de preparación</h2></div>
+            <output class="ac-count" id="checklist-count">0 / 8</output>
+          </header>
+          <div class="mui-progress" id="checklist-progress" role="progressbar" aria-labelledby="preflight-title" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" aria-valuetext="0 de 8 tareas">
+            <div class="mui-progress__bar" id="checklist-progress-bar" style="width:0%"></div>
+          </div>
+          <div class="ac-checklist">
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="artifacts"><span class="mui-choice__text">Artifacts abiertos y probados<span class="mui-choice__hint">Siembra, Pipeline y Compuerta en pestañas separadas.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="fallback"><span class="mui-choice__text">Ruta de recuperación lista<span class="mui-choice__hint">Recarga local y enlace directo al siguiente artifact.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="skeleton"><span class="mui-choice__text">Skeleton preparado<span class="mui-choice__hint"><code>php bin/coa doctor</code> ya corre en la terminal.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="poll"><span class="mui-choice__text">Encuesta lista<span class="mui-choice__hint">Contrato claro vs. código brillante sin documentación.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="roles"><span class="mui-choice__text">Roles asignados<span class="mui-choice__hint">Facilitación, artifacts, tiempo y relatoría.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="access"><span class="mui-choice__text">Acceso verificado<span class="mui-choice__hint">Audio, contraste, teclado y captions disponibles.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="consent"><span class="mui-choice__text">Grabación y consentimiento acordados<span class="mui-choice__hint">El grupo sabe qué se registra y dónde se publicará.</span></span></label>
+            <label class="mui-choice"><input class="mui-checkbox" type="checkbox" data-check="followup"><span class="mui-choice__text">Seguimiento preparado<span class="mui-choice__hint">Onboarding, retos y canal para preguntas posteriores.</span></span></label>
+          </div>
+        </section>
+
+        <section class="ac-section" id="notes" aria-labelledby="notes-title">
+          <header class="ac-section-head">
+            <div><p class="ac-eyebrow">Memoria de sesión</p><h2 id="notes-title">Notas del facilitador</h2></div>
+            <output class="ac-save-status" id="notes-status" aria-live="polite">Sin cambios</output>
+          </header>
+          <div class="mui-field">
+            <label class="mui-field__label" for="facilitator-notes">Preguntas, acuerdos y ajustes para la siguiente cosecha</label>
+            <textarea class="mui-textarea ac-notes" id="facilitator-notes" rows="9" placeholder="Ej.: el grupo pidió más tiempo en la compuerta; convertir la pregunta sobre PHP en un ejemplo…"></textarea>
+            <span class="mui-field__hint">Se conserva solo en este navegador.</span>
+          </div>
+          <div class="ac-reset-row">
+            <button class="mui-btn mui-btn--danger" id="reset-session" type="button">Restablecer sesión</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="mui-docs__aside ac-aside">
+      <nav class="mui-toc" aria-label="En esta página">
+        <p class="mui-toc__title">En esta página</p>
+        <ul class="mui-toc__list">
+          <li class="mui-toc__item"><a class="mui-toc__link" href="#agenda" aria-current="location">Agenda</a></li>
+          <li class="mui-toc__item"><a class="mui-toc__link" href="#artifacts">Artifacts</a></li>
+          <li class="mui-toc__item"><a class="mui-toc__link" href="#roles">Roles</a></li>
+          <li class="mui-toc__item"><a class="mui-toc__link" href="#preflight">Preparación</a></li>
+          <li class="mui-toc__item"><a class="mui-toc__link" href="#notes">Notas</a></li>
+        </ul>
+      </nav>
+      <div class="ac-aside-status" aria-live="polite">
+        <span class="ac-eyebrow">Ahora</span>
+        <strong id="current-block-title">El gancho</strong>
+        <span id="current-block-time">00–05 min</span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="ac-presentation-controls" role="toolbar" aria-label="Controles de presentación">
+    <button class="mui-btn mui-btn--ghost mui-btn--icon" id="previous-block" type="button" aria-label="Bloque anterior">←</button>
+    <output id="presentation-position" aria-live="polite">1 / 8 · El gancho</output>
+    <button class="mui-btn mui-btn--primary mui-btn--icon" id="next-block" type="button" aria-label="Bloque siguiente">→</button>
+    <button class="mui-btn mui-btn--ghost" id="exit-presentation" type="button">Salir</button>
+  </div>
+
+  <dialog class="mui-modal mui-modal--danger" id="reset-dialog" aria-labelledby="reset-dialog-title" aria-describedby="reset-dialog-description">
+    <header class="mui-modal__header"><h2 class="mui-modal__title" id="reset-dialog-title">Restablecer la sesión</h2></header>
+    <div class="mui-modal__body"><p id="reset-dialog-description">Se borrarán el checklist, los bloques cubiertos, las notas y el cronómetro guardados en este navegador. El tema se conserva.</p></div>
+    <footer class="mui-modal__footer">
+      <button class="mui-btn mui-btn--ghost" id="reset-cancel" type="button">Cancelar</button>
+      <button class="mui-btn mui-btn--danger" id="reset-confirm" type="button">Restablecer</button>
+    </footer>
+  </dialog>
+</body>
+</html>

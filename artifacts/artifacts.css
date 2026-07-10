@@ -1,0 +1,705 @@
+/* Page-specific composition for the Academy artifacts. The published mui-* bundles remain untouched. */
+
+* { box-sizing: border-box; }
+
+html { height: 100%; overflow: hidden; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.wb-shell,
+.wb-shell * { letter-spacing: 0; }
+
+.wb-shell { --_sidebar-w: 17rem; }
+
+.wb-sidebar__brand { gap: var(--space-3); }
+.wb-sidebar__brand img { display: block; flex: none; }
+
+.wb-nav-index {
+  width: 1.5rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+.mui-sidebar__item[aria-current="page"] .wb-nav-index { color: var(--accent-text); }
+
+.wb-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.wb-sidebar__date {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+.wb-topbar { min-width: 0; }
+
+.wb-topbar__context {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.wb-topbar__context strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wb-topbar__kind {
+  flex: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+}
+
+.wb-topbar__end { gap: var(--space-1); }
+
+.wb-progress {
+  min-width: 4.5rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.wb-main {
+  width: 100%;
+  height: calc(100dvh - var(--header-h));
+  max-width: none;
+  overflow: auto;
+  padding: var(--space-6) clamp(var(--space-5), 3vw, var(--space-10)) var(--space-16);
+  scroll-behavior: smooth;
+}
+
+.wb-artifact {
+  width: min(100%, 92rem);
+  min-height: calc(100dvh - var(--header-h) - var(--space-12));
+  margin-inline: auto;
+  scroll-margin-top: var(--header-h);
+}
+
+.wb-artifact[hidden] { display: none; }
+
+.wb-artifact__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 34rem);
+  gap: var(--space-2) var(--space-10);
+  align-items: end;
+  padding-block-end: var(--space-5);
+  border-block-end: var(--border-width) var(--border-style) var(--border-subtle);
+}
+
+.wb-artifact__header h1 {
+  grid-column: 1;
+  margin: 0;
+  color: var(--text);
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+.wb-artifact__header > p {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: end;
+  max-width: 56ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.wb-artifact__meta {
+  display: flex;
+  grid-column: 1;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.wb-zone {
+  min-width: 0;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--surface) 82%, var(--bg));
+  border: var(--border-width) var(--border-style) var(--border-subtle);
+  border-radius: var(--radius-base);
+}
+
+.wb-zone__header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-4);
+}
+
+.wb-zone__header h2,
+.wb-zone > h2,
+.wb-gate-machine > h2,
+.wb-boundary-inspector h2 {
+  margin: var(--space-1) 0 0;
+  color: var(--text);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+.wb-zone__kicker {
+  display: block;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+}
+
+.wb-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.wb-inline-status { margin-block-start: var(--space-4); }
+
+.wb-lesson { margin-block-start: var(--space-5); }
+
+.wb-source {
+  margin-block-start: var(--space-3);
+  padding-block: var(--space-3);
+  color: var(--text-secondary);
+  border-block-start: var(--border-width) var(--border-style) var(--border-subtle);
+  font-size: var(--text-xs);
+}
+
+.wb-source summary {
+  width: fit-content;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+}
+
+.wb-source summary:focus-visible {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.wb-source p { max-width: 100ch; margin: var(--space-3) 0 0; line-height: var(--leading-relaxed); }
+.wb-source code { color: var(--accent-text); overflow-wrap: anywhere; }
+
+/* Artifact 01: dependency field */
+.wb-graph {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.72fr) minmax(28rem, 1.45fr) minmax(17rem, 0.83fr);
+  gap: var(--space-4);
+  align-items: stretch;
+  margin-block-start: var(--space-5);
+}
+
+.wb-module-tray,
+.wb-field,
+.wb-boot { min-height: 30rem; }
+
+/* Las semillas y el campo son mui-plot (contrato @milpa/design 0.9.0);
+   aquí solo queda composición propia del artifact. */
+.wb-graph .mui-plot__cell[hidden] { display: none; }
+.wb-graph .mui-plot__cell[aria-grabbed="true"] { opacity: 0.64; border-color: var(--accent); }
+
+.wb-field[data-drag-over="true"] { border-color: var(--accent); background: var(--accent-subtle); }
+.wb-field[data-chaos="true"] { animation: wb-shake var(--dur-moderate) var(--ease-standard) 2; }
+
+.wb-capability-list {
+  max-width: 58%;
+  overflow: hidden;
+  color: var(--secondary-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-align: end;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wb-field__plot {
+  min-height: 20rem;
+  padding: var(--space-3);
+  align-content: start;
+  border: var(--border-width) dashed var(--border);
+  border-radius: var(--radius-base);
+}
+
+.wb-plot-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  align-self: end;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.wb-plot-empty[hidden] { display: none; }
+
+.wb-boot { display: flex; flex-direction: column; }
+.wb-boot .wb-action-row { align-items: stretch; }
+.wb-boot .mui-btn { flex: 1 1 8rem; }
+.wb-boot-terminal { min-height: 14rem; margin-block-start: var(--space-4); flex: 1; }
+.wb-boot-terminal .mui-terminal__body { max-height: 18rem; }
+
+/* Artifact 02: conceptual pipeline */
+.wb-pipeline-layout {
+  display: grid;
+  grid-template-columns: minmax(19rem, 0.7fr) minmax(32rem, 1.3fr);
+  gap: var(--space-4) var(--space-6);
+  align-items: start;
+  margin-block-start: var(--space-5);
+}
+
+.wb-action-contract { grid-column: 1; }
+
+.wb-caller-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.wb-permission-toggle {
+  grid-column: 1 / -1;
+  padding: var(--space-3);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-base);
+}
+
+/* El tubo es mui-pipeline (contrato @milpa/design 0.9.0); aquí solo su lugar en la grilla. */
+.wb-conceptual-pipeline { grid-column: 1 / -1; }
+
+.wb-pipeline-log { min-height: 9rem; }
+.wb-pipeline-layout > .mui-alert { min-height: 7rem; }
+
+/* Artifact 03: human gate — la compuerta es mui-gate (contrato @milpa/design 0.9.0);
+   aquí queda la grilla de tres columnas y el símbolo animado, composición propia. */
+.wb-gate-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1fr) minmax(21rem, 1.1fr);
+  gap: var(--space-5);
+  align-items: stretch;
+  margin-block-start: var(--space-5);
+}
+
+.wb-gate-request__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+
+.wb-gate-layout .mui-gate__action { margin: 0; font-size: var(--text-xl); line-height: var(--leading-snug); }
+
+.wb-gate-machine {
+  display: flex;
+  min-height: 25rem;
+  padding: var(--space-5);
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-base);
+  text-align: center;
+}
+
+.wb-gate-symbol {
+  display: grid;
+  width: min(100%, 18rem);
+  height: 5rem;
+  margin-block: var(--space-6);
+  grid-template-columns: 1fr 3rem 1fr;
+  align-items: center;
+}
+
+.wb-gate-symbol span { height: 3px; background: var(--border-strong); }
+.wb-gate-symbol i {
+  display: block;
+  width: 3rem;
+  height: 5rem;
+  background: var(--warning-bg);
+  border: 2px solid var(--warning);
+  border-radius: var(--radius-base);
+  transform-origin: center top;
+  transition: transform var(--dur-moderate) var(--ease-settle), background var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+}
+
+.wb-gate-symbol[data-status="approved"] i,
+.wb-gate-symbol[data-status="waived"] i { transform: rotate(72deg); }
+.wb-gate-symbol[data-status="approved"] i { background: var(--success-bg); border-color: var(--success); }
+.wb-gate-symbol[data-status="rejected"] i,
+.wb-gate-symbol[data-status="self-denied"] i { background: var(--danger-bg); border-color: var(--danger); }
+
+.wb-gate-machine .mui-gate__decisions { justify-content: center; }
+
+#self-approval { margin-block-start: var(--space-4); }
+#reset-gate { margin-block-start: auto; }
+.wb-gate-machine .mui-gate__outcome { width: 100%; margin-block-start: var(--space-3); text-align: start; }
+
+.wb-audit-column { min-width: 0; }
+
+/* Artifact 04: architecture boundaries */
+.wb-atlas-tabs { margin-block-start: var(--space-5); overflow-x: auto; }
+
+.wb-atlas-panel {
+  display: grid;
+  grid-template-columns: minmax(38rem, 1.55fr) minmax(19rem, 0.65fr);
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+.wb-boundary-map {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.wb-boundary-tier {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-2);
+  min-height: 6.5rem;
+  padding: calc(var(--space-6) + var(--space-1)) var(--space-3) var(--space-3);
+  background: color-mix(in srgb, var(--surface) 72%, var(--bg));
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-base);
+}
+
+.wb-boundary-tier__label {
+  position: absolute;
+  inset: var(--space-2) auto auto var(--space-3);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+}
+
+.wb-boundary-node {
+  display: flex;
+  min-width: 0;
+  min-height: 4.25rem;
+  padding: var(--space-2);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  text-align: start;
+  transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard), opacity var(--dur-fast) var(--ease-standard);
+}
+
+.wb-boundary-node:hover { color: var(--text); border-color: var(--border-strong); }
+.wb-boundary-node:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); }
+.wb-boundary-node strong { margin-block-start: var(--space-1); color: var(--text); font-size: var(--text-sm); }
+.wb-boundary-node small { margin-block-start: var(--space-1); color: var(--text-muted); font-size: var(--text-2xs); }
+.wb-boundary-node[data-active="true"] { background: var(--accent-subtle); border-color: var(--accent); }
+.wb-boundary-map[data-filtering="true"] .wb-boundary-node:not([data-active="true"]) { opacity: 0.42; }
+
+.wb-boundary-tier[data-tier="host"] .wb-boundary-node { grid-column: 3 / span 2; }
+.wb-boundary-tier[data-tier="adapters"] .wb-boundary-node:nth-of-type(1) { grid-column: 2 / span 2; }
+.wb-boundary-tier[data-tier="adapters"] .wb-boundary-node:nth-of-type(2) { grid-column: 4 / span 2; }
+.wb-boundary-tier[data-tier="engines"] .wb-boundary-node { grid-column: span 2; }
+.wb-boundary-tier[data-tier="contracts"] .wb-boundary-node { grid-column: span 1; }
+
+.wb-boundary-arrow {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-align: center;
+}
+
+.wb-boundary-inspector {
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--surface);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: 0 var(--radius-base) var(--radius-base) 0;
+}
+
+.wb-boundary-inspector > p { color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-relaxed); }
+.wb-boundary-facts { display: grid; gap: var(--space-4); margin: var(--space-6) 0 0; }
+.wb-boundary-facts div { padding-block-end: var(--space-3); border-block-end: var(--border-width) solid var(--border-subtle); }
+.wb-boundary-facts dt { color: var(--text-muted); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; }
+.wb-boundary-facts dd { margin: var(--space-1) 0 0; overflow-wrap: anywhere; color: var(--text-secondary); font-size: var(--text-sm); }
+
+/* Artifact 05: runtime x-ray */
+.wb-runtime-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+  margin-block-start: var(--space-5);
+}
+
+.wb-runtime-controls .mui-field { width: min(100%, 24rem); }
+
+/* La radiografía es mui-pipeline--vertical (contrato @milpa/design 0.9.0);
+   aquí solo la grilla rail + evidencia. */
+.wb-runtime-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.62fr) minmax(30rem, 1.38fr);
+  gap: var(--space-5);
+  align-items: start;
+  margin-block-start: var(--space-5);
+}
+
+.wb-runtime-evidence {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  min-width: 0;
+}
+
+.wb-runtime-table td:nth-child(2) { width: 6rem; }
+
+/* Artifact 06: event log — el log reproducible es mui-replay (contrato
+   @milpa/design 0.9.0); aquí solo la grilla de dos columnas y remates. */
+.wb-event-layout {
+  display: grid;
+  grid-template-columns: minmax(28rem, 1.1fr) minmax(25rem, 0.9fr);
+  gap: var(--space-6);
+  margin-block-start: var(--space-5);
+}
+
+.wb-event-column { min-width: 0; }
+.wb-event-column .wb-action-row { margin-block-start: var(--space-4); }
+.wb-event-layout .mui-replay__payload { overflow-wrap: anywhere; }
+
+.wb-projection-column {
+  min-width: 0;
+  padding-inline-start: var(--space-6);
+  border-inline-start: var(--border-width) solid var(--border-subtle);
+}
+
+.wb-projection-note { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: var(--text-xs); }
+.wb-replay-cut { margin-block-start: var(--space-6); }
+.wb-alpha-control input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+/* Artifact 07: design contract */
+.wb-design-flow {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.55fr) minmax(36rem, 1.45fr);
+  gap: var(--space-6);
+  margin-block-start: var(--space-5);
+}
+
+.wb-design-steps { grid-row: 1 / span 2; }
+
+.wb-design-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  padding-block-end: var(--space-5);
+  border-block-end: var(--border-width) solid var(--border-subtle);
+}
+
+.wb-contrast-lab { min-width: 0; }
+
+.wb-color-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(8rem, 1fr));
+  gap: var(--space-3);
+}
+
+.wb-color-control {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: var(--space-1) var(--space-2);
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.wb-color-control input {
+  grid-row: 1 / span 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  background: transparent;
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+
+.wb-color-control input:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); }
+.wb-color-control span { color: var(--text-muted); font-family: var(--font-mono); font-size: var(--text-2xs); }
+.wb-alpha-control { grid-column: 1 / -1; }
+
+.wb-composite-preview {
+  display: grid;
+  min-height: 5rem;
+  margin-block: var(--space-4);
+  padding: var(--space-4);
+  place-items: center;
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-base);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* Artifact 08: generation plan */
+.wb-plan-layout {
+  display: grid;
+  grid-template-columns: minmax(20rem, 0.8fr) minmax(24rem, 1fr) minmax(22rem, 0.9fr);
+  gap: var(--space-5);
+  align-items: start;
+  margin-block-start: var(--space-5);
+}
+
+.wb-plan-command { margin-block: var(--space-4); }
+.wb-plan-switches { display: grid; gap: var(--space-3); margin-block: var(--space-4); }
+.wb-plan-files .mui-file-tree { min-height: 12rem; }
+.wb-file-path { min-width: 0; overflow-wrap: anywhere; }
+.wb-plan-diff { margin-block-start: var(--space-4); }
+.wb-plan-diff[hidden] { display: none; }
+.wb-plan-terminal { margin-block-start: var(--space-5); min-height: 8rem; }
+.wb-file-badge--blocked { color: var(--danger); }
+#plan-steps .mui-steps__item[data-status="failed"] .mui-steps__marker { color: var(--danger); background: var(--danger-bg); border-color: var(--danger); }
+#plan-steps .mui-steps__item[data-status="failed"] .mui-steps__marker::before { content: "!" / ""; }
+
+@keyframes wb-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@media (max-width: 1260px) {
+  .wb-graph { grid-template-columns: minmax(15rem, 0.7fr) minmax(28rem, 1.3fr); }
+  .wb-boot { grid-column: 1 / -1; min-height: auto; }
+  .wb-boot-terminal { min-height: 8rem; }
+
+  .wb-gate-layout { grid-template-columns: 1fr 1fr; }
+  .wb-audit-column { grid-column: 1 / -1; }
+
+  .wb-plan-layout { grid-template-columns: 1fr 1fr; }
+  .wb-plan-progress { grid-column: 1 / -1; }
+}
+
+@media (max-width: 1080px) {
+  .wb-artifact__header { grid-template-columns: 1fr; }
+  .wb-artifact__header > p { grid-column: 1; grid-row: auto; max-width: 72ch; }
+
+  .wb-atlas-panel { grid-template-columns: 1fr; }
+  .wb-boundary-inspector { border-inline-start-width: 1px; }
+
+  .wb-design-flow { grid-template-columns: 1fr; }
+  .wb-design-steps { grid-row: auto; }
+}
+
+@media (max-width: 960px) {
+  body { overflow: hidden; }
+  .wb-shell { grid-template-rows: var(--header-h) minmax(0, 1fr); }
+  .wb-topbar { grid-area: auto; grid-column: 1; grid-row: 1; }
+  .wb-main { grid-area: auto; grid-column: 1; grid-row: 2; height: calc(100dvh - var(--header-h)); }
+  .wb-sidebar__footer { display: none; }
+}
+
+@media (max-width: 820px) {
+  .wb-graph,
+  .wb-pipeline-layout,
+  .wb-gate-layout,
+  .wb-event-layout,
+  .wb-runtime-layout,
+  .wb-plan-layout { grid-template-columns: 1fr; }
+
+  .wb-module-tray,
+  .wb-field,
+  .wb-boot,
+  .wb-gate-machine { min-height: auto; }
+
+  .wb-action-contract,
+  .wb-conceptual-pipeline,
+  .wb-audit-column,
+  .wb-plan-progress { grid-column: 1; }
+
+  .wb-field__plot { min-height: 12rem; }
+  .wb-projection-column { padding-inline-start: 0; padding-block-start: var(--space-5); border-inline-start: 0; border-block-start: var(--border-width) solid var(--border-subtle); }
+
+  .wb-boundary-tier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb-boundary-tier .wb-boundary-node,
+  .wb-boundary-tier[data-tier="host"] .wb-boundary-node,
+  .wb-boundary-tier[data-tier="adapters"] .wb-boundary-node:nth-of-type(1),
+  .wb-boundary-tier[data-tier="adapters"] .wb-boundary-node:nth-of-type(2),
+  .wb-boundary-tier[data-tier="engines"] .wb-boundary-node,
+  .wb-boundary-tier[data-tier="contracts"] .wb-boundary-node { grid-column: span 1; }
+  .wb-boundary-tier[data-tier="host"] .wb-boundary-node { grid-column: 1 / -1; }
+}
+
+@media (max-width: 640px) {
+  .wb-main { padding: var(--space-4) var(--space-3) var(--space-12); }
+  .wb-artifact { min-height: auto; }
+  .wb-artifact__header h1 { font-size: var(--text-2xl); }
+  .wb-topbar { gap: var(--space-2); padding-inline: var(--space-2); }
+  .wb-topbar__context { display: none; }
+  .wb-topbar__end { margin-inline-start: auto; }
+  .wb-progress { min-width: 3.5rem; font-size: var(--text-2xs); }
+  .wb-fullscreen { display: none; }
+
+  .wb-caller-controls,
+  .wb-design-metrics,
+  .wb-color-controls { grid-template-columns: 1fr; }
+  .wb-permission-toggle,
+  .wb-alpha-control { grid-column: 1; }
+
+  /* En pantallas angostas el tubo conceptual se apila; el rail y la canica se ocultan. */
+  .wb-conceptual-pipeline .mui-pipeline__track { flex-direction: column; padding-block-start: 0; }
+  .wb-conceptual-pipeline .mui-pipeline__track::before,
+  .wb-conceptual-pipeline .mui-pipeline__marker { display: none; }
+
+  .wb-boundary-tier { grid-template-columns: 1fr; }
+  .wb-boundary-tier .wb-boundary-node,
+  .wb-boundary-tier[data-tier="host"] .wb-boundary-node { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .wb-main { scroll-behavior: auto; }
+  .wb-gate-symbol i,
+  .wb-boundary-node { transition: none; animation: none; }
+  .wb-field[data-chaos="true"] { animation: none; }
+}
+
+/* Artifact 09 · el átomo y sus puertas */
+.wb-atom-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-base);
+  background: var(--surface);
+  padding: var(--space-4);
+  margin-block: var(--space-4);
+}
+.wb-atom-card__name { margin: 0 0 var(--space-2); font-size: 1.125rem; }
+.wb-atom-card__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.wb-surface-controls { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-block: var(--space-4); }
+.wb-projection { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+.wb-surface-column { border: 1px solid var(--border-subtle); border-radius: var(--radius-base); padding: var(--space-3); background: var(--surface); }
+.wb-surface-column__title { margin: 0 0 var(--space-2); font-size: 1rem; }
+.wb-surface-column__invocation { margin: 0 0 var(--space-3); font-family: var(--font-mono, monospace); font-size: 0.85rem; overflow-x: auto; }
+.wb-surface-column__status { margin-block-start: var(--space-3); font-size: 0.9rem; }
+.wb-guarantees { margin-block: var(--space-4); }
+@media (max-width: 820px) {
+  .wb-projection { grid-template-columns: 1fr; }
+}

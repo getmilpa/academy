@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es-MX" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aprender · Milpa Academy</title>
+  <meta name="description" content="Rutas verificables para entender la arquitectura y construir con Milpa.">
+  <link rel="icon" href="../assets/milpa-app-icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+  <link rel="stylesheet" href="./learn.css">
+</head>
+<body class="mui-page">
+  <a class="mui-shell__skip" href="#main">Saltar al contenido</a>
+
+  <header class="mui-docs__topbar">
+    <button class="mui-btn mui-btn--ghost mui-btn--sm mui-docs__nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="courseMenu">Menú</button>
+    <a class="mui-docs__brand" href="../">
+      <img class="ac-brand-mark" src="../assets/milpa-symbol-color.svg" width="22" height="22" alt="">
+      <span>Academy</span>
+    </a>
+    <nav class="mui-docs__topbar-nav" aria-label="Secciones de Academy">
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="./">Aprender</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../labs/">Laboratorios</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../artifacts/">Artifacts</a>
+      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../webinars/">Webinar</a>
+    </nav>
+    <div class="mui-docs__topbar-actions">
+      <span class="mui-badge ac-progress-badge" id="globalProgress">0/0</span>
+      <button class="mui-btn mui-btn--ghost mui-btn--sm" id="themeBtn" type="button" aria-label="Cambiar tema">Tema</button>
+    </div>
+  </header>
+
+  <dialog class="mui-drawer mui-drawer--start" id="courseMenu" aria-labelledby="courseMenuTitle">
+    <header class="mui-drawer__header">
+      <h2 class="mui-drawer__title" id="courseMenuTitle">Rutas</h2>
+      <button class="mui-btn mui-btn--ghost mui-btn--sm" id="navClose" type="button">Cerrar</button>
+    </header>
+    <div class="mui-drawer__body">
+      <nav id="mobileCourseNav" aria-label="Rutas de aprendizaje"></nav>
+    </div>
+  </dialog>
+
+  <div class="mui-docs">
+    <nav class="mui-docs__nav" id="courseNav" aria-label="Rutas de aprendizaje"></nav>
+    <main class="mui-docs__main" id="main" tabindex="-1">
+      <div id="lesson" aria-live="polite"></div>
+    </main>
+    <aside class="mui-docs__aside" id="courseAside" aria-label="Contexto de la lección"></aside>
+  </div>
+
+  <script src="../curriculum/catalog.js"></script>
+  <script src="../curriculum/quiz-bank.js"></script>
+  <script src="../curriculum/quizzes-fundamentos.js"></script>
+  <script src="../curriculum/quizzes-arquitectura.js"></script>
+  <script src="../curriculum/quiz-engine.js"></script>
+  <script src="../curriculum/progress.js"></script>
+  <script src="./learn.js"></script>
+</body>
+</html>

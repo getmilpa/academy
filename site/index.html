@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es-MX" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El átomo y sus puertas · Milpa</title>
+<meta name="description" content="Milpa no promete ahorrarte pensar. Milpa promete enseñarte a pensar mientras construyes.">
+<link rel="canonical" href="https://academy.milpa.lat/">
+<link rel="alternate" hreflang="es" href="https://academy.milpa.lat/">
+<link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/">
+<link rel="alternate" hreflang="x-default" href="https://academy.milpa.lat/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+<link rel="stylesheet" href="../artifacts/artifacts.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","inLanguage":"es","name":"El átomo y sus puertas","description":"Milpa no promete ahorrarte pensar. Milpa promete enseñarte a pensar mientras construyes.","about":"Milpa — pluggable pipelines through clear contracts for humans and agents","isBasedOn":["https://github.com/getmilpa/command","https://github.com/getmilpa/runtime","https://github.com/getmilpa/skeleton"]}</script>
+</head>
+<body>
+<main>
+<h1 class="wb-hero">Milpa no promete ahorrarte pensar. Milpa promete enseñarte a pensar mientras construyes.</h1>
+<p class="wb-intro">Imaginá que le pedís lo mismo a tres mensajeros distintos — una línea de comandos, un asistente de IA, un formulario web — y cada uno lo resuelve un poco distinto: uno te pide confirmar antes de actuar, otro revisa primero si tenés permiso, el tercero todavía no revisa nada. Es la misma orden, dicha de tres formas, con tres niveles de cuidado distintos. Eso es lo que vas a ver acá, ya con su nombre técnico: una Operación, proyectada a tres puertas.</p>
+<milpa-artifact id="atomo-artifact" lang="es">
+        <header class="wb-artifact__header">
+          <div class="wb-artifact__meta">
+            <span class="mui-badge mui-badge--accent">Artifact 09</span>
+            <span class="mui-badge mui-badge--secondary">Ingeniería · inspeccionar</span>
+          </div>
+          <h1 id="atomo-title">El átomo y sus puertas</h1>
+          <p>Una operación se declara una vez. <code>coa</code>, MCP y HTTP son adaptadores del mismo handler — pero cambiar de puerta puede cambiar la política.</p>
+        </header>
+
+        <article class="wb-atom-card" aria-label="La operación declarada">
+          <p class="wb-atom-card__name"><code>crear:tarea</code></p>
+          <ul class="wb-atom-card__chips">
+            <li class="mui-badge mui-badge--warning">mutating</li>
+            <li class="mui-badge mui-badge--warning">requiresConfirmation</li>
+            <li class="mui-badge mui-badge--secondary">scopes: tarea:crear</li>
+            <li class="mui-badge mui-badge--secondary">handler: TaskService::create</li>
+          </ul>
+        </article>
+
+        <div class="wb-surface-controls" role="group" aria-label="Elegir superficie">
+          <button class="mui-btn mui-btn--lg mui-btn--primary wb-surface" type="button" data-surface="cli">coa · CLI</button>
+          <button class="mui-btn mui-btn--lg mui-btn--secondary wb-surface" type="button" data-surface="mcp">MCP · agente</button>
+          <button class="mui-btn mui-btn--lg mui-btn--secondary wb-surface" type="button" data-surface="http">POST · HTTP</button>
+          <label class="mui-choice wb-scope-toggle">
+            <input class="mui-switch" id="scope-toggle" type="checkbox" role="switch">
+            <span>Modo caos · quitar scope <code>tarea:crear</code></span>
+          </label>
+        </div>
+
+        <div class="mui-callout mui-callout--warning" role="note">
+          <p><strong>Hueco de cobertura honesto:</strong> Esto no es una garantía deseable de HTTP. Es una radiografía de la implementación actual. MCP aplica scopes hoy; HTTP todavía no lee scopes de <code>Operation</code>. Este hueco debe cerrarse en runtime/policy antes de producción. Ver <a href="../artifacts/#runtime">Radiografía del runtime</a>. Fuente: <code>Operation.php</code>.</p>
+        </div>
+
+        <div class="wb-projection">
+          <section class="wb-surface-column" data-surface="cli" aria-label="Proyección a coa (CLI)">
+            <h2 class="wb-surface-column__title">coa · CLI</h2>
+            <p class="wb-surface-column__invocation" id="inv-cli"><code>coa crear:tarea --titulo=… --yes</code></p>
+            <div class="mui-pipeline mui-pipeline--vertical" id="pipe-cli" aria-label="Pipeline resolver, validar, autorizar, ejecutar, auditar (coa)">
+              <div class="mui-pipeline__track" style="--_pipeline-progress: 0">
+                <span class="mui-pipeline__marker" aria-hidden="true"></span>
+                <div class="mui-pipeline__stage" data-stage="resolve"><span class="mui-pipeline__label">resolver</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="validate"><span class="mui-pipeline__label">validar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="authorize"><span class="mui-pipeline__label">autorizar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="execute"><span class="mui-pipeline__label">ejecutar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="audit"><span class="mui-pipeline__label">auditar</span><p class="mui-pipeline__note"></p></div>
+              </div>
+            </div>
+            <p class="wb-surface-column__status" id="status-cli" role="status" aria-live="polite">Elegí una puerta para proyectar.</p>
+          </section>
+          <section class="wb-surface-column" data-surface="mcp" aria-label="Proyección a MCP (agente)">
+            <h2 class="wb-surface-column__title">MCP · agente</h2>
+            <p class="wb-surface-column__invocation" id="inv-mcp"><code>tools/call · crear:tarea</code></p>
+            <div class="mui-pipeline mui-pipeline--vertical" id="pipe-mcp" aria-label="Pipeline resolver, validar, autorizar, ejecutar, auditar (MCP)">
+              <div class="mui-pipeline__track" style="--_pipeline-progress: 0">
+                <span class="mui-pipeline__marker" aria-hidden="true"></span>
+                <div class="mui-pipeline__stage" data-stage="resolve"><span class="mui-pipeline__label">resolver</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="validate"><span class="mui-pipeline__label">validar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="authorize"><span class="mui-pipeline__label">autorizar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="execute"><span class="mui-pipeline__label">ejecutar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="audit"><span class="mui-pipeline__label">auditar</span><p class="mui-pipeline__note"></p></div>
+              </div>
+            </div>
+            <p class="wb-surface-column__status" id="status-mcp" role="status" aria-live="polite">Elegí una puerta para proyectar.</p>
+          </section>
+          <section class="wb-surface-column" data-surface="http" aria-label="Proyección a POST (HTTP)">
+            <h2 class="wb-surface-column__title">POST · HTTP</h2>
+            <p class="wb-surface-column__invocation" id="inv-http"><code>POST /crear/tarea</code></p>
+            <div class="mui-pipeline mui-pipeline--vertical" id="pipe-http" aria-label="Pipeline resolver, validar, autorizar, ejecutar, auditar (POST)">
+              <div class="mui-pipeline__track" style="--_pipeline-progress: 0">
+                <span class="mui-pipeline__marker" aria-hidden="true"></span>
+                <div class="mui-pipeline__stage" data-stage="resolve"><span class="mui-pipeline__label">resolver</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="validate"><span class="mui-pipeline__label">validar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="authorize"><span class="mui-pipeline__label">autorizar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="execute"><span class="mui-pipeline__label">ejecutar</span><p class="mui-pipeline__note"></p></div>
+                <div class="mui-pipeline__stage" data-stage="audit"><span class="mui-pipeline__label">auditar</span><p class="mui-pipeline__note"></p></div>
+              </div>
+            </div>
+            <p class="wb-surface-column__status" id="status-http" role="status" aria-live="polite">Elegí una puerta para proyectar.</p>
+          </section>
+        </div>
+
+        <table class="mui-table mui-table--compact wb-guarantees">
+          <caption>Garantías por superficie</caption>
+          <thead><tr><th scope="col">Superficie</th><th scope="col">Confirm</th><th scope="col">Scopes aplicados</th></tr></thead>
+          <tbody id="atomo-matrix">
+            <tr><td>coa</td><td>flag <code>--yes</code></td><td>no (local/confiable)</td></tr>
+            <tr><td>MCP</td><td>gate heredado (tool-runtime)</td><td><strong>sí</strong> (PolicyGate)</td></tr>
+            <tr><td>POST</td><td>token <code>428→201</code></td><td>no (pendiente · middleware)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="wb-lesson mui-callout" role="note">
+          <p>El handler nunca cambió. Cambiaste de puerta y el framework sintetizó la invocación — pero la puerta puede cambiar la política, y hoy no todas aplican los mismos scopes.</p>
+        </div>
+
+        <details class="wb-source">
+          <summary>Evidencia y alcance</summary>
+          <p>Modelo <strong>didáctico</strong> sobre implementación <strong>auditada</strong>. Este artifact no afirma que HTTP aplique scopes ni que el token store in-memory sea de producción.</p>
+          <h3>Fuentes auditadas</h3>
+          <ul>
+            <li>Contrato publicado <code>milpa/command</code>: <code>getmilpa-command/src/Operation.php</code>, <code>CommandProvider.php</code>, <code>SurfaceProjector.php</code>.</li>
+            <li>Proyectores de referencia (<code>skeleton</code>, ns <code>App\Command</code>, no parte del paquete): <code>getmilpa-skeleton/src/Command/{CliProjector,McpProjector,HttpProjector}.php</code>.</li>
+            <li>Stand-ins didácticos: <code>ConfirmTokenStore.php</code> (in-memory, single-process — no producción), <code>SchemaCoercer.php</code>.</li>
+            <li>Semilla junior: <code>docs/GUION-WEBINAR-JUNIORS.md</code> (Artifact 2).</li>
+          </ul>
+        </details>
+      </milpa-artifact>
+</main>
+<script src="../artifacts/artifacts-core.js" defer></script>
+<script src="../artifacts/milpa-artifact.js" defer></script>
+</body>
+</html>

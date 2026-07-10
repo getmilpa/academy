@@ -1,0 +1,86 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+.ac-brand-mark { display: block; width: 1.4rem; height: 1.4rem; }
+.ac-progress-badge { white-space: nowrap; }
+.ac-nav-home { margin-block-end: var(--space-4); }
+.ac-nav-unit { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+.ac-nav-status { flex: none; font-family: var(--font-mono); color: var(--text-muted); }
+.ac-nav-unit[aria-current="page"] .ac-nav-status { color: var(--accent-text); }
+.ac-dashboard-head { max-width: 52rem; margin-block-end: var(--space-8); }
+.ac-dashboard-head h1 { margin: var(--space-2) 0 var(--space-3); font-size: var(--text-4xl); font-weight: var(--weight-medium); letter-spacing: 0; }
+.ac-dashboard-head p { max-width: 64ch; color: var(--text-secondary); line-height: var(--leading-relaxed); }
+.ac-dashboard-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block-start: var(--space-5); }
+.ac-track-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.ac-track-card { height: 100%; }
+.ac-track-card .mui-card__body { display: flex; flex-direction: column; gap: var(--space-3); }
+.ac-track-card h2 { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-medium); }
+.ac-track-card p { margin: 0; color: var(--text-muted); line-height: var(--leading-normal); }
+.ac-track-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ac-track-progress { margin-block-start: auto; padding-block-start: var(--space-3); }
+.ac-progress-copy { display: flex; justify-content: space-between; gap: var(--space-3); margin-block-end: var(--space-2); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-secondary); }
+.ac-lesson-header { margin-block-end: var(--space-8); }
+.ac-lesson-kicker { margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--secondary-text); }
+.ac-lesson-header h1 { margin: 0; font-size: var(--text-4xl); font-weight: var(--weight-medium); letter-spacing: 0; line-height: var(--leading-tight); }
+.ac-lesson-summary { margin: var(--space-3) 0 0; max-width: 62ch; color: var(--text-secondary); font-size: var(--text-lg); line-height: var(--leading-relaxed); }
+.ac-lesson-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block-start: var(--space-4); }
+.ac-objectives { margin-block: var(--space-6) var(--space-8); }
+.ac-objectives h2 { margin: 0 0 var(--space-3); font-size: var(--text-base); }
+.ac-objectives ul { margin: 0; padding-inline-start: var(--space-5); color: var(--text-secondary); }
+.ac-phase { scroll-margin-top: calc(var(--header-h) + var(--space-4)); margin-block-start: var(--space-10); }
+.ac-phase > h2 { display: flex; align-items: center; gap: var(--space-3); margin-block-end: var(--space-4); }
+.ac-phase-index { display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; flex: none; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent-text); background: var(--accent-subtle); border-radius: var(--radius-full); }
+.ac-action-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-block-start: var(--space-4); }
+.ac-terminal { margin-block-start: var(--space-4); }
+.ac-rubric { margin-block: var(--space-5); padding: var(--space-4); border-inline-start: 3px solid var(--border-strong); }
+.ac-rubric > p { margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; color: var(--text-muted); }
+.ac-rubric ul { margin: 0; padding-inline-start: var(--space-5); color: var(--text-secondary); }
+.ac-quiz { margin-block-start: var(--space-6); border-block: var(--border-width) var(--border-style) var(--border-subtle); }
+.ac-quiz-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-5); }
+.ac-quiz-eyebrow { margin: 0 0 var(--space-1); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; color: var(--secondary-text); }
+.ac-quiz-copy { max-width: 58ch; margin: 0; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-normal); }
+.ac-quiz-question { min-width: 0; margin: 0; padding: var(--space-6) 0; border: 0; border-block-start: var(--border-width) var(--border-style) var(--border-subtle); }
+.ac-quiz-prompt { display: grid; width: 100%; gap: var(--space-2); margin: 0 0 var(--space-4); padding: 0; color: var(--text); font-size: var(--text-base); line-height: var(--leading-normal); }
+.ac-quiz-index { font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: var(--weight-regular); text-transform: uppercase; color: var(--text-muted); }
+.ac-quiz-options { display: grid; gap: var(--space-2); }
+.ac-quiz-option { width: 100%; padding: var(--space-3); background: var(--surface); border: var(--border-width) var(--border-style) var(--border-subtle); border-radius: var(--radius-md); transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
+.ac-quiz-option:hover { border-color: var(--border); }
+.ac-quiz-option:has(.mui-radio:checked) { background: var(--accent-subtle); border-color: var(--accent); }
+.ac-quiz-option .mui-choice__text { color: var(--text-secondary); }
+.ac-quiz-option:has(.mui-radio:checked) .mui-choice__text { color: var(--text); }
+.ac-quiz-feedback { margin-block-start: var(--space-3); padding: var(--space-3); font-size: var(--text-sm); line-height: var(--leading-normal); border-radius: var(--radius-md); }
+.ac-quiz-feedback strong { display: block; margin-block-end: var(--space-1); }
+.ac-quiz-feedback p { margin: 0; }
+.ac-quiz-question[data-result="correct"] .ac-quiz-feedback { color: var(--success); background: var(--success-bg); border: var(--border-width) var(--border-style) var(--success-border); }
+.ac-quiz-question[data-result="incorrect"] .ac-quiz-feedback { color: var(--danger); background: var(--danger-bg); border: var(--border-width) var(--border-style) var(--danger-border); }
+.ac-quiz-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); padding-block: var(--space-5); border-block-start: var(--border-width) var(--border-style) var(--border-subtle); }
+.ac-quiz-actions > p { flex: 1 1 18rem; margin: 0; color: var(--text-muted); font-size: var(--text-xs); }
+.ac-quiz-result:focus-visible { outline: none; }
+.ac-quiz-result:not(:empty) { padding-block-end: var(--space-5); }
+.ac-quiz-passed { margin-block-start: var(--space-6); }
+.ac-sources { margin-block-start: var(--space-10); padding-block-start: var(--space-5); border-block-start: var(--border-width) var(--border-style) var(--border-subtle); }
+.ac-sources h2 { font-size: var(--text-base); }
+.ac-sources ul { margin: 0; }
+.ac-verified { margin-block-start: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); }
+.ac-aside-block + .ac-aside-block { margin-block-start: var(--space-6); }
+.ac-aside-title { margin: 0 0 var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; color: var(--text-muted); }
+.ac-aside-copy { margin: var(--space-2) 0 0; font-size: var(--text-xs); color: var(--text-secondary); }
+.ac-mobile-toc { display: none; }
+.ac-reset { margin-block-start: var(--space-8); }
+:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); }
+@media (max-width: 1100px) {
+  .ac-mobile-toc { display: block; }
+}
+@media (max-width: 760px) {
+  .ac-track-list { grid-template-columns: 1fr; }
+  .ac-dashboard-head h1, .ac-lesson-header h1 { font-size: var(--text-3xl); }
+  .ac-progress-badge { display: none; }
+  .ac-quiz-head { flex-direction: column; }
+  .ac-quiz-actions { align-items: stretch; flex-direction: column; }
+  .ac-quiz-actions .mui-btn { width: 100%; }
+  .ac-quiz-actions > p { flex-basis: auto; }
+}
+@media (max-width: 420px) {
+  .mui-docs__topbar { gap: var(--space-2); }
+  .mui-docs__topbar-actions { gap: var(--space-1); }
+}
