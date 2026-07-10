@@ -3,6 +3,7 @@
 
   const { labs, getLab } = globalThis.MilpaLabCatalog;
   const { verifyLab } = globalThis.MilpaLabVerifier;
+  const { splitCodeSpans } = globalThis.MilpaInlineCode;
   const storageKey = "milpa-academy-labs-v1";
   const themeKey = "milpa-academy-theme";
   const navigation = document.querySelector("#lab-navigation");
@@ -39,6 +40,17 @@
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+
+  // Convierte texto con code-spans Markdown (`código`) en un fragmento con
+  // <code> real. element() usa textContent, así que esto sigue siendo
+  // XSS-safe: nunca se construye HTML desde texto de contenido.
+  function inlineCode(text) {
+    const fragment = document.createDocumentFragment();
+    splitCodeSpans(text).forEach((token) => {
+      fragment.append(token.code ? element("code", null, token.text) : document.createTextNode(token.text));
+    });
+    return fragment;
   }
 
   function setTheme(theme) {
@@ -145,7 +157,9 @@
       const mark = element("span", "ac-evidence-item__mark", evidence.pass ? "✓" : "×");
       mark.setAttribute("aria-hidden", "true");
       const copy = element("div");
-      copy.append(element("p", "", evidence.label));
+      const evidenceLabel = element("p", "");
+      evidenceLabel.append(inlineCode(evidence.label));
+      copy.append(evidenceLabel);
       if (evidence.excerpt) copy.append(element("code", "", evidence.excerpt));
       item.append(mark, copy);
       list.append(item);
@@ -168,7 +182,9 @@
     );
     const title = element("h2", "", lab.title);
     title.id = `title-${lab.id}`;
-    header.append(meta, title, element("p", "", lab.objective));
+    const objective = element("p", "");
+    objective.append(inlineCode(lab.objective));
+    header.append(meta, title, objective);
 
     const layout = element("div", "ac-practice-layout");
     const commandColumn = element("div", "ac-command-column");
@@ -200,7 +216,9 @@
       const item = element("li", "mui-steps__item");
       const marker = element("span", "mui-steps__marker");
       marker.setAttribute("aria-hidden", "true");
-      item.append(marker, element("p", "mui-steps__title", `Paso ${index + 1}`), element("p", "mui-steps__body", step));
+      const stepBody = element("p", "mui-steps__body");
+      stepBody.append(inlineCode(step));
+      item.append(marker, element("p", "mui-steps__title", `Paso ${index + 1}`), stepBody);
       steps.append(item);
     });
     procedure.append(procedureTitle, steps);
@@ -214,7 +232,8 @@
     const field = element("div", "ac-field");
     const label = element("label", "", "Salida real de tu terminal");
     label.htmlFor = `output-${lab.id}`;
-    const hint = element("p", "ac-field-hint", lab.evidenceHint);
+    const hint = element("p", "ac-field-hint");
+    hint.append(inlineCode(lab.evidenceHint));
     hint.id = `hint-${lab.id}`;
     const textarea = element("textarea", "mui-textarea ac-output");
     textarea.id = `output-${lab.id}`;

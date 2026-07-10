@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const catalog = require("./catalog.js");
+const labsCatalog = require("../labs/catalog.js");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("el catálogo público tiene cuatro rutas completas y IDs estables", () => {
@@ -61,7 +62,7 @@ test("las prerrequisitos forman un grafo válido y acíclico", () => {
   assert.equal(visited.size, tracks.size);
 });
 
-test("todos los destinos locales del currículo existen y sus artifacts conservan el hash", () => {
+test("todos los destinos locales del currículo existen y sus artifacts/labs conservan el hash", () => {
   for (const unit of catalog.allUnits()) {
     for (const destination of [unit.see, unit.do]) {
       if (/^[a-z]+:/i.test(destination.href)) continue;
@@ -72,6 +73,12 @@ test("todos los destinos locales del currículo existen y sus artifacts conserva
       if (fragment && target.endsWith(path.join("artifacts", "index.html"))) {
         const html = fs.readFileSync(target, "utf8");
         assert.match(html, new RegExp("\\bid=[\"']" + fragment + "[\"']"), "hash ausente: " + fragment);
+      }
+      if (fragment && target.endsWith(path.join("labs", "index.html"))) {
+        assert.ok(
+          labsCatalog.getLab(fragment),
+          unit.trackId + "/" + unit.id + ": lab inexistente en labs/catalog.js: " + fragment
+        );
       }
     }
   }

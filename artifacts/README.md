@@ -48,6 +48,7 @@ puede abrir con `file://`; solo necesita red para cargar el CSS publicado de
 | 6 | El proceso es el log | Append-only log, replay y proyección por fold |
 | 7 | Contrato ejecutable | DTCG → build → contratos/gates → consumidor |
 | 8 | El plan antes del disco | `PlannedFile`, inspección, `WriteGuard` y verificación |
+| 9 | El átomo y sus puertas | `Operation` declarada una vez, proyectada a coa/MCP/HTTP y su hueco de scopes en HTTP |
 
 Los tres primeros implementan las specs de
 `docs/GUION-WEBINAR-JUNIORS.md`. Los restantes desarrollan el mapa de
@@ -71,7 +72,8 @@ auditoría para todas las salidas tempranas de `ToolRegistry::call()`.
 ## Verificación
 
 ```bash
-npm test   # 9 tests de la lógica pura (artifacts-core.test.mjs)
+npm test   # 14 tests de la lógica pura (artifacts-core.test.mjs)
+           # + milpa-artifact.test.mjs cubre la hidratación del artifact 9 (átomo)
 ```
 
 El drag del primer artifact tiene alternativa completa por click/teclado. La

@@ -23,7 +23,7 @@ export const ATOMO = {
      "proyección" o "scope". Cierra con esos mismos términos como puente hacia
      la sección técnica que sigue. */
   intro: {
-    es: "Imaginá que le pides lo mismo a tres mensajeros distintos — una línea de "
+    es: "Imagina que le pides lo mismo a tres mensajeros distintos — una línea de "
       + "comandos, un asistente de IA, un formulario web — y cada uno lo resuelve "
       + "un poco distinto: uno te pide confirmar antes de actuar, otro revisa "
       + "primero si tienes permiso, el tercero todavía no revisa nada. Es la misma "

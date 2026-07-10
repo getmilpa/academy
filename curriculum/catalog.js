@@ -60,14 +60,16 @@
           objectives: ["Separar entrada, acción y política", "Distinguir validación automática de decisión humana"],
           understand: [
             "CLI, HTTP o un agente pueden iniciar trabajo, pero la entrada no debe convertirse en una segunda implementación del dominio. La acción cruza el mismo pipeline y deja la misma clase de evidencia.",
-            "Una compuerta humana no reemplaza validaciones automáticas. Interviene cuando la política exige intención, responsabilidad o contexto que una regla mecánica no puede decidir."
+            "Una compuerta humana no reemplaza validaciones automáticas. Interviene cuando la política exige intención, responsabilidad o contexto que una regla mecánica no puede decidir.",
+            "milpa/command nombra ese mismo principio como átomo: una Operación se declara una vez y se proyecta a coa, MCP y HTTP sin reimplementar el dominio en cada puerta — pero la puerta sí puede cambiar la política, y hoy no todas aplican los mismos scopes."
           ],
           see: { label: "Recorrer el pipeline", href: "../artifacts/#pipeline", note: "Cambia la puerta de entrada y retira un permiso para localizar exactamente dónde se detiene la acción." },
           do: { label: "Operar la compuerta", href: "../artifacts/#compuerta", commands: [] },
           verify: ["La entrada no contiene la lógica del caso de uso.", "Una aprobación produce una decisión auditable, no un atajo invisible."],
           sources: [
             { label: "Milpa Workflow", href: "https://github.com/getmilpa/workflow" },
-            { label: "Milpa Orchestrator", href: "https://github.com/getmilpa/orchestrator" }
+            { label: "Milpa Orchestrator", href: "https://github.com/getmilpa/orchestrator" },
+            { label: "Ver también: El átomo y sus puertas (milpa/command)", href: "../artifacts/index.html#atomo" }
           ],
           lastVerified: verifiedAt
         }
@@ -129,7 +131,7 @@
             "Una tool necesita schema, autorización y auditoría; exponer una función al modelo no basta para convertirla en una herramienta gobernada."
           ],
           see: { label: "Comparar las dos puertas", href: "../artifacts/#pipeline", note: "La visualización explica el pipeline compartido; no promete un runner CLI genérico que el skeleton no ofrece." },
-          do: { label: "Habilitar y comprobar tools", href: "../labs/#tools", commands: ["php bin/coa agent:enable", "php bin/coa make:tool CatalogPlugin SearchCatalog", "php bin/coa inspect:tools"] },
+          do: { label: "Habilitar y comprobar tools", href: "../labs/#tool", commands: ["php bin/coa agent:enable", "php bin/coa make:tool CatalogPlugin SearchCatalog", "php bin/coa inspect:tools"] },
           verify: ["agent:enable instala Tool Runtime y MCP Server.", "inspect:tools muestra la tool registrada."],
           sources: [
             { label: "Tool Runtime", href: "https://github.com/getmilpa/tool-runtime" },

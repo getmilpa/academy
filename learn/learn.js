@@ -5,7 +5,8 @@
   var progress = window.MilpaProgress;
   var quizBank = window.MilpaQuizBank;
   var quizEngine = window.MilpaQuiz;
-  if (!catalog || !progress || !quizBank || !quizEngine) return;
+  var inlineCode = window.MilpaInlineCode;
+  if (!catalog || !progress || !quizBank || !quizEngine || !inlineCode) return;
 
   var store = progress.createStore(window.localStorage);
   var retakeUnits = new Set();
@@ -23,6 +24,15 @@
     return String(value).replace(/[&<>"']/g, function (character) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[character];
     });
+  }
+
+  // Escapa texto que puede traer code-spans Markdown (`código`) y envuelve
+  // cada uno en <code>. El escapado ocurre por token, así que HTML dentro
+  // de un code-span queda neutralizado igual que fuera de él.
+  function escapeInline(text) {
+    return inlineCode.splitCodeSpans(text).map(function (token) {
+      return token.code ? "<code>" + escapeHtml(token.text) + "</code>" : escapeHtml(token.text);
+    }).join("");
   }
 
   function unitHref(trackId, unitId) { return "#" + trackId + "/" + unitId; }
@@ -134,9 +144,9 @@
       var errorId = "quiz-error-" + question.id;
       var feedbackId = "quiz-feedback-" + question.id;
       var options = question.options.map(function (option) {
-        return "<label class=\"mui-choice ac-quiz-option\"><input class=\"mui-radio\" type=\"radio\" name=\"" + escapeHtml(inputName) + "\" value=\"" + escapeHtml(option.id) + "\"><span class=\"mui-choice__text\">" + escapeHtml(option.text) + "</span></label>";
+        return "<label class=\"mui-choice ac-quiz-option\"><input class=\"mui-radio\" type=\"radio\" name=\"" + escapeHtml(inputName) + "\" value=\"" + escapeHtml(option.id) + "\"><span class=\"mui-choice__text\">" + escapeInline(option.text) + "</span></label>";
       }).join("");
-      return "<fieldset class=\"mui-field ac-quiz-question\" data-question-id=\"" + escapeHtml(question.id) + "\"><legend class=\"mui-field__label ac-quiz-prompt\"><span class=\"ac-quiz-index\">Pregunta " + (questionIndex + 1) + " de " + quiz.questions.length + "</span><span>" + escapeHtml(question.prompt) + "</span></legend><div class=\"ac-quiz-options\">" + options + "</div><p class=\"mui-field__error\" id=\"" + errorId + "\" data-question-error hidden>Selecciona una respuesta antes de calificar.</p><div class=\"ac-quiz-feedback\" id=\"" + feedbackId + "\" data-question-feedback hidden></div></fieldset>";
+      return "<fieldset class=\"mui-field ac-quiz-question\" data-question-id=\"" + escapeHtml(question.id) + "\"><legend class=\"mui-field__label ac-quiz-prompt\"><span class=\"ac-quiz-index\">Pregunta " + (questionIndex + 1) + " de " + quiz.questions.length + "</span><span>" + escapeInline(question.prompt) + "</span></legend><div class=\"ac-quiz-options\">" + options + "</div><p class=\"mui-field__error\" id=\"" + errorId + "\" data-question-error hidden>Selecciona una respuesta antes de calificar.</p><div class=\"ac-quiz-feedback\" id=\"" + feedbackId + "\" data-question-feedback hidden></div></fieldset>";
     }).join("");
 
     return "<form class=\"ac-quiz mui-not-prose\" id=\"lessonQuiz\" novalidate><div class=\"ac-quiz-head\"><div><p class=\"ac-quiz-eyebrow\">Evaluación calificable</p><p class=\"ac-quiz-copy\">Resuelve los " + quiz.questions.length + " escenarios. Esta unidad exige " + passScore + " de " + quiz.questions.length + " respuestas correctas.</p></div><span class=\"mui-badge\">" + attempts + " intento" + (attempts === 1 ? "" : "s") + "</span></div><div class=\"ac-quiz-questions\">" + questions + "</div><div class=\"ac-quiz-actions\"><button class=\"mui-btn mui-btn--primary\" type=\"submit\">Calificar evaluación</button><p>La calificación valida respuestas en este navegador; no certifica identidad.</p></div><div class=\"ac-quiz-result\" id=\"quizResult\" role=\"status\" aria-live=\"polite\" tabindex=\"-1\"></div></form>";
@@ -247,7 +257,7 @@
         var feedback = fieldset.querySelector("[data-question-feedback]");
         fieldset.dataset.result = item.correct ? "correct" : "incorrect";
         fieldset.setAttribute("aria-describedby", feedback.id);
-        feedback.innerHTML = "<strong>" + (item.correct ? "Correcta." : "Incorrecta.") + "</strong><p>" + escapeHtml(item.explanation) + "</p>";
+        feedback.innerHTML = "<strong>" + (item.correct ? "Correcta." : "Incorrecta.") + "</strong><p>" + escapeInline(item.explanation) + "</p>";
         feedback.hidden = false;
       });
 
