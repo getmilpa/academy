@@ -11,6 +11,7 @@ import path from "node:path";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
 import { htmlOpen, renderHead } from "./gen/page.mjs";
+import { buildLearnPages } from "./gen/learn.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["es", "en"];
@@ -33,6 +34,12 @@ function gtagBootstrap(lang, pageType) {
   return `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{language:'${lang}',page_type:'${pageType}'});gtag('config','${GA_ID}');</script>`;
 }
+
+/* Per-unit + learn-index SSG pages (bilingual). Built once here so the same
+   result feeds the emission loop, SITEMAP_PAGES and llms() below — the learn
+   generators live in gen/learn.mjs (mismo estilo que gen/page.mjs) porque el
+   volumen (30 unit pages + 2 learn index) crecería demasiado este archivo. */
+const LEARN = buildLearnPages({ BASE, gtagBootstrap });
 
 function urlFor(lang) {
   return lang === "es" ? `${BASE}/atomo/` : `${BASE}/en/atomo/`;
@@ -423,6 +430,7 @@ ${renderPortalFooter(lang)}
 const SITEMAP_PAGES = [
   { es: portalUrlFor("es"), en: portalUrlFor("en") },
   { es: urlFor("es"), en: urlFor("en") },
+  ...LEARN.sitemapPages,
 ];
 
 function sitemap() {
@@ -482,6 +490,7 @@ function llmsPath(lang) {
 
 function llms(lang) {
   const repos = ATOMO.jsonld.isBasedOn.map((url) => `- [${llmsRepoLabel(url)}](${url})`).join("\n");
+  const learnLinks = LEARN.llms[lang].map((entry) => `- [${entry.label}](${entry.url}): ${entry.note}`).join("\n");
   return `# Milpa
 
 > ${ATOMO.hero[lang]}
@@ -492,6 +501,10 @@ ${LLMS_COPY.what[lang]}
 
 - [${PORTAL.meta.title[lang]}](${portalUrlFor(lang)}): ${LLMS_COPY.portalLinkNote[lang]}
 - [${ATOMO.title[lang]}](${urlFor(lang)}): ${LLMS_COPY.pageLinkNote[lang]}
+
+## ${PORTAL.nav.learn[lang]}
+
+${learnLinks}
 
 ## ${LLMS_COPY.reposHeading[lang]}
 
@@ -511,6 +524,11 @@ for (const lang of LANGS) {
   writeFileSync(path.join(ROOT, out), portalPage(lang), "utf8");
 }
 
+for (const learnPage of LEARN.pages) {
+  mkdirSync(path.join(ROOT, path.dirname(learnPage.path)), { recursive: true });
+  writeFileSync(path.join(ROOT, learnPage.path), learnPage.html, "utf8");
+}
+
 writeFileSync(path.join(ROOT, "site/sitemap.xml"), sitemap(), "utf8");
 writeFileSync(path.join(ROOT, "site/robots.txt"), robots(), "utf8");
 for (const lang of LANGS) {
@@ -524,6 +542,7 @@ console.log(
   [
     ...LANGS.map(pathFor),
     ...LANGS.map(portalPathFor),
+    `${LEARN.pages.length} learn pages (units + index, es/en)`,
     "site/sitemap.xml",
     "site/robots.txt",
     ...LANGS.map(llmsPath),

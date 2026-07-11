@@ -9,6 +9,25 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 - [Milpa Academy](https://academy.milpa.lat/): El home del currículo: rutas de aprendizaje, laboratorios verificables y artifacts de arquitectura.
 - [El átomo y sus puertas](https://academy.milpa.lat/atomo/): Artifact 09: el mismo handler, proyectado a tres puertas, con sus garantías por superficie.
 
+## Aprender
+
+- [Aprender](https://academy.milpa.lat/learn/): Elige una ruta. Cada unidad conecta una explicación breve, un artifact, una práctica y una evaluación calificable con la fuente primaria.
+- [La metáfora es el diseño](https://academy.milpa.lat/learn/fundamentos/sistema-vivo/): Fundamentos
+- [Contratos antes que acoplamiento](https://academy.milpa.lat/learn/fundamentos/contratos-grafo/): Fundamentos
+- [Una acción, políticas explícitas](https://academy.milpa.lat/learn/fundamentos/pipeline-gates/): Fundamentos
+- [Arranca un host verificable](https://academy.milpa.lat/learn/construye/skeleton-boot/): Construye con Milpa
+- [Crea una capacidad y una ruta](https://academy.milpa.lat/learn/construye/plugin-request/): Construye con Milpa
+- [Habilita herramientas para agentes](https://academy.milpa.lat/learn/construye/agent-tools/): Construye con Milpa
+- [Compón con @milpa/design](https://academy.milpa.lat/learn/construye/consume-design/): Construye con Milpa
+- [Atlas de límites](https://academy.milpa.lat/learn/arquitectura/atlas-limites/): Arquitectura auditable
+- [Radiografía del runtime](https://academy.milpa.lat/learn/arquitectura/runtime-boot/): Arquitectura auditable
+- [El proceso es el log](https://academy.milpa.lat/learn/arquitectura/estado-log/): Arquitectura auditable
+- [El contrato visual se ejecuta](https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/): Arquitectura auditable
+- [El plan antes del disco](https://academy.milpa.lat/learn/arquitectura/plan-disco/): Arquitectura auditable
+- [Las seis capas](https://academy.milpa.lat/learn/disena/capas-visuales/): Diseña con Milpa
+- [Design da lenguaje; Academy da conducta](https://academy.milpa.lat/learn/disena/composicion-app/): Diseña con Milpa
+- [De candidato local a patrón público](https://academy.milpa.lat/learn/disena/promocion-patron/): Diseña con Milpa
+
 ## Repositorios del paquete
 
 - [milpa/command](https://github.com/getmilpa/command)

@@ -119,6 +119,160 @@ test("translation completeness: every leaf string has es and en", () => {
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
 });
 
+/* Task 6: per-unit SSG pages (site/learn/<track>/<unit>/) + learn index
+   (site/learn/), one file per language. Full lesson + graded quiz render
+   WITHOUT JS; learn.js only hydrates progress (Task 7 consumes this DOM). */
+const unitEntries = catalog.tracks.flatMap((track) =>
+  track.units.map((unit, index) => ({ track, unit, index })),
+);
+
+function readUnitPage(lang, trackId, unitId) {
+  const rel = lang === "es"
+    ? `../site/learn/${trackId}/${unitId}/index.html`
+    : `../site/en/learn/${trackId}/${unitId}/index.html`;
+  return readFileSync(new URL(rel, import.meta.url), "utf8");
+}
+
+const learnIndexEs = readFileSync(new URL("../site/learn/index.html", import.meta.url), "utf8");
+const learnIndexEn = readFileSync(new URL("../site/en/learn/index.html", import.meta.url), "utf8");
+
+test("unit page (representative es): lang, canonical, reciprocal hreflang, JSON-LD, full no-JS body + quiz", () => {
+  const html = readUnitPage("es", "fundamentos", "contratos-grafo");
+  assert.match(html, /<html lang="es-MX"/);
+  assert.ok(html.includes('rel="canonical" href="https://academy.milpa.lat/learn/fundamentos/contratos-grafo/"'));
+  const hreflangs = [...html.matchAll(/rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => [m[1], m[2]]);
+  assert.deepEqual(hreflangs, [
+    ["es", "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/"],
+    ["en", "https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"],
+    ["x-default", "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/"],
+  ]);
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+  assert.equal(ld["@type"], "LearningResource");
+  assert.equal(ld.inLanguage, "es");
+  assert.ok(ld.name.length > 0 && ld.description.length > 0);
+  const unit = catalog.getUnit("fundamentos", "contratos-grafo").unit;
+  assert.deepEqual(ld.isBasedOn, unit.sources.map((s) => s.href));
+  // Progressive enhancement: the whole lesson is real HTML.
+  assert.match(html, /<article class="mui-prose" data-unit="fundamentos\/contratos-grafo">/);
+  for (const id of ["entender", "ver", "hacer", "verificar", "fuentes"]) assert.match(html, new RegExp(`id="${id}"`));
+  assert.match(html, /Contratos antes que acoplamiento/);
+  assert.match(html, /Al terminar podrás/);
+  // Quiz is fully static: form, questions, options, labels, submit.
+  assert.ok(html.includes('<form class="ac-quiz mui-not-prose" id="lessonQuiz" data-unit-key="fundamentos/contratos-grafo" novalidate>'));
+  assert.match(html, /class="mui-field ac-quiz-question" data-question-id="contratos-grafo-01"/);
+  assert.match(html, /name="quiz-fundamentos-contratos-grafo-contratos-grafo-01"/);
+  assert.match(html, /<code>php bin\/coa validate<\/code>/); // code-span rendered like escapeInline
+});
+
+test("unit page (representative en twin): lang, English content, reciprocal hreflang, JSON-LD", () => {
+  const html = readUnitPage("en", "fundamentos", "contratos-grafo");
+  assert.match(html, /<html lang="en"/);
+  assert.ok(html.includes('rel="canonical" href="https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"'));
+  assert.match(html, /Contracts before coupling/); // en title
+  assert.match(html, /Graded assessment/); // en quiz chrome (apostrophe-free)
+  // The objectives heading has an apostrophe, escaped to &#39; exactly like learn.js escapeHtml.
+  assert.match(html, /By the end, you&#39;ll be able to/);
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+  assert.equal(ld.inLanguage, "en");
+  assert.ok(html.includes('id="lessonQuiz" data-unit-key="fundamentos/contratos-grafo"'));
+});
+
+test("every unit page (15 × es/en) has lang, canonical, {es,en,x-default} hreflang and JSON-LD LearningResource", () => {
+  for (const { track, unit } of unitEntries) {
+    for (const lang of ["es", "en"]) {
+      const label = `${lang} ${track.id}/${unit.id}`;
+      const html = readUnitPage(lang, track.id, unit.id);
+      const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}learn/${track.id}/${unit.id}/`;
+      assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`), `${label}: lang`);
+      assert.ok(html.includes(`rel="canonical" href="${canon}"`), `${label}: canonical ${canon}`);
+      const hreflangs = [...html.matchAll(/rel="alternate" hreflang="([^"]+)"/g)].map((m) => m[1]);
+      assert.deepEqual(hreflangs, ["es", "en", "x-default"], `${label}: hreflang order`);
+      const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+      assert.equal(ld["@type"], "LearningResource", `${label}: JSON-LD type`);
+      assert.equal(ld.inLanguage, lang, `${label}: inLanguage`);
+      assert.deepEqual(ld.isBasedOn, unit.sources.map((s) => s.href), `${label}: isBasedOn`);
+      assert.match(html, new RegExp(`data-unit="${track.id}\\/${unit.id}"`), `${label}: article data-unit`);
+      assert.match(html, new RegExp(`id="lessonQuiz" data-unit-key="${track.id}\\/${unit.id}"`), `${label}: quiz data-unit-key`);
+    }
+  }
+});
+
+test("learn index (es/en): lang, canonical, reciprocal hreflang, JSON-LD ItemList, static track cards", () => {
+  for (const [html, lang] of [[learnIndexEs, "es"], [learnIndexEn, "en"]]) {
+    const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}learn/`;
+    assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`));
+    assert.ok(html.includes(`rel="canonical" href="${canon}"`), `${lang} learn index canonical`);
+    const hreflangs = [...html.matchAll(/rel="alternate" hreflang="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(hreflangs, ["es", "en", "x-default"]);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+    assert.equal(ld["@type"], "ItemList");
+    assert.equal(ld.inLanguage, lang);
+    assert.equal(ld.itemListElement.length, catalog.tracks.length);
+    assert.ok((html.match(/ac-track-card/g) || []).length >= catalog.tracks.length);
+    assert.match(html, /id="globalProgress">0\/15</);
+    assert.match(html, /id="tracksTitle"/);
+  }
+  assert.match(learnIndexEs, /Rutas públicas/);
+  assert.match(learnIndexEn, /Public tracks/);
+});
+
+test("re-running the generator is idempotent for the new learn pages (byte-identical)", () => {
+  const sample = [
+    "../site/learn/index.html",
+    "../site/en/learn/index.html",
+    "../site/learn/fundamentos/sistema-vivo/index.html",
+    "../site/en/learn/disena/promocion-patron/index.html",
+  ];
+  const before = sample.map((p) => readFileSync(new URL(p, import.meta.url), "utf8"));
+  execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
+  const after = sample.map((p) => readFileSync(new URL(p, import.meta.url), "utf8"));
+  assert.deepEqual(after, before);
+});
+
+test("localized chrome on unit pages uses the same wording as learn.js STRINGS (drift guard)", () => {
+  const learnJs = readFileSync(new URL("../learn/learn.js", import.meta.url), "utf8");
+  const es = readUnitPage("es", "fundamentos", "sistema-vivo");
+  const en = readUnitPage("en", "fundamentos", "sistema-vivo");
+  // Apostrophe-free chrome so the same needle is present in both learn.js
+  // source (raw) and the generated HTML (escapeHtml only touches & < > " ').
+  const pairs = [
+    [es, "Al terminar podrás"], [es, "Evaluación calificable"], [es, "Fuentes primarias"],
+    [es, "Calificar evaluación"], [es, "Todas las rutas"],
+    [en, "Graded assessment"], [en, "Primary sources"], [en, "Grade assessment"], [en, "All routes"],
+  ];
+  for (const [html, needle] of pairs) {
+    assert.ok(html.includes(needle), `generated page missing chrome string: ${needle}`);
+    assert.ok(learnJs.includes(needle), `learn.js STRINGS drifted from generator: ${needle}`);
+  }
+});
+
+test("unit + learn-index pages ship the GA4 gtag bootstrap with per-page page_type", () => {
+  const unit = readUnitPage("es", "fundamentos", "sistema-vivo");
+  assert.match(unit, /gtag\('set',\{language:'es',page_type:'unit'\}\)/);
+  assert.match(readUnitPage("en", "fundamentos", "sistema-vivo"), /gtag\('set',\{language:'en',page_type:'unit'\}\)/);
+  assert.match(learnIndexEs, /gtag\('set',\{language:'es',page_type:'learn'\}\)/);
+  assert.match(learnIndexEn, /gtag\('set',\{language:'en',page_type:'learn'\}\)/);
+  for (const html of [unit, learnIndexEs, learnIndexEn]) {
+    assert.match(html, /gtag\('config','G-RNV9LK6RLL'\)/);
+    assert.doesNotMatch(html, /gtag\('event'\s*,\s*'page_view'/);
+  }
+});
+
+test("sitemap + es llms include the learn index and every unit; es llms stays es-only", () => {
+  const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/learn\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/learn\/<\/loc>/);
+  const llmsEs = readFileSync(new URL("../site/llms.txt", import.meta.url), "utf8");
+  const llmsEn = readFileSync(new URL("../site/en/llms.txt", import.meta.url), "utf8");
+  for (const { track, unit } of unitEntries) {
+    assert.match(sm, new RegExp(`<loc>https:\\/\\/academy\\.milpa\\.lat\\/learn\\/${track.id}\\/${unit.id}\\/<\\/loc>`), `sitemap es ${track.id}/${unit.id}`);
+    assert.match(sm, new RegExp(`<loc>https:\\/\\/academy\\.milpa\\.lat\\/en\\/learn\\/${track.id}\\/${unit.id}\\/<\\/loc>`), `sitemap en ${track.id}/${unit.id}`);
+    assert.ok(llmsEs.includes(`https://academy.milpa.lat/learn/${track.id}/${unit.id}/`), `es llms ${track.id}/${unit.id}`);
+    assert.ok(llmsEn.includes(`https://academy.milpa.lat/en/learn/${track.id}/${unit.id}/`), `en llms ${track.id}/${unit.id}`);
+  }
+  assert.doesNotMatch(llmsEs, /\/en\//, "es llms.txt must not point at /en/ learn pages");
+});
+
 /* Portal (Task 6a): site/index.html (es) + site/en/index.html (en),
    generados desde content/portal.content.mjs. La completeness walk sobre
    PORTAL ya la cubre tests/portal-contract.test.mjs — acá se verifica lo

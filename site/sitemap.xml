@@ -20,4 +20,164 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/atomo/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/atomo/"/>
   </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/fundamentos/sistema-vivo/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/sistema-vivo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/sistema-vivo/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/fundamentos/sistema-vivo/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/sistema-vivo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/sistema-vivo/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/fundamentos/contratos-grafo/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/contratos-grafo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/contratos-grafo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/fundamentos/pipeline-gates/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/pipeline-gates/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/pipeline-gates/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/fundamentos/pipeline-gates/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/pipeline-gates/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/pipeline-gates/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/construye/skeleton-boot/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/skeleton-boot/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/skeleton-boot/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/construye/skeleton-boot/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/skeleton-boot/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/skeleton-boot/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/construye/plugin-request/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/plugin-request/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/plugin-request/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/construye/plugin-request/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/plugin-request/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/plugin-request/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/construye/agent-tools/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/agent-tools/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/agent-tools/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/construye/agent-tools/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/agent-tools/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/agent-tools/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/construye/consume-design/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/consume-design/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/consume-design/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/construye/consume-design/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/construye/consume-design/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/construye/consume-design/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/atlas-limites/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/atlas-limites/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/atlas-limites/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/runtime-boot/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/runtime-boot/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/runtime-boot/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/estado-log/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/estado-log/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/estado-log/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/estado-log/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/estado-log/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/estado-log/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/contrato-ejecutable/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/contrato-ejecutable/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/contrato-ejecutable/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/plan-disco/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/plan-disco/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/plan-disco/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/plan-disco/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/plan-disco/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/plan-disco/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/disena/capas-visuales/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/capas-visuales/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/capas-visuales/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/disena/capas-visuales/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/capas-visuales/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/capas-visuales/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/disena/composicion-app/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/composicion-app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/composicion-app/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/disena/composicion-app/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/composicion-app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/composicion-app/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/disena/promocion-patron/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/promocion-patron/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/promocion-patron/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/disena/promocion-patron/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/promocion-patron/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/promocion-patron/"/>
+  </url>
 </urlset>

@@ -3,8 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// catalog.js es UMD; se carga con require (cjs-module-lexer no ve sus exports).
+const require = createRequire(import.meta.url);
+const catalog = require("../curriculum/catalog.js");
 const htmlFiles = [
   "learn/index.html",
   "labs/index.html",
@@ -30,7 +34,16 @@ const generatedHtmlFiles = [
   { relative: "site/en/atomo/index.html", lang: "en" },
   { relative: "site/index.html", lang: "es-MX" },
   { relative: "site/en/index.html", lang: "en" },
+  /* Task 6: learn index + 30 unit pages (bilingual SSG). */
+  { relative: "site/learn/index.html", lang: "es-MX" },
+  { relative: "site/en/learn/index.html", lang: "en" },
 ];
+for (const track of catalog.tracks) {
+  for (const unit of track.units) {
+    generatedHtmlFiles.push({ relative: `site/learn/${track.id}/${unit.id}/index.html`, lang: "es-MX" });
+    generatedHtmlFiles.push({ relative: `site/en/learn/${track.id}/${unit.id}/index.html`, lang: "en" });
+  }
+}
 
 function localTarget(sourceFile, reference) {
   const clean = reference.split("#")[0].split("?")[0];
@@ -161,4 +174,37 @@ test("el lector carga y usa la evaluación antes de registrar progreso", () => {
   assert.match(script, /quizEngine\.gradeQuiz/);
   assert.match(script, /store\.recordAssessment/);
   assert.doesNotMatch(script, /setCompleted|completeLesson|ac-evidence/);
+});
+
+/* Task 6 — Progressive enhancement: every SSG unit page shows the full lesson
+   body AND the graded quiz as real HTML, before any JS runs. Both languages. */
+test("las páginas de unidad SSG muestran el cuerpo completo y el quiz sin JS", () => {
+  for (const track of catalog.tracks) {
+    for (const unit of track.units) {
+      for (const prefix of ["site/learn", "site/en/learn"]) {
+        const rel = `${prefix}/${track.id}/${unit.id}/index.html`;
+        const html = fs.readFileSync(path.join(root, rel), "utf8");
+        assert.match(html, new RegExp(`<article class="mui-prose" data-unit="${track.id}\\/${unit.id}">`), rel + ": falta el article");
+        for (const id of ["entender", "ver", "hacer", "verificar", "fuentes"]) {
+          assert.match(html, new RegExp(`id="${id}"`), `${rel}: falta la sección ${id}`);
+        }
+        // quiz estático: form + al menos una pregunta con opciones y botón de calificar
+        assert.match(html, new RegExp(`id="lessonQuiz" data-unit-key="${track.id}\\/${unit.id}"`), rel + ": falta el form del quiz");
+        assert.match(html, /class="mui-field ac-quiz-question" data-question-id="/, rel + ": falta una pregunta");
+        assert.match(html, /<input class="mui-radio" type="radio" name="quiz-/, rel + ": falta una opción");
+        assert.match(html, /<button class="mui-btn mui-btn--primary" type="submit">/, rel + ": falta el botón calificar");
+        assert.match(html, /id="courseNav"/, rel + ": falta courseNav");
+        assert.match(html, /id="courseAside"/, rel + ": falta courseAside");
+      }
+    }
+  }
+});
+
+test("las páginas learn-index SSG muestran las 4 tarjetas de track y #globalProgress sin JS", () => {
+  for (const rel of ["site/learn/index.html", "site/en/learn/index.html"]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    assert.equal((html.match(/mui-card--interactive ac-track-card/g) || []).length, catalog.tracks.length, rel + ": 4 tarjetas");
+    assert.match(html, /id="globalProgress">0\/\d+</, rel + ": #globalProgress");
+    assert.match(html, /id="courseNav"/, rel + ": courseNav");
+  }
 });
