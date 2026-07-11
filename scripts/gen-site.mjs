@@ -103,7 +103,7 @@ function page(lang) {
       `<script src="${asset}/analytics.js" defer></script>`,
     ].join("\n"),
   });
-  return `${htmlOpen(lang)}
+  return `${htmlOpen(lang, "wb-doc")}
 ${head}
 <body>
 <main>

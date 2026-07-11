@@ -24,8 +24,13 @@ export function hreflangLinks(alternates) {
     .join("\n");
 }
 
-export function htmlOpen(lang) {
-  return `<!doctype html>\n<html lang="${lang}${lang === "es" ? "-MX" : ""}" data-theme="dark">`;
+/* className = clase de contexto de scroll para artifacts.css (anti-fuga):
+   "wb-app" (shell que bloquea el scroll del documento — la galería),
+   "wb-doc" (documento fluido — el átomo standalone). Vacío = página que no
+   carga artifacts.css a nivel de página (portal, learn, labs). */
+export function htmlOpen(lang, className = "") {
+  const cls = className ? ` class="${className}"` : "";
+  return `<!doctype html>\n<html lang="${lang}${lang === "es" ? "-MX" : ""}"${cls} data-theme="dark">`;
 }
 
 export function renderHead({ lang, title, description, canonical, alternates, jsonld, extraHead }) {

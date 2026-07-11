@@ -1,17 +1,42 @@
 /* Page-specific composition for the Academy artifacts. The published mui-* bundles remain untouched. */
 
-* { box-sizing: border-box; }
+/* Contextos de página (anti-fuga). Esta hoja se consume en TRES contextos:
+   la galería (shell con panes internos), las páginas del átomo (documento
+   fluido) y los embeds cross-origin de <milpa-artifact> en los sitios de
+   marketing. Un selector global (*, html, body) se fuga a los tres — en
+   producción html/body{overflow:hidden} bloqueó el scroll de milpa.lat,
+   getmilpa.com y /atomo/ (2026-07-11). Regla, guardada por test en
+   site-contract: los estilos de nivel página van scoped por contexto —
+   html.wb-app = el shell de la galería (bloquea el scroll del documento;
+   sus panes .wb-main scrollean adentro); html.wb-doc = el átomo standalone
+   (documento que fluye normal). El embed no toca NADA del host: lo suyo va
+   bajo milpa-artifact / .wb-artifact. */
+html.wb-app,
+html.wb-doc { scroll-behavior: smooth; }
 
-html { height: 100%; overflow: hidden; scroll-behavior: smooth; }
+html.wb-app { height: 100%; overflow: hidden; }
 
-body {
+html.wb-app body,
+html.wb-doc body {
   margin: 0;
-  overflow: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+
+html.wb-app body { overflow: hidden; }
+
+html.wb-app *, html.wb-app *::before, html.wb-app *::after,
+html.wb-doc *, html.wb-doc *::before, html.wb-doc *::after,
+milpa-artifact, milpa-artifact *, milpa-artifact *::before, milpa-artifact *::after { box-sizing: border-box; }
+
+/* Anchors del contexto artifact — el design system, no el azul/morado UA.
+   Cubre la prosa, el warning box y las fuentes, en la galería, el átomo
+   standalone y los embeds. */
+.wb-artifact a,
+.wb-artifact a:visited { color: var(--accent-text); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+.wb-artifact a:hover { color: var(--accent-hover); }
 
 .wb-shell,
 .wb-shell * { letter-spacing: 0; }

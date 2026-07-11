@@ -298,3 +298,40 @@ test("el shell de labs SSG muestra el resumen de los 4 labs sin JS + hooks del r
     assert.ok((html.match(/mui-steps__title/g) || []).length >= 4, rel + ": el resumen debe listar los 4 labs");
   }
 });
+
+/* Fix css-leak — GATE anti-fuga de artifacts.css (la lección frontera aplicada a CSS).
+   artifacts.css se consume en TRES contextos: la galería (shell con panes), las
+   páginas del átomo (documento fluido) y los embeds cross-origin en los sitios de
+   marketing. Un selector GLOBAL (*, html, body sin scope) se fuga a los tres:
+   html/body{overflow:hidden} bloqueó el scroll de milpa.lat, getmilpa.com y
+   /atomo/ en producción (bug real, 2026-07-11). Regla: en artifacts.css los
+   selectores de nivel página van scoped por contexto (html.wb-app = shell que
+   bloquea; html.wb-doc = documento que fluye); lo del átomo va bajo
+   .wb-artifact / milpa-artifact. Cobertura total, no mayoría. */
+test("artifacts.css no tiene selectores globales sin scope (anti-fuga de embed)", () => {
+  const css = fs.readFileSync(path.join(root, "artifacts/artifacts.css"), "utf8");
+  const offenders = [];
+  for (const [i, line] of css.split("\n").entries()) {
+    // Selector top-level que empieza en *, html o body sin clase de contexto.
+    if (/^(\*|html|body)(\s|,|\{|$)/.test(line) && !/^html\.wb-|^body\.wb-/.test(line)) {
+      offenders.push(`L${i + 1}: ${line.trim()}`);
+    }
+  }
+  assert.deepEqual(offenders, [], "selectores globales fugables en artifacts.css:\n" + offenders.join("\n"));
+});
+
+test("artifacts.css estila los anchors del contexto wb-artifact (no azul UA)", () => {
+  const css = fs.readFileSync(path.join(root, "artifacts/artifacts.css"), "utf8");
+  assert.match(css, /\.wb-artifact a[\s,{]/, "falta el estilo de <a> scoped a .wb-artifact — los links caen al azul/morado del navegador");
+});
+
+test("las páginas llevan su clase de contexto de scroll: galería wb-app, átomo wb-doc", () => {
+  for (const [rel, cls] of [
+    ["site/artifacts/index.html", "wb-app"], ["site/en/artifacts/index.html", "wb-app"],
+    ["site/atomo/index.html", "wb-doc"], ["site/en/atomo/index.html", "wb-doc"],
+    ["artifacts/index.html", "wb-app"],
+  ]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    assert.match(html, new RegExp(`<html[^>]*class="[^"]*${cls}`), `${rel}: el <html> debe llevar la clase de contexto ${cls}`);
+  }
+});

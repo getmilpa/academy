@@ -927,7 +927,7 @@ function galleryPage(lang, gtagBootstrap) {
     extraHead: extraHead(lang, rootPrefix, gtagBootstrap),
   });
   const sections = GALLERY.artifacts.map((a) => RENDERERS[a.id](a, lang)).join("\n\n");
-  return `${htmlOpen(lang)}
+  return `${htmlOpen(lang, "wb-app")}
 ${head}
 <body>
   <div class="mui-shell wb-shell" id="app-shell">
