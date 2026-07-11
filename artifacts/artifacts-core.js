@@ -1,59 +1,65 @@
 (() => {
 "use strict";
+/* Los campos de PROSA de estas tablas de datos viajan como {es,en} (Task 4):
+   el consumidor (artifacts.js) resuelve el idioma con pick(). id/shortName/
+   provides/requires son CÓDIGOS del grafo (cableado semántico) — se preservan
+   neutros en ambos idiomas para que la lógica (resolveModuleOrder,
+   evaluatePlanting) no cambie. El átomo cross-origin (milpa-artifact.js) NO
+   consume estas tablas, así que el cambio es seguro para su embed. */
 const MODULE_CATALOG = Object.freeze([
   {
     id: "database",
-    name: "Base de datos",
+    name: { es: "Base de datos", en: "Database" },
     shortName: "BD",
     provides: ["bd"],
     requires: [],
-    description: "Persistencia para pagos y datos de la tienda.",
+    description: { es: "Persistencia para pagos y datos de la tienda.", en: "Persistence for payments and store data." },
   },
   {
     id: "queue",
-    name: "Cola",
+    name: { es: "Cola", en: "Queue" },
     shortName: "cola",
     provides: ["cola"],
     requires: [],
-    description: "Entrega trabajo asíncrono al módulo de correo.",
+    description: { es: "Entrega trabajo asíncrono al módulo de correo.", en: "Delivers async work to the mail module." },
   },
   {
     id: "mail",
-    name: "Correo",
+    name: { es: "Correo", en: "Mail" },
     shortName: "mail",
     provides: ["correo"],
     requires: ["cola"],
-    description: "Envía notificaciones sin conocer la cola por dentro.",
+    description: { es: "Envía notificaciones sin conocer la cola por dentro.", en: "Sends notifications without knowing the queue internals." },
   },
   {
     id: "payments",
-    name: "Pagos",
+    name: { es: "Pagos", en: "Payments" },
     shortName: "pagos",
     provides: ["pagos"],
     requires: ["bd"],
-    description: "Registra cobros mediante una capacidad de persistencia.",
+    description: { es: "Registra cobros mediante una capacidad de persistencia.", en: "Records charges through a persistence capability." },
   },
   {
     id: "store",
-    name: "Tienda",
+    name: { es: "Tienda", en: "Store" },
     shortName: "tienda",
     provides: ["tienda"],
     requires: ["correo", "pagos"],
-    description: "Compone correo y pagos sin acoplarse a sus clases.",
+    description: { es: "Compone correo y pagos sin acoplarse a sus clases.", en: "Composes mail and payments without coupling to their classes." },
   },
 ]);
 
 const CHAOS_MODULES = Object.freeze([
   {
     id: "chaos-a",
-    name: "Módulo A",
+    name: { es: "Módulo A", en: "Module A" },
     shortName: "A",
     provides: ["capacidad-a"],
     requires: ["capacidad-b"],
   },
   {
     id: "chaos-b",
-    name: "Módulo B",
+    name: { es: "Módulo B", en: "Module B" },
     shortName: "B",
     provides: ["capacidad-b"],
     requires: ["capacidad-a"],
@@ -124,16 +130,19 @@ function projectOperation(op, surface, { scopeGranted = true } = {}) {
   };
 }
 
+/* label/note son prosa bilingüe {es,en}; id es el código de etapa (neutro).
+   runtimeTrace hace spread de ...stage pero sólo depende de stage.id, así que
+   la lógica no cambia. renderRuntimeRail (artifacts.js) resuelve con pick(). */
 const RUNTIME_STAGES = Object.freeze([
-  { id: "resolve", label: "Resolver", note: "Busca la tool declarada." },
-  { id: "validate", label: "Validar", note: "Valida el schema de entrada." },
-  { id: "clamp", label: "Acotar", note: "Aplica límites declarados a los argumentos." },
-  { id: "authorize", label: "Autorizar", note: "Evalúa scopes y PolicyGate." },
-  { id: "rate-limit", label: "Rate limit", note: "Consume presupuesto por caller y tool." },
-  { id: "plan-confirm", label: "Plan / confirmar", note: "Previsualiza o solicita confirmación." },
-  { id: "intercept", label: "Interceptar", note: "Permite cache, reemplazo o veto después de auth." },
-  { id: "execute", label: "Ejecutar", note: "Invoca el callback y mide el tiempo." },
-  { id: "audit", label: "Auditar", note: "Emite tool.executed o tool.failed." },
+  { id: "resolve", label: { es: "Resolver", en: "Resolve" }, note: { es: "Busca la tool declarada.", en: "Looks up the declared tool." } },
+  { id: "validate", label: { es: "Validar", en: "Validate" }, note: { es: "Valida el schema de entrada.", en: "Validates the input schema." } },
+  { id: "clamp", label: { es: "Acotar", en: "Clamp" }, note: { es: "Aplica límites declarados a los argumentos.", en: "Applies declared limits to the arguments." } },
+  { id: "authorize", label: { es: "Autorizar", en: "Authorize" }, note: { es: "Evalúa scopes y PolicyGate.", en: "Evaluates scopes and PolicyGate." } },
+  { id: "rate-limit", label: { es: "Rate limit", en: "Rate limit" }, note: { es: "Consume presupuesto por caller y tool.", en: "Consumes budget per caller and tool." } },
+  { id: "plan-confirm", label: { es: "Plan / confirmar", en: "Plan / confirm" }, note: { es: "Previsualiza o solicita confirmación.", en: "Previews or requests confirmation." } },
+  { id: "intercept", label: { es: "Interceptar", en: "Intercept" }, note: { es: "Permite cache, reemplazo o veto después de auth.", en: "Allows cache, replacement or veto after auth." } },
+  { id: "execute", label: { es: "Ejecutar", en: "Execute" }, note: { es: "Invoca el callback y mide el tiempo.", en: "Invokes the callback and measures the time." } },
+  { id: "audit", label: { es: "Auditar", en: "Audit" }, note: { es: "Emite tool.executed o tool.failed.", en: "Emits tool.executed or tool.failed." } },
 ]);
 
 const FAILURE_STAGE = Object.freeze({
