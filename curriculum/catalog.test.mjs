@@ -85,6 +85,12 @@ test("todos los destinos locales del currículo existen y sus artifacts/labs con
   }
 });
 
+test("ningún href apunta al repo inexistente getmilpa/design", () => {
+  const raw = fs.readFileSync(path.join(root, "curriculum", "catalog.js"), "utf8");
+  assert.ok(!raw.includes("github.com/getmilpa/design"),
+    "github.com/getmilpa/design es 404 — el repo público es getmilpa/milpa-design");
+});
+
 test("catalog track metadata and unit titles are bilingual", () => {
   for (const track of catalog.tracks) {
     for (const f of ["title", "eyebrow", "summary", "level", "audience"]) {

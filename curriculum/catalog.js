@@ -188,14 +188,14 @@
             { es: "Consume una versión publicada. Academy puede probar composiciones ac-*, pero no debe duplicar la anatomía de una pieza mui-* ni leer archivos privados del paquete.", en: "Consume a published version. Academy can try out ac-* compositions, but it must not duplicate the anatomy of a mui-* piece or read the package's private files." }
           ],
           see: { label: { es: "Auditar el contrato ejecutable", en: "Audit the executable contract" }, href: "../artifacts/#design-contract", note: { es: "Cambia tema y superficie; el gate calcula contraste en vivo.", en: "Change theme and surface; the gate computes contrast live." } },
-          do: { label: { es: "Abrir la guía de contribución", en: "Open the contribution guide" }, href: "https://github.com/getmilpa/design", commands: [] },
+          do: { label: { es: "Abrir la guía de contribución", en: "Open the contribution guide" }, href: "https://github.com/getmilpa/milpa-design", commands: [] },
           verify: [
             { es: "Los bundles cargan tokens, motion, primitives, components, artifacts y layouts, en ese orden.", en: "The bundles load tokens, motion, primitives, components, artifacts and layouts, in that order." },
             { es: "La lógica de progreso vive en Academy, no en Design.", en: "Progress logic lives in Academy, not in Design." }
           ],
           sources: [
             { label: { es: "Milpa Design", en: "Milpa Design" }, href: "https://www.npmjs.com/package/@milpa/design" },
-            { label: { es: "Gobernanza pública", en: "Public governance" }, href: "https://github.com/getmilpa/design" }
+            { label: { es: "Gobernanza pública", en: "Public governance" }, href: "https://github.com/getmilpa/milpa-design" }
           ],
           lastVerified: verifiedAt
         }
@@ -283,12 +283,12 @@
             { es: "Una clase CSS no es suficiente contrato. Milpa Design documenta anatomía, estados, tokens, accesibilidad, motion y ejemplos, y los gates comprueban que el paquete publicado preserve esas promesas.", en: "A CSS class isn't enough of a contract. Milpa Design documents anatomy, states, tokens, accessibility, motion and examples, and the gates check that the published package preserves those promises." }
           ],
           see: { label: { es: "Medir el contrato", en: "Measure the contract" }, href: "../artifacts/#design-contract", note: { es: "Inspecciona contraste AA y cambia superficie sin alterar el contenido.", en: "Inspect AA contrast and change surface without altering the content." } },
-          do: { label: { es: "Consultar @milpa/design", en: "Check @milpa/design" }, href: "https://github.com/getmilpa/design", commands: ["npm test"] },
+          do: { label: { es: "Consultar @milpa/design", en: "Check @milpa/design" }, href: "https://github.com/getmilpa/milpa-design", commands: ["npm test"] },
           verify: [
             { es: "El componente conserva significado sin depender solo del color.", en: "The component keeps its meaning without relying on color alone." },
             { es: "La versión consumida está fijada y no sigue main accidentalmente.", en: "The consumed version is pinned and doesn't follow main by accident." }
           ],
-          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/design" }],
+          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/milpa-design" }],
           lastVerified: verifiedAt
         },
         {
@@ -361,7 +361,7 @@
             { es: "Separa la lógica Academy del contrato CSS publicado.", en: "Separate Academy's logic from the published CSS contract." },
             { es: "Distingue una composición ac-* específica de un componente genérico.", en: "Tell a specific ac-* composition apart from a generic component." }
           ],
-          sources: [{ label: { es: "Design governance", en: "Design governance" }, href: "https://github.com/getmilpa/design" }],
+          sources: [{ label: { es: "Design governance", en: "Design governance" }, href: "https://github.com/getmilpa/milpa-design" }],
           lastVerified: verifiedAt
         },
         {
@@ -376,12 +376,12 @@
             { es: "Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks.", en: "Academy is a laboratory: it can invent an ac-* composition. Design decides whether it survives as mui-* when there is a real case, it shows up at least twice, it admits a contract, it passes gates and it's consumed without hacks." }
           ],
           see: { label: { es: "Ver el precedente de artifacts", en: "See the artifacts precedent" }, href: "../artifacts/", note: { es: "El cluster nació como composición local y hoy se consume desde @milpa/design@0.9.0.", en: "The cluster started as a local composition and today is consumed from @milpa/design@0.9.0." } },
-          do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "https://github.com/getmilpa/design", commands: [] },
+          do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "https://github.com/getmilpa/milpa-design", commands: [] },
           verify: [
             { es: "Exige dos usos reales o evidencia fuerte antes de promover.", en: "Require two real uses or strong evidence before promoting." },
             { es: "Describe al candidato mediante anatomía, estados, a11y y motion.", en: "Describe the candidate through anatomy, states, a11y and motion." }
           ],
-          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/design" }],
+          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/milpa-design" }],
           lastVerified: verifiedAt
         }
       ]
