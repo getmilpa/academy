@@ -95,6 +95,15 @@ test("catalog track metadata and unit titles are bilingual", () => {
   assert.equal(typeof pick(catalog.tracks[0].title, "en"), "string");
 });
 
+test("catalog unit bodies are bilingual on every leaf", () => {
+  for (const track of catalog.tracks) for (const unit of track.units) {
+    for (const f of ["objectives", "understand", "verify"]) unit[f].forEach((leaf, i) => assert.ok(leaf.es && leaf.en, `${unit.id}.${f}[${i}]`));
+    assert.ok(unit.see.label.es && unit.see.label.en); assert.ok(unit.see.note.es && unit.see.note.en);
+    assert.ok(unit.do.label.es && unit.do.label.en);
+    unit.sources.forEach((s, i) => assert.ok(s.label.es && s.label.en, `${unit.id}.sources[${i}]`));
+  }
+});
+
 test("un pack privado requiere visibilidad interna y no colisiona con lo público", () => {
   assert.throws(
     () => catalog.registerPack({ id: "bad", tracks: [{ id: "oculta", units: [{ id: "u" }] }] }),

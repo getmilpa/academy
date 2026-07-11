@@ -21,17 +21,23 @@
           id: "sistema-vivo",
           title: { es: "La metáfora es el diseño", en: "The metaphor is the design" },
           durationMinutes: 15,
-          objectives: ["Distinguir ecosistema, framework y host", "Ubicar las responsabilidades de Core, Runtime, Plugin y Workflow"],
-          understand: [
-            "Milpa no usa la milpa como decoración. Cada cultivo conserva una responsabilidad y coopera mediante contratos pequeños.",
-            "El host decide qué sembrar; el runtime arranca el sistema; los plugins aportan capacidades; los workflows coordinan acciones. Ninguna capa necesita fingir que es toda la plataforma."
+          objectives: [
+            { es: "Distinguir ecosistema, framework y host", en: "Tell ecosystem, framework and host apart" },
+            { es: "Ubicar las responsabilidades de Core, Runtime, Plugin y Workflow", en: "Locate the responsibilities of Core, Runtime, Plugin and Workflow" }
           ],
-          see: { label: "Abrir Siembra tu milpa", href: "../artifacts/#siembra", note: "Construye el grafo módulo por módulo y observa cuándo una dependencia todavía no puede germinar." },
-          do: { label: "Leer el mapa en lenguaje llano", href: "../docs/QUE-ES-MILPA.md", commands: [] },
-          verify: ["Distingue las decisiones del host de las responsabilidades del runtime.", "Identifica responsabilidades que no pertenecen a Core."],
+          understand: [
+            { es: "Milpa no usa la milpa como decoración. Cada cultivo conserva una responsabilidad y coopera mediante contratos pequeños.", en: "Milpa doesn't use the milpa as decoration. Each crop keeps a single responsibility and cooperates through small contracts." },
+            { es: "El host decide qué sembrar; el runtime arranca el sistema; los plugins aportan capacidades; los workflows coordinan acciones. Ninguna capa necesita fingir que es toda la plataforma.", en: "The host decides what to plant; the runtime boots the system; plugins contribute capabilities; workflows coordinate actions. No layer needs to pretend it is the whole platform." }
+          ],
+          see: { label: { es: "Abrir Siembra tu milpa", en: "Open Plant your milpa" }, href: "../artifacts/#siembra", note: { es: "Construye el grafo módulo por módulo y observa cuándo una dependencia todavía no puede germinar.", en: "Build the graph module by module and watch when a dependency can't germinate yet." } },
+          do: { label: { es: "Leer el mapa en lenguaje llano", en: "Read the map in plain language" }, href: "../docs/QUE-ES-MILPA.md", commands: [] },
+          verify: [
+            { es: "Distingue las decisiones del host de las responsabilidades del runtime.", en: "Tell the host's decisions apart from the runtime's responsibilities." },
+            { es: "Identifica responsabilidades que no pertenecen a Core.", en: "Identify responsibilities that don't belong to Core." }
+          ],
           sources: [
-            { label: "Milpa Core", href: "https://github.com/getmilpa/core" },
-            { label: "Milpa Runtime", href: "https://github.com/getmilpa/runtime" }
+            { label: { es: "Milpa Core", en: "Milpa Core" }, href: "https://github.com/getmilpa/core" },
+            { label: { es: "Milpa Runtime", en: "Milpa Runtime" }, href: "https://github.com/getmilpa/runtime" }
           ],
           lastVerified: verifiedAt
         },
@@ -39,17 +45,23 @@
           id: "contratos-grafo",
           title: { es: "Contratos antes que acoplamiento", en: "Contracts before coupling" },
           durationMinutes: 20,
-          objectives: ["Reconocer provides/requires", "Detectar una capacidad ausente y un ciclo"],
-          understand: [
-            "Un plugin declara lo que provee y lo que requiere. El resolver puede validar el conjunto antes de arrancar porque trabaja con un grafo explícito, no con efectos laterales escondidos.",
-            "El orden de boot es una consecuencia del grafo. Si falta una capacidad o existe un ciclo, el sistema debe fallar con evidencia y antes de atender tráfico."
+          objectives: [
+            { es: "Reconocer provides/requires", en: "Recognize provides/requires" },
+            { es: "Detectar una capacidad ausente y un ciclo", en: "Detect a missing capability and a cycle" }
           ],
-          see: { label: "Romper y reparar la siembra", href: "../artifacts/#siembra", note: "Activa un ciclo, inspecciona el bloqueo y vuelve a un orden válido." },
-          do: { label: "Practicar validate", href: "../labs/#capabilities", commands: ["php bin/coa validate"] },
-          verify: ["Ubica la validación antes del boot.", "Justifica el orden válido a partir del grafo, no de una lista manual."],
+          understand: [
+            { es: "Un plugin declara lo que provee y lo que requiere. El resolver puede validar el conjunto antes de arrancar porque trabaja con un grafo explícito, no con efectos laterales escondidos.", en: "A plugin declares what it provides and what it requires. The resolver can validate the whole set before boot because it works with an explicit graph, not with hidden side effects." },
+            { es: "El orden de boot es una consecuencia del grafo. Si falta una capacidad o existe un ciclo, el sistema debe fallar con evidencia y antes de atender tráfico.", en: "Boot order is a consequence of the graph. If a capability is missing or a cycle exists, the system must fail with evidence and before it serves traffic." }
+          ],
+          see: { label: { es: "Romper y reparar la siembra", en: "Break and repair the planting" }, href: "../artifacts/#siembra", note: { es: "Activa un ciclo, inspecciona el bloqueo y vuelve a un orden válido.", en: "Trigger a cycle, inspect the block and return to a valid order." } },
+          do: { label: { es: "Practicar validate", en: "Practice validate" }, href: "../labs/#capabilities", commands: ["php bin/coa validate"] },
+          verify: [
+            { es: "Ubica la validación antes del boot.", en: "Place validation before boot." },
+            { es: "Justifica el orden válido a partir del grafo, no de una lista manual.", en: "Justify the valid order from the graph, not from a manual list." }
+          ],
           sources: [
-            { label: "ContractResolver", href: "https://github.com/getmilpa/plugin" },
-            { label: "Plugin metadata", href: "https://github.com/getmilpa/core" }
+            { label: { es: "ContractResolver", en: "ContractResolver" }, href: "https://github.com/getmilpa/plugin" },
+            { label: { es: "Plugin metadata", en: "Plugin metadata" }, href: "https://github.com/getmilpa/core" }
           ],
           lastVerified: verifiedAt
         },
@@ -57,19 +69,25 @@
           id: "pipeline-gates",
           title: { es: "Una acción, políticas explícitas", en: "One action, explicit policies" },
           durationMinutes: 25,
-          objectives: ["Separar entrada, acción y política", "Distinguir validación automática de decisión humana"],
-          understand: [
-            "CLI, HTTP o un agente pueden iniciar trabajo, pero la entrada no debe convertirse en una segunda implementación del dominio. La acción cruza el mismo pipeline y deja la misma clase de evidencia.",
-            "Una compuerta humana no reemplaza validaciones automáticas. Interviene cuando la política exige intención, responsabilidad o contexto que una regla mecánica no puede decidir.",
-            "milpa/command nombra ese mismo principio como átomo: una Operación se declara una vez y se proyecta a coa, MCP y HTTP sin reimplementar el dominio en cada puerta — pero la puerta sí puede cambiar la política, y hoy no todas aplican los mismos scopes."
+          objectives: [
+            { es: "Separar entrada, acción y política", en: "Separate entry, action and policy" },
+            { es: "Distinguir validación automática de decisión humana", en: "Tell automatic validation apart from human decision" }
           ],
-          see: { label: "Recorrer el pipeline", href: "../artifacts/#pipeline", note: "Cambia la puerta de entrada y retira un permiso para localizar exactamente dónde se detiene la acción." },
-          do: { label: "Operar la compuerta", href: "../artifacts/#compuerta", commands: [] },
-          verify: ["La entrada no contiene la lógica del caso de uso.", "Una aprobación produce una decisión auditable, no un atajo invisible."],
+          understand: [
+            { es: "CLI, HTTP o un agente pueden iniciar trabajo, pero la entrada no debe convertirse en una segunda implementación del dominio. La acción cruza el mismo pipeline y deja la misma clase de evidencia.", en: "A CLI, HTTP or an agent can start work, but the entry point must not become a second implementation of the domain. The action crosses the same pipeline and leaves the same kind of evidence." },
+            { es: "Una compuerta humana no reemplaza validaciones automáticas. Interviene cuando la política exige intención, responsabilidad o contexto que una regla mecánica no puede decidir.", en: "A human gate doesn't replace automatic validations. It steps in when policy demands intent, accountability or context that a mechanical rule can't decide." },
+            { es: "milpa/command nombra ese mismo principio como átomo: una Operación se declara una vez y se proyecta a coa, MCP y HTTP sin reimplementar el dominio en cada puerta — pero la puerta sí puede cambiar la política, y hoy no todas aplican los mismos scopes.", en: "milpa/command names that same principle as an atom: an Operation is declared once and projected to coa, MCP and HTTP without reimplementing the domain at each door — but the door can change the policy, and today not all of them enforce the same scopes." }
+          ],
+          see: { label: { es: "Recorrer el pipeline", en: "Walk the pipeline" }, href: "../artifacts/#pipeline", note: { es: "Cambia la puerta de entrada y retira un permiso para localizar exactamente dónde se detiene la acción.", en: "Change the entry door and remove a permission to pinpoint exactly where the action stops." } },
+          do: { label: { es: "Operar la compuerta", en: "Operate the gate" }, href: "../artifacts/#compuerta", commands: [] },
+          verify: [
+            { es: "La entrada no contiene la lógica del caso de uso.", en: "The entry point doesn't contain the use-case logic." },
+            { es: "Una aprobación produce una decisión auditable, no un atajo invisible.", en: "An approval produces an auditable decision, not an invisible shortcut." }
+          ],
           sources: [
-            { label: "Milpa Workflow", href: "https://github.com/getmilpa/workflow" },
-            { label: "Milpa Orchestrator", href: "https://github.com/getmilpa/orchestrator" },
-            { label: "Ver también: El átomo y sus puertas (milpa/command)", href: "../artifacts/index.html#atomo" }
+            { label: { es: "Milpa Workflow", en: "Milpa Workflow" }, href: "https://github.com/getmilpa/workflow" },
+            { label: { es: "Milpa Orchestrator", en: "Milpa Orchestrator" }, href: "https://github.com/getmilpa/orchestrator" },
+            { label: { es: "Ver también: El átomo y sus puertas (milpa/command)", en: "See also: The atom and its doors (milpa/command)" }, href: "../artifacts/index.html#atomo" }
           ],
           lastVerified: verifiedAt
         }
@@ -89,17 +107,23 @@
           id: "skeleton-boot",
           title: { es: "Arranca un host verificable", en: "Boot a verifiable host" },
           durationMinutes: 25,
-          objectives: ["Crear el skeleton público", "Leer doctor como evidencia del boot"],
-          understand: [
-            "El skeleton es un host mínimo. Su trabajo es ensamblar paquetes, configuración y rutas sin introducir una segunda arquitectura.",
-            "Doctor no es una pantalla de bienvenida: comprueba que el kernel arrancó, enumera plugins y rutas y hace visible el estado del contenedor."
+          objectives: [
+            { es: "Crear el skeleton público", en: "Create the public skeleton" },
+            { es: "Leer doctor como evidencia del boot", en: "Read doctor as evidence of the boot" }
           ],
-          see: { label: "Inspeccionar el runtime", href: "../artifacts/#runtime", note: "Usa la radiografía para relacionar boot, contenedor, dispatcher y registry." },
-          do: { label: "Ejecutar el laboratorio de boot", href: "../labs/#doctor", commands: ["composer create-project milpa/skeleton myapp", "cd myapp", "php bin/coa doctor"] },
-          verify: ["Doctor confirma kernel, plugins, contenedor y rutas.", "El servidor público se sirve desde public/."],
+          understand: [
+            { es: "El skeleton es un host mínimo. Su trabajo es ensamblar paquetes, configuración y rutas sin introducir una segunda arquitectura.", en: "The skeleton is a minimal host. Its job is to assemble packages, configuration and routes without introducing a second architecture." },
+            { es: "Doctor no es una pantalla de bienvenida: comprueba que el kernel arrancó, enumera plugins y rutas y hace visible el estado del contenedor.", en: "Doctor is not a welcome screen: it checks that the kernel booted, lists plugins and routes, and makes the container's state visible." }
+          ],
+          see: { label: { es: "Inspeccionar el runtime", en: "Inspect the runtime" }, href: "../artifacts/#runtime", note: { es: "Usa la radiografía para relacionar boot, contenedor, dispatcher y registry.", en: "Use the x-ray to relate boot, container, dispatcher and registry." } },
+          do: { label: { es: "Ejecutar el laboratorio de boot", en: "Run the boot lab" }, href: "../labs/#doctor", commands: ["composer create-project milpa/skeleton myapp", "cd myapp", "php bin/coa doctor"] },
+          verify: [
+            { es: "Doctor confirma kernel, plugins, contenedor y rutas.", en: "Doctor confirms kernel, plugins, container and routes." },
+            { es: "El servidor público se sirve desde public/.", en: "The public server is served from public/." }
+          ],
           sources: [
-            { label: "Skeleton", href: "https://github.com/getmilpa/skeleton" },
-            { label: "Runtime Kernel", href: "https://github.com/getmilpa/runtime" }
+            { label: { es: "Skeleton", en: "Skeleton" }, href: "https://github.com/getmilpa/skeleton" },
+            { label: { es: "Runtime Kernel", en: "Runtime Kernel" }, href: "https://github.com/getmilpa/runtime" }
           ],
           lastVerified: verifiedAt
         },
@@ -107,17 +131,23 @@
           id: "plugin-request",
           title: { es: "Crea una capacidad y una ruta", en: "Create a capability and a route" },
           durationMinutes: 35,
-          objectives: ["Generar un plugin con contrato", "Inspeccionar la ruta resultante"],
-          understand: [
-            "El generador reduce trabajo repetitivo, pero el contrato sigue siendo explícito: nombre, capacidades provistas, dependencias y flavor.",
-            "Después de escribir, inspecciona. Un archivo presente no prueba que el host registró correctamente el plugin o la ruta."
+          objectives: [
+            { es: "Generar un plugin con contrato", en: "Generate a plugin with a contract" },
+            { es: "Inspeccionar la ruta resultante", en: "Inspect the resulting route" }
           ],
-          see: { label: "Explorar el atlas de límites", href: "../artifacts/#atlas", note: "Ubica la nueva pieza en el mapa antes de convertirla en código." },
-          do: { label: "Verificar scaffold e inspect", href: "../labs/#route", commands: ["php bin/coa make:plugin Catalog --provides=catalog", "php bin/coa make:controller CatalogPlugin CatalogController --path=/catalog", "php bin/coa inspect:routes"] },
-          verify: ["El plugin declara catalog en provides.", "La ruta /catalog aparece en inspect:routes."],
+          understand: [
+            { es: "El generador reduce trabajo repetitivo, pero el contrato sigue siendo explícito: nombre, capacidades provistas, dependencias y flavor.", en: "The generator cuts repetitive work, but the contract stays explicit: name, provided capabilities, dependencies and flavor." },
+            { es: "Después de escribir, inspecciona. Un archivo presente no prueba que el host registró correctamente el plugin o la ruta.", en: "After writing, inspect. A file being present doesn't prove the host registered the plugin or the route correctly." }
+          ],
+          see: { label: { es: "Explorar el atlas de límites", en: "Explore the atlas of boundaries" }, href: "../artifacts/#atlas", note: { es: "Ubica la nueva pieza en el mapa antes de convertirla en código.", en: "Locate the new piece on the map before turning it into code." } },
+          do: { label: { es: "Verificar scaffold e inspect", en: "Verify scaffold and inspect" }, href: "../labs/#route", commands: ["php bin/coa make:plugin Catalog --provides=catalog", "php bin/coa make:controller CatalogPlugin CatalogController --path=/catalog", "php bin/coa inspect:routes"] },
+          verify: [
+            { es: "El plugin declara catalog en provides.", en: "The plugin declares catalog in provides." },
+            { es: "La ruta /catalog aparece en inspect:routes.", en: "The /catalog route appears in inspect:routes." }
+          ],
           sources: [
-            { label: "Plugin package", href: "https://github.com/getmilpa/plugin" },
-            { label: "Devtools", href: "https://github.com/getmilpa/devtools" }
+            { label: { es: "Plugin package", en: "Plugin package" }, href: "https://github.com/getmilpa/plugin" },
+            { label: { es: "Devtools", en: "Devtools" }, href: "https://github.com/getmilpa/devtools" }
           ],
           lastVerified: verifiedAt
         },
@@ -125,17 +155,23 @@
           id: "agent-tools",
           title: { es: "Habilita herramientas para agentes", en: "Enable tools for agents" },
           durationMinutes: 30,
-          objectives: ["Entender el opt-in agent-ready", "Registrar e inspeccionar una tool"],
-          understand: [
-            "El skeleton básico no instala Tool Runtime ni MCP Server. agent:enable agrega esas capacidades de forma explícita para mantener pequeño el host base.",
-            "Una tool necesita schema, autorización y auditoría; exponer una función al modelo no basta para convertirla en una herramienta gobernada."
+          objectives: [
+            { es: "Entender el opt-in agent-ready", en: "Understand the agent-ready opt-in" },
+            { es: "Registrar e inspeccionar una tool", en: "Register and inspect a tool" }
           ],
-          see: { label: "Comparar las dos puertas", href: "../artifacts/#pipeline", note: "La visualización explica el pipeline compartido; no promete un runner CLI genérico que el skeleton no ofrece." },
-          do: { label: "Habilitar y comprobar tools", href: "../labs/#tool", commands: ["php bin/coa agent:enable", "php bin/coa make:tool CatalogPlugin SearchCatalog", "php bin/coa inspect:tools"] },
-          verify: ["agent:enable instala Tool Runtime y MCP Server.", "inspect:tools muestra la tool registrada."],
+          understand: [
+            { es: "El skeleton básico no instala Tool Runtime ni MCP Server. agent:enable agrega esas capacidades de forma explícita para mantener pequeño el host base.", en: "The basic skeleton doesn't install Tool Runtime or MCP Server. agent:enable adds those capabilities explicitly to keep the base host small." },
+            { es: "Una tool necesita schema, autorización y auditoría; exponer una función al modelo no basta para convertirla en una herramienta gobernada.", en: "A tool needs a schema, authorization and auditing; exposing a function to the model isn't enough to turn it into a governed tool." }
+          ],
+          see: { label: { es: "Comparar las dos puertas", en: "Compare the two doors" }, href: "../artifacts/#pipeline", note: { es: "La visualización explica el pipeline compartido; no promete un runner CLI genérico que el skeleton no ofrece.", en: "The visualization explains the shared pipeline; it doesn't promise a generic CLI runner that the skeleton doesn't offer." } },
+          do: { label: { es: "Habilitar y comprobar tools", en: "Enable and check tools" }, href: "../labs/#tool", commands: ["php bin/coa agent:enable", "php bin/coa make:tool CatalogPlugin SearchCatalog", "php bin/coa inspect:tools"] },
+          verify: [
+            { es: "agent:enable instala Tool Runtime y MCP Server.", en: "agent:enable installs Tool Runtime and MCP Server." },
+            { es: "inspect:tools muestra la tool registrada.", en: "inspect:tools shows the registered tool." }
+          ],
           sources: [
-            { label: "Tool Runtime", href: "https://github.com/getmilpa/tool-runtime" },
-            { label: "MCP Server", href: "https://github.com/getmilpa/mcp-server" }
+            { label: { es: "Tool Runtime", en: "Tool Runtime" }, href: "https://github.com/getmilpa/tool-runtime" },
+            { label: { es: "MCP Server", en: "MCP Server" }, href: "https://github.com/getmilpa/mcp-server" }
           ],
           lastVerified: verifiedAt
         },
@@ -143,17 +179,23 @@
           id: "consume-design",
           title: { es: "Compón con @milpa/design", en: "Compose with @milpa/design" },
           durationMinutes: 30,
-          objectives: ["Cargar los seis bundles en orden", "Separar contrato visual de lógica de producto"],
-          understand: [
-            "Design entrega tokens, motion, primitives, components, artifacts y layouts. No entrega JavaScript: estado, datos y comportamiento siguen perteneciendo a la aplicación.",
-            "Consume una versión publicada. Academy puede probar composiciones ac-*, pero no debe duplicar la anatomía de una pieza mui-* ni leer archivos privados del paquete."
+          objectives: [
+            { es: "Cargar los seis bundles en orden", en: "Load the six bundles in order" },
+            { es: "Separar contrato visual de lógica de producto", en: "Separate the visual contract from product logic" }
           ],
-          see: { label: "Auditar el contrato ejecutable", href: "../artifacts/#design-contract", note: "Cambia tema y superficie; el gate calcula contraste en vivo." },
-          do: { label: "Abrir la guía de contribución", href: "../docs/CONTRIBUIR.md", commands: [] },
-          verify: ["Los bundles cargan tokens, motion, primitives, components, artifacts y layouts, en ese orden.", "La lógica de progreso vive en Academy, no en Design."],
+          understand: [
+            { es: "Design entrega tokens, motion, primitives, components, artifacts y layouts. No entrega JavaScript: estado, datos y comportamiento siguen perteneciendo a la aplicación.", en: "Design ships tokens, motion, primitives, components, artifacts and layouts. It doesn't ship JavaScript: state, data and behavior still belong to the application." },
+            { es: "Consume una versión publicada. Academy puede probar composiciones ac-*, pero no debe duplicar la anatomía de una pieza mui-* ni leer archivos privados del paquete.", en: "Consume a published version. Academy can try out ac-* compositions, but it must not duplicate the anatomy of a mui-* piece or read the package's private files." }
+          ],
+          see: { label: { es: "Auditar el contrato ejecutable", en: "Audit the executable contract" }, href: "../artifacts/#design-contract", note: { es: "Cambia tema y superficie; el gate calcula contraste en vivo.", en: "Change theme and surface; the gate computes contrast live." } },
+          do: { label: { es: "Abrir la guía de contribución", en: "Open the contribution guide" }, href: "../docs/CONTRIBUIR.md", commands: [] },
+          verify: [
+            { es: "Los bundles cargan tokens, motion, primitives, components, artifacts y layouts, en ese orden.", en: "The bundles load tokens, motion, primitives, components, artifacts and layouts, in that order." },
+            { es: "La lógica de progreso vive en Academy, no en Design.", en: "Progress logic lives in Academy, not in Design." }
+          ],
           sources: [
-            { label: "Milpa Design", href: "https://www.npmjs.com/package/@milpa/design" },
-            { label: "Gobernanza pública", href: "https://github.com/getmilpa/design" }
+            { label: { es: "Milpa Design", en: "Milpa Design" }, href: "https://www.npmjs.com/package/@milpa/design" },
+            { label: { es: "Gobernanza pública", en: "Public governance" }, href: "https://github.com/getmilpa/design" }
           ],
           lastVerified: verifiedAt
         }
@@ -173,60 +215,101 @@
           id: "atlas-limites",
           title: { es: "Atlas de límites", en: "Atlas of boundaries" },
           durationMinutes: 35,
-          objectives: ["Seguir dependencias entre paquetes", "Diferenciar contrato público de detalle interno"],
-          understand: ["Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar."],
-          see: { label: "Abrir Atlas de límites", href: "../artifacts/#atlas", note: "Selecciona un paquete y sigue sus relaciones y fuentes primarias." },
-          do: { label: "Consultar la referencia senior", href: "../docs/REFERENCIA-SENIOR.md", commands: [] },
-          verify: ["Ubica al dueño de boot, capabilities, tools, gates y estado.", "Sustenta cada afirmación importante con una fuente primaria."],
-          sources: [{ label: "Organización getmilpa", href: "https://github.com/getmilpa" }],
+          objectives: [
+            { es: "Seguir dependencias entre paquetes", en: "Follow dependencies between packages" },
+            { es: "Diferenciar contrato público de detalle interno", en: "Tell a public contract apart from an internal detail" }
+          ],
+          understand: [
+            { es: "Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar.", en: "An auditable architecture lets you trace a responsibility from the interface to the package that implements it. The map doesn't replace the code: it tells you where to start verifying." }
+          ],
+          see: { label: { es: "Abrir Atlas de límites", en: "Open Atlas of boundaries" }, href: "../artifacts/#atlas", note: { es: "Selecciona un paquete y sigue sus relaciones y fuentes primarias.", en: "Select a package and follow its relationships and primary sources." } },
+          do: { label: { es: "Consultar la referencia senior", en: "Check the senior reference" }, href: "../docs/REFERENCIA-SENIOR.md", commands: [] },
+          verify: [
+            { es: "Ubica al dueño de boot, capabilities, tools, gates y estado.", en: "Locate the owner of boot, capabilities, tools, gates and state." },
+            { es: "Sustenta cada afirmación importante con una fuente primaria.", en: "Back every important claim with a primary source." }
+          ],
+          sources: [{ label: { es: "Organización getmilpa", en: "getmilpa organization" }, href: "https://github.com/getmilpa" }],
           lastVerified: verifiedAt
         },
         {
           id: "runtime-boot",
           title: { es: "Radiografía del runtime", en: "X-ray of the runtime" },
           durationMinutes: 35,
-          objectives: ["Reconstruir la secuencia de boot", "Identificar los registries derivados"],
-          understand: ["El kernel carga manifiestos, resuelve el grafo, registra servicios y expone rutas. La secuencia importa porque cada fase valida una condición para la siguiente."],
-          see: { label: "Abrir radiografía del runtime", href: "../artifacts/#runtime", note: "Avanza fase por fase y contrasta modelo didáctico con implementación auditada." },
-          do: { label: "Comprobar doctor", href: "../labs/#doctor", commands: ["php bin/coa doctor", "php bin/coa inspect:plugins", "php bin/coa inspect:services"] },
-          verify: ["Distingue la información disponible antes y después de resolver el grafo.", "Relaciona doctor e inspect como vistas complementarias."],
-          sources: [{ label: "Runtime", href: "https://github.com/getmilpa/runtime" }],
+          objectives: [
+            { es: "Reconstruir la secuencia de boot", en: "Reconstruct the boot sequence" },
+            { es: "Identificar los registries derivados", en: "Identify the derived registries" }
+          ],
+          understand: [
+            { es: "El kernel carga manifiestos, resuelve el grafo, registra servicios y expone rutas. La secuencia importa porque cada fase valida una condición para la siguiente.", en: "The kernel loads manifests, resolves the graph, registers services and exposes routes. The sequence matters because each phase validates a condition for the next one." }
+          ],
+          see: { label: { es: "Abrir radiografía del runtime", en: "Open the runtime x-ray" }, href: "../artifacts/#runtime", note: { es: "Avanza fase por fase y contrasta modelo didáctico con implementación auditada.", en: "Advance phase by phase and contrast the teaching model with the audited implementation." } },
+          do: { label: { es: "Comprobar doctor", en: "Check doctor" }, href: "../labs/#doctor", commands: ["php bin/coa doctor", "php bin/coa inspect:plugins", "php bin/coa inspect:services"] },
+          verify: [
+            { es: "Distingue la información disponible antes y después de resolver el grafo.", en: "Tell apart the information available before and after resolving the graph." },
+            { es: "Relaciona doctor e inspect como vistas complementarias.", en: "Relate doctor and inspect as complementary views." }
+          ],
+          sources: [{ label: { es: "Runtime", en: "Runtime" }, href: "https://github.com/getmilpa/runtime" }],
           lastVerified: verifiedAt
         },
         {
           id: "estado-log",
           title: { es: "El proceso es el log", en: "The process is the log" },
           durationMinutes: 35,
-          objectives: ["Distinguir evento de snapshot", "Reconstruir estado por replay"],
-          understand: ["Cuando cada transición significativa queda como evento, el estado puede reconstruirse y una decisión puede explicarse. El snapshot acelera lectura; no reemplaza la historia."],
-          see: { label: "Ejecutar el replay", href: "../artifacts/#event-log", note: "Añade eventos, rebobina y compara estado derivado con la secuencia." },
-          do: { label: "Inspeccionar contratos de event store", href: "https://github.com/getmilpa/event-store", commands: [] },
-          verify: ["Deriva el estado mostrado desde eventos ordenados.", "Identifica la evidencia perdida al persistir únicamente el último estado."],
-          sources: [{ label: "Event Store", href: "https://github.com/getmilpa/event-store" }],
+          objectives: [
+            { es: "Distinguir evento de snapshot", en: "Tell an event apart from a snapshot" },
+            { es: "Reconstruir estado por replay", en: "Reconstruct state by replay" }
+          ],
+          understand: [
+            { es: "Cuando cada transición significativa queda como evento, el estado puede reconstruirse y una decisión puede explicarse. El snapshot acelera lectura; no reemplaza la historia.", en: "When every meaningful transition is recorded as an event, state can be reconstructed and a decision can be explained. The snapshot speeds up reads; it doesn't replace the history." }
+          ],
+          see: { label: { es: "Ejecutar el replay", en: "Run the replay" }, href: "../artifacts/#event-log", note: { es: "Añade eventos, rebobina y compara estado derivado con la secuencia.", en: "Add events, rewind and compare the derived state against the sequence." } },
+          do: { label: { es: "Inspeccionar contratos de event store", en: "Inspect the event store contracts" }, href: "https://github.com/getmilpa/event-store", commands: [] },
+          verify: [
+            { es: "Deriva el estado mostrado desde eventos ordenados.", en: "Derive the displayed state from ordered events." },
+            { es: "Identifica la evidencia perdida al persistir únicamente el último estado.", en: "Identify the evidence lost when persisting only the latest state." }
+          ],
+          sources: [{ label: { es: "Event Store", en: "Event Store" }, href: "https://github.com/getmilpa/event-store" }],
           lastVerified: verifiedAt
         },
         {
           id: "contrato-ejecutable",
           title: { es: "El contrato visual se ejecuta", en: "The visual contract is executable" },
           durationMinutes: 35,
-          objectives: ["Leer estructura, estados y a11y como un contrato", "Comprobar paridad dark/light"],
-          understand: ["Una clase CSS no es suficiente contrato. Milpa Design documenta anatomía, estados, tokens, accesibilidad, motion y ejemplos, y los gates comprueban que el paquete publicado preserve esas promesas."],
-          see: { label: "Medir el contrato", href: "../artifacts/#design-contract", note: "Inspecciona contraste AA y cambia superficie sin alterar el contenido." },
-          do: { label: "Consultar @milpa/design", href: "https://github.com/getmilpa/design", commands: ["npm test"] },
-          verify: ["El componente conserva significado sin depender solo del color.", "La versión consumida está fijada y no sigue main accidentalmente."],
-          sources: [{ label: "Design", href: "https://github.com/getmilpa/design" }],
+          objectives: [
+            { es: "Leer estructura, estados y a11y como un contrato", en: "Read structure, states and a11y as a contract" },
+            { es: "Comprobar paridad dark/light", en: "Check dark/light parity" }
+          ],
+          understand: [
+            { es: "Una clase CSS no es suficiente contrato. Milpa Design documenta anatomía, estados, tokens, accesibilidad, motion y ejemplos, y los gates comprueban que el paquete publicado preserve esas promesas.", en: "A CSS class isn't enough of a contract. Milpa Design documents anatomy, states, tokens, accessibility, motion and examples, and the gates check that the published package preserves those promises." }
+          ],
+          see: { label: { es: "Medir el contrato", en: "Measure the contract" }, href: "../artifacts/#design-contract", note: { es: "Inspecciona contraste AA y cambia superficie sin alterar el contenido.", en: "Inspect AA contrast and change surface without altering the content." } },
+          do: { label: { es: "Consultar @milpa/design", en: "Check @milpa/design" }, href: "https://github.com/getmilpa/design", commands: ["npm test"] },
+          verify: [
+            { es: "El componente conserva significado sin depender solo del color.", en: "The component keeps its meaning without relying on color alone." },
+            { es: "La versión consumida está fijada y no sigue main accidentalmente.", en: "The consumed version is pinned and doesn't follow main by accident." }
+          ],
+          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/design" }],
           lastVerified: verifiedAt
         },
         {
           id: "plan-disco",
           title: { es: "El plan antes del disco", en: "The plan before disk" },
           durationMinutes: 40,
-          objectives: ["Separar preflight, escritura y verificación", "Evitar atribuir --dry-run al CLI público"],
-          understand: ["Los generadores actuales hacen preflight, escriben y verifican ciertos resultados. Internamente producen un GenerationResult inspeccionable, pero el skeleton público no expone --dry-run.", "La lección es revisar alcance y conflictos antes de mutar, no documentar una bandera inexistente."],
-          see: { label: "Abrir el plan antes del disco", href: "../artifacts/#plan", note: "Explora la secuencia conceptual y conserva visible la diferencia con el CLI publicado." },
-          do: { label: "Generar e inspeccionar", href: "../labs/#route", commands: ["php bin/coa make:controller CatalogPlugin HealthController --path=/health", "php bin/coa inspect:routes"] },
-          verify: ["Distingue el plan interno de una bandera --dry-run que el CLI público no expone.", "Comprueba el registro resultante después de generar."],
-          sources: [{ label: "Devtools", href: "https://github.com/getmilpa/devtools" }],
+          objectives: [
+            { es: "Separar preflight, escritura y verificación", en: "Separate preflight, writing and verification" },
+            { es: "Evitar atribuir --dry-run al CLI público", en: "Avoid attributing --dry-run to the public CLI" }
+          ],
+          understand: [
+            { es: "Los generadores actuales hacen preflight, escriben y verifican ciertos resultados. Internamente producen un GenerationResult inspeccionable, pero el skeleton público no expone --dry-run.", en: "The current generators run preflight, write and verify certain results. Internally they produce an inspectable GenerationResult, but the public skeleton doesn't expose --dry-run." },
+            { es: "La lección es revisar alcance y conflictos antes de mutar, no documentar una bandera inexistente.", en: "The lesson is to review scope and conflicts before mutating, not to document a flag that doesn't exist." }
+          ],
+          see: { label: { es: "Abrir el plan antes del disco", en: "Open the plan before disk" }, href: "../artifacts/#plan", note: { es: "Explora la secuencia conceptual y conserva visible la diferencia con el CLI publicado.", en: "Explore the conceptual sequence and keep the difference from the published CLI in view." } },
+          do: { label: { es: "Generar e inspeccionar", en: "Generate and inspect" }, href: "../labs/#route", commands: ["php bin/coa make:controller CatalogPlugin HealthController --path=/health", "php bin/coa inspect:routes"] },
+          verify: [
+            { es: "Distingue el plan interno de una bandera --dry-run que el CLI público no expone.", en: "Tell the internal plan apart from a --dry-run flag that the public CLI doesn't expose." },
+            { es: "Comprueba el registro resultante después de generar.", en: "Check the resulting registration after generating." }
+          ],
+          sources: [{ label: { es: "Devtools", en: "Devtools" }, href: "https://github.com/getmilpa/devtools" }],
           lastVerified: verifiedAt
         }
       ]
@@ -245,36 +328,60 @@
           id: "capas-visuales",
           title: { es: "Las seis capas", en: "The six layers" },
           durationMinutes: 25,
-          objectives: ["Reconocer la cascada publicada", "Elegir la capa correcta para cada pieza"],
-          understand: ["Tokens nombran decisiones; motion define movimiento; primitives resuelven controles; components forman piezas; artifacts expresan contenido; layouts organizan páginas."],
-          see: { label: "Inspeccionar contrato visual", href: "../artifacts/#design-contract", note: "Relaciona el selector visible con su contrato y sus gates." },
-          do: { label: "Abrir npm publicado", href: "https://www.npmjs.com/package/@milpa/design", commands: [] },
-          verify: ["Ordena las seis capas según su contrato de carga.", "Prioriza tokens semánticos existentes sobre valores visuales nuevos."],
-          sources: [{ label: "Design package", href: "https://www.npmjs.com/package/@milpa/design" }],
+          objectives: [
+            { es: "Reconocer la cascada publicada", en: "Recognize the published cascade" },
+            { es: "Elegir la capa correcta para cada pieza", en: "Choose the right layer for each piece" }
+          ],
+          understand: [
+            { es: "Tokens nombran decisiones; motion define movimiento; primitives resuelven controles; components forman piezas; artifacts expresan contenido; layouts organizan páginas.", en: "Tokens name decisions; motion defines movement; primitives resolve controls; components form pieces; artifacts express content; layouts organize pages." }
+          ],
+          see: { label: { es: "Inspeccionar contrato visual", en: "Inspect the visual contract" }, href: "../artifacts/#design-contract", note: { es: "Relaciona el selector visible con su contrato y sus gates.", en: "Relate the visible selector to its contract and its gates." } },
+          do: { label: { es: "Abrir npm publicado", en: "Open the published npm package" }, href: "https://www.npmjs.com/package/@milpa/design", commands: [] },
+          verify: [
+            { es: "Ordena las seis capas según su contrato de carga.", en: "Order the six layers by their load contract." },
+            { es: "Prioriza tokens semánticos existentes sobre valores visuales nuevos.", en: "Prioritize existing semantic tokens over new visual values." }
+          ],
+          sources: [{ label: { es: "Design package", en: "Design package" }, href: "https://www.npmjs.com/package/@milpa/design" }],
           lastVerified: verifiedAt
         },
         {
           id: "composicion-app",
           title: { es: "Design da lenguaje; Academy da conducta", en: "Design gives language; Academy gives behavior" },
           durationMinutes: 30,
-          objectives: ["Mantener lógica fuera del paquete CSS", "Crear composición local sin duplicar anatomía mui-*"],
-          understand: ["Milpa Design publica CSS y contratos, no JavaScript. Academy controla rutas, progreso, datos del currículo y verificadores. Sus clases ac-* cosen el caso educativo sin redefinir componentes estables."],
-          see: { label: "Abrir la galería", href: "../artifacts/", note: "Las piezas mui-plot, mui-pipeline, mui-gate y mui-replay reciben escenarios y estado desde Academy." },
-          do: { label: "Comparar artifacts y lógica", href: "../artifacts/README.md", commands: [] },
-          verify: ["Separa la lógica Academy del contrato CSS publicado.", "Distingue una composición ac-* específica de un componente genérico."],
-          sources: [{ label: "Design governance", href: "https://github.com/getmilpa/design" }],
+          objectives: [
+            { es: "Mantener lógica fuera del paquete CSS", en: "Keep logic out of the CSS package" },
+            { es: "Crear composición local sin duplicar anatomía mui-*", en: "Create a local composition without duplicating mui-* anatomy" }
+          ],
+          understand: [
+            { es: "Milpa Design publica CSS y contratos, no JavaScript. Academy controla rutas, progreso, datos del currículo y verificadores. Sus clases ac-* cosen el caso educativo sin redefinir componentes estables.", en: "Milpa Design publishes CSS and contracts, not JavaScript. Academy controls routing, progress, curriculum data and verifiers. Its ac-* classes stitch the educational case together without redefining stable components." }
+          ],
+          see: { label: { es: "Abrir la galería", en: "Open the gallery" }, href: "../artifacts/", note: { es: "Las piezas mui-plot, mui-pipeline, mui-gate y mui-replay reciben escenarios y estado desde Academy.", en: "The mui-plot, mui-pipeline, mui-gate and mui-replay pieces receive scenarios and state from Academy." } },
+          do: { label: { es: "Comparar artifacts y lógica", en: "Compare artifacts and logic" }, href: "../artifacts/README.md", commands: [] },
+          verify: [
+            { es: "Separa la lógica Academy del contrato CSS publicado.", en: "Separate Academy's logic from the published CSS contract." },
+            { es: "Distingue una composición ac-* específica de un componente genérico.", en: "Tell a specific ac-* composition apart from a generic component." }
+          ],
+          sources: [{ label: { es: "Design governance", en: "Design governance" }, href: "https://github.com/getmilpa/design" }],
           lastVerified: verifiedAt
         },
         {
           id: "promocion-patron",
           title: { es: "De candidato local a patrón público", en: "From local candidate to public pattern" },
           durationMinutes: 35,
-          objectives: ["Aplicar la regla de promoción", "Reunir evidencia antes de generalizar"],
-          understand: ["Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks."],
-          see: { label: "Ver el precedente de artifacts", href: "../artifacts/", note: "El cluster nació como composición local y hoy se consume desde @milpa/design@0.9.0." },
-          do: { label: "Leer cómo contribuir", href: "../docs/CONTRIBUIR.md", commands: [] },
-          verify: ["Exige dos usos reales o evidencia fuerte antes de promover.", "Describe al candidato mediante anatomía, estados, a11y y motion."],
-          sources: [{ label: "Design", href: "https://github.com/getmilpa/design" }],
+          objectives: [
+            { es: "Aplicar la regla de promoción", en: "Apply the promotion rule" },
+            { es: "Reunir evidencia antes de generalizar", en: "Gather evidence before generalizing" }
+          ],
+          understand: [
+            { es: "Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks.", en: "Academy is a laboratory: it can invent an ac-* composition. Design decides whether it survives as mui-* when there is a real case, it shows up at least twice, it admits a contract, it passes gates and it's consumed without hacks." }
+          ],
+          see: { label: { es: "Ver el precedente de artifacts", en: "See the artifacts precedent" }, href: "../artifacts/", note: { es: "El cluster nació como composición local y hoy se consume desde @milpa/design@0.9.0.", en: "The cluster started as a local composition and today is consumed from @milpa/design@0.9.0." } },
+          do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "../docs/CONTRIBUIR.md", commands: [] },
+          verify: [
+            { es: "Exige dos usos reales o evidencia fuerte antes de promover.", en: "Require two real uses or strong evidence before promoting." },
+            { es: "Describe al candidato mediante anatomía, estados, a11y y motion.", en: "Describe the candidate through anatomy, states, a11y and motion." }
+          ],
+          sources: [{ label: { es: "Design", en: "Design" }, href: "https://github.com/getmilpa/design" }],
           lastVerified: verifiedAt
         }
       ]

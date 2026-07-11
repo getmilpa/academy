@@ -2,8 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
+
+// catalog.js es UMD (module.exports = factory()); cjs-module-lexer no ve sus
+// named exports a través de un import estático, así que se carga con require.
+const require = createRequire(import.meta.url);
+const catalog = require("../curriculum/catalog.js");
 
 execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
 const es = readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8");
@@ -95,7 +101,7 @@ test("re-running the generator is idempotent (byte-identical output)", () => {
 
 test("translation completeness: every leaf string has es and en", () => {
   const missing = [];
-  (function walk(node, path) {
+  function walk(node, path) {
     if (node && typeof node === "object" && !Array.isArray(node)) {
       const keys = Object.keys(node);
       if (keys.includes("es") || keys.includes("en")) {
@@ -107,7 +113,9 @@ test("translation completeness: every leaf string has es and en", () => {
     } else if (Array.isArray(node)) {
       node.forEach((v, i) => walk(v, `${path}[${i}]`));
     }
-  })(ATOMO, "ATOMO");
+  }
+  walk(ATOMO, "ATOMO");
+  walk(catalog.tracks, "catalog.tracks");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
 });
 
