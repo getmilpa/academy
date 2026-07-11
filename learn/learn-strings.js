@@ -213,7 +213,7 @@
       correctLabel: "Correct.",
       incorrectLabel: "Incorrect.",
       regradeButton: "Grade again",
-      failedTitleRepeat: "Retake not passed",
+      failedTitleRepeat: "Retake didn't pass",
       failedTitleFirst: "Not passed yet",
       failedBody: function (score, total, keepPrevious) {
         return "Result: " + score + " of " + total + ". Review the explanation for each scenario and try again." + (keepPrevious ? " Your previous pass is kept." : "");

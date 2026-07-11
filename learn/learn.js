@@ -275,6 +275,9 @@
       if (retake) {
         retake.addEventListener("click", function () {
           if (callout.parentNode) callout.parentNode.removeChild(callout);
+          form.querySelectorAll("[data-question-id]").forEach(clearQuestionState);
+          resultRoot.innerHTML = "";
+          submitButton.textContent = t.submitGrade;
           form.style.display = "";
           bindForm();
         });

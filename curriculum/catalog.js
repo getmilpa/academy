@@ -223,7 +223,7 @@
             { es: "Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar.", en: "An auditable architecture lets you trace a responsibility from the interface to the package that implements it. The map doesn't replace the code: it tells you where to start verifying." }
           ],
           see: { label: { es: "Abrir Atlas de límites", en: "Open Atlas of boundaries" }, href: "../artifacts/#atlas", note: { es: "Selecciona un paquete y sigue sus relaciones y fuentes primarias.", en: "Select a package and follow its relationships and primary sources." } },
-          do: { label: { es: "Consultar la referencia senior", en: "Browse the senior reference (source packages)" }, href: "https://github.com/getmilpa", commands: [] },
+          do: { label: { es: "Consultar la referencia senior (paquetes fuente)", en: "Browse the senior reference (source packages)" }, href: "https://github.com/getmilpa", commands: [] },
           verify: [
             { es: "Ubica al dueño de boot, capabilities, tools, gates y estado.", en: "Locate the owner of boot, capabilities, tools, gates and state." },
             { es: "Sustenta cada afirmación importante con una fuente primaria.", en: "Back every important claim with a primary source." }
@@ -293,7 +293,7 @@
         },
         {
           id: "plan-disco",
-          title: { es: "El plan antes del disco", en: "The plan before disk" },
+          title: { es: "El plan antes del disco", en: "The plan before the disk" },
           durationMinutes: 40,
           objectives: [
             { es: "Separar preflight, escritura y verificación", en: "Separate preflight, writing and verification" },
@@ -303,7 +303,7 @@
             { es: "Los generadores actuales hacen preflight, escriben y verifican ciertos resultados. Internamente producen un GenerationResult inspeccionable, pero el skeleton público no expone --dry-run.", en: "The current generators run preflight, write and verify certain results. Internally they produce an inspectable GenerationResult, but the public skeleton doesn't expose --dry-run." },
             { es: "La lección es revisar alcance y conflictos antes de mutar, no documentar una bandera inexistente.", en: "The lesson is to review scope and conflicts before mutating, not to document a flag that doesn't exist." }
           ],
-          see: { label: { es: "Abrir el plan antes del disco", en: "Open the plan before disk" }, href: "../artifacts/#plan", note: { es: "Explora la secuencia conceptual y conserva visible la diferencia con el CLI publicado.", en: "Explore the conceptual sequence and keep the difference from the published CLI in view." } },
+          see: { label: { es: "Abrir el plan antes del disco", en: "Open the plan before the disk" }, href: "../artifacts/#plan", note: { es: "Explora la secuencia conceptual y conserva visible la diferencia con el CLI publicado.", en: "Explore the conceptual sequence and keep the difference from the published CLI in view." } },
           do: { label: { es: "Generar e inspeccionar", en: "Generate and inspect" }, href: "../labs/#route", commands: ["php bin/coa make:controller CatalogPlugin HealthController --path=/health", "php bin/coa inspect:routes"] },
           verify: [
             { es: "Distingue el plan interno de una bandera --dry-run que el CLI público no expone.", en: "Tell the internal plan apart from a --dry-run flag that the public CLI doesn't expose." },
@@ -373,7 +373,7 @@
             { es: "Reunir evidencia antes de generalizar", en: "Gather evidence before generalizing" }
           ],
           understand: [
-            { es: "Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks.", en: "Academy is a laboratory: it can invent an ac-* composition. Design decides whether it survives as mui-* when there is a real case, it shows up at least twice, it admits a contract, it passes gates and it's consumed without hacks." }
+            { es: "Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks.", en: "Academy is a laboratory: it can invent an ac-* composition. Design decides whether it survives as mui-* when there is a real case, it shows up at least twice, it supports a contract, it passes gates and it's consumed without hacks." }
           ],
           see: { label: { es: "Ver el precedente de artifacts", en: "See the artifacts precedent" }, href: "../artifacts/", note: { es: "El cluster nació como composición local y hoy se consume desde @milpa/design@0.9.0.", en: "The cluster started as a local composition and today is consumed from @milpa/design@0.9.0." } },
           do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "https://github.com/getmilpa/milpa-design", commands: [] },

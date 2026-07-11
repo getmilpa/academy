@@ -23,7 +23,7 @@ Milpa is a PHP framework whose distinguishing trait is that it opens pluggable p
 - [X-ray of the runtime](https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/): Auditable architecture
 - [The process is the log](https://academy.milpa.lat/en/learn/arquitectura/estado-log/): Auditable architecture
 - [The visual contract is executable](https://academy.milpa.lat/en/learn/arquitectura/contrato-ejecutable/): Auditable architecture
-- [The plan before disk](https://academy.milpa.lat/en/learn/arquitectura/plan-disco/): Auditable architecture
+- [The plan before the disk](https://academy.milpa.lat/en/learn/arquitectura/plan-disco/): Auditable architecture
 - [The six layers](https://academy.milpa.lat/en/learn/disena/capas-visuales/): Design with Milpa
 - [Design gives language; Academy gives behavior](https://academy.milpa.lat/en/learn/disena/composicion-app/): Design with Milpa
 - [From local candidate to public pattern](https://academy.milpa.lat/en/learn/disena/promocion-patron/): Design with Milpa
