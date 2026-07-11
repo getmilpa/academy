@@ -732,7 +732,9 @@ milpa-artifact, milpa-artifact *, milpa-artifact *::before, milpa-artifact *::af
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  /* Scoped a los contextos que ponen smooth arriba — el embed no decide
+     el scroll-behavior del host. */
+  html.wb-app, html.wb-doc { scroll-behavior: auto; }
   .wb-main { scroll-behavior: auto; }
   .wb-gate-symbol i,
   .wb-boundary-node { transition: none; animation: none; }
