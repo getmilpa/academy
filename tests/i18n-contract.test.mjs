@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { GALLERY } from "../artifacts/content/gallery.content.mjs";
+import { LABS_SHELL } from "../labs/labs.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
 
 // catalog.js es UMD (module.exports = factory()); cjs-module-lexer no ve sus
@@ -18,6 +19,10 @@ const es = readFileSync(new URL("../site/atomo/index.html", import.meta.url), "u
 const en = readFileSync(new URL("../site/en/atomo/index.html", import.meta.url), "utf8");
 const portalEs = readFileSync(new URL("../site/index.html", import.meta.url), "utf8");
 const portalEn = readFileSync(new URL("../site/en/index.html", import.meta.url), "utf8");
+const galleryEs = readFileSync(new URL("../site/artifacts/index.html", import.meta.url), "utf8");
+const galleryEn = readFileSync(new URL("../site/en/artifacts/index.html", import.meta.url), "utf8");
+const labsEs = readFileSync(new URL("../site/labs/index.html", import.meta.url), "utf8");
+const labsEn = readFileSync(new URL("../site/en/labs/index.html", import.meta.url), "utf8");
 
 test("es page: lang, hero line, canonical, hreflang", () => {
   assert.match(es, /<html lang="es[^"]*"/);
@@ -130,6 +135,7 @@ test("translation completeness: every leaf string has es and en", () => {
   }
   walk(ATOMO, "ATOMO");
   walk(GALLERY, "GALLERY");
+  walk(LABS_SHELL, "LABS_SHELL");
   walk(catalog.tracks, "catalog.tracks");
   walk(labsCatalog.labs, "labs.labs");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
@@ -165,12 +171,112 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
   const normalizedHtml = squashWhitespace(galleryHtml);
   const leaves = [];
   collectEsLeaves(GALLERY, "GALLERY", leaves);
-  // Sanity: the walk actually found the bulk of the extracted strings.
-  assert.ok(leaves.length > 200, `expected >200 es leaves, found ${leaves.length}`);
+  /* Task 5 CARRY: pin the GALLERY walk leaf-count (como el key-count de
+     learn-strings). Cierra el blind-spot de completitud — borrar un artifact
+     del módulo bajaría el conteo y pasaría el fidelity test silenciosamente. */
+  assert.equal(leaves.length, 324, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   const missing = leaves
     .filter(([, es]) => !normalizedHtml.includes(squashWhitespace(es)))
     .map(([path, es]) => `${path}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings not found verbatim in index.html:\n${missing.join("\n")}`);
+});
+
+/* Task 5: la galería completa (9 artifacts) + el shell de labs pasaron a SSG
+   bilingüe (site/[en/]artifacts/, site/[en/]labs/). Estas guardas cubren el HTML
+   efectivamente emitido: paridad de contenido es contra la galería generada,
+   auditoría de hooks DOM que artifacts.js consulta (fundamento del smoke de T6),
+   canonical/hreflang/JSON-LD ItemList/idempotencia y GA4 por página. */
+
+test("gallery es content-parity: every GALLERY es leaf appears in the GENERATED site/artifacts/index.html", () => {
+  const normalized = squashWhitespace(galleryEs);
+  const leaves = [];
+  collectEsLeaves(GALLERY, "GALLERY", leaves);
+  const missing = leaves
+    .filter(([, es]) => !normalized.includes(squashWhitespace(es)))
+    .map(([p, es]) => `${p}: ${JSON.stringify(es)}`);
+  assert.deepEqual(missing, [], `es strings missing in generated gallery:\n${missing.join("\n")}`);
+  // El átomo (Artifact 09) trae su prosa desde ATOMO — muestra representativa.
+  assert.ok(galleryEs.includes(ATOMO.title.es) && galleryEs.includes(ATOMO.atomCard.name), "atomo prose missing (es)");
+  assert.ok(galleryEn.includes(ATOMO.title.en), "atomo prose missing (en)");
+});
+
+test("gallery hook-audit: every id-hook artifacts.js queries exists in the generated pages (es/en)", () => {
+  const artjs = readFileSync(new URL("../artifacts/artifacts.js", import.meta.url), "utf8");
+  const idHooks = [...new Set([...artjs.matchAll(/\$\(["'](#[a-zA-Z0-9_-]+)["']/g)].map((m) => m[1].slice(1)))];
+  assert.ok(idHooks.length >= 70, `expected the full id-hook set, found ${idHooks.length}`);
+  for (const html of [galleryEs, galleryEn]) {
+    const missing = idHooks.filter((id) => !html.includes(`id="${id}"`));
+    assert.deepEqual(missing, [], `id-hooks missing in generated gallery: ${missing.join(", ")}`);
+  }
+  // Los 8 artifacts 2-9 quedan hidden; sólo #siembra visible (no-JS entra por el 01).
+  for (const html of [galleryEs, galleryEn]) {
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 8);
+  }
+});
+
+test("gallery pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (9 items) per language", () => {
+  for (const [html, lang] of [[galleryEs, "es"], [galleryEn, "en"]]) {
+    const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}artifacts/`;
+    assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`));
+    assert.ok(html.includes(`rel="canonical" href="${canon}"`), `${lang} gallery canonical ${canon}`);
+    const hreflangs = [...html.matchAll(/rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => [m[1], m[2]]);
+    assert.deepEqual(hreflangs, [
+      ["es", "https://academy.milpa.lat/artifacts/"],
+      ["en", "https://academy.milpa.lat/en/artifacts/"],
+      ["x-default", "https://academy.milpa.lat/artifacts/"],
+    ], `${lang} gallery hreflang`);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+    assert.equal(ld["@type"], "ItemList");
+    assert.equal(ld.inLanguage, lang);
+    assert.equal(ld.itemListElement.length, GALLERY.artifacts.length);
+    assert.ok(ld.itemListElement.every((it) => it.name.length > 0 && it.description.length > 0), "ItemList items need name+description");
+  }
+  assert.match(galleryEs, /gtag\('set',\{language:'es',page_type:'gallery'\}\)/);
+  assert.match(galleryEn, /gtag\('set',\{language:'en',page_type:'gallery'\}\)/);
+});
+
+test("labs pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (4 items), static 4-lab summary", () => {
+  for (const [html, lang] of [[labsEs, "es"], [labsEn, "en"]]) {
+    const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}labs/`;
+    assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`));
+    assert.ok(html.includes(`rel="canonical" href="${canon}"`), `${lang} labs canonical ${canon}`);
+    const hreflangs = [...html.matchAll(/rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => [m[1], m[2]]);
+    assert.deepEqual(hreflangs, [
+      ["es", "https://academy.milpa.lat/labs/"],
+      ["en", "https://academy.milpa.lat/en/labs/"],
+      ["x-default", "https://academy.milpa.lat/labs/"],
+    ], `${lang} labs hreflang`);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.+?)<\/script>/)[1]);
+    assert.equal(ld["@type"], "ItemList");
+    assert.equal(ld.inLanguage, lang);
+    assert.equal(ld.itemListElement.length, labsCatalog.labs.length);
+    // Resumen estático: cada lab del catalog aparece con su título en el idioma.
+    for (const lab of labsCatalog.labs) assert.ok(html.includes(lab.title[lang]), `${lang} labs summary missing ${lab.id}`);
+  }
+  assert.match(labsEs, /gtag\('set',\{language:'es',page_type:'labs'\}\)/);
+  assert.match(labsEn, /gtag\('set',\{language:'en',page_type:'labs'\}\)/);
+});
+
+test("gallery + labs machine identifiers are byte-identical between es and en (only visible text differs)", () => {
+  const tokens = (html) => [...html.matchAll(/data-stage="([^"]+)"|data-surface="([^"]+)"|data-node="([^"]+)"|data-caller="([^"]+)"|data-artifact-link="([^"]+)"/g)]
+    .map((m) => m.slice(1).find(Boolean));
+  assert.deepEqual(tokens(galleryEs), tokens(galleryEn));
+  assert.deepEqual(
+    [...labsEs.matchAll(/id="(lab-navigation|lab-workspace|course-progress|progress-label)"/g)].map((m) => m[1]),
+    [...labsEn.matchAll(/id="(lab-navigation|lab-workspace|course-progress|progress-label)"/g)].map((m) => m[1]),
+  );
+});
+
+test("re-running the generator is idempotent for the gallery + labs pages (byte-identical)", () => {
+  const before = { galleryEs, galleryEn, labsEs, labsEn };
+  execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
+  const after = {
+    galleryEs: readFileSync(new URL("../site/artifacts/index.html", import.meta.url), "utf8"),
+    galleryEn: readFileSync(new URL("../site/en/artifacts/index.html", import.meta.url), "utf8"),
+    labsEs: readFileSync(new URL("../site/labs/index.html", import.meta.url), "utf8"),
+    labsEn: readFileSync(new URL("../site/en/labs/index.html", import.meta.url), "utf8"),
+  };
+  assert.deepEqual(after, before);
 });
 
 /* Task 6: per-unit SSG pages (site/learn/<track>/<unit>/) + learn index
@@ -456,6 +562,28 @@ test("sitemap.xml lists the portal (home) as well as the atom, per language", ()
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/<\/loc>/, "sitemap must list the en portal root");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/atomo\/<\/loc>/, "sitemap must still list the es atom");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/atomo\/<\/loc>/, "sitemap must still list the en atom");
+});
+
+/* Task 5: la galería + el shell de labs suman 2 páginas nuevas × 2 idiomas al
+   sitemap (36 → 40 URLs) y una entrada por idioma a cada llms.txt, sin cruzar
+   idiomas (es → /artifacts/ + /labs/; en → /en/artifacts/ + /en/labs/). */
+test("sitemap: exactly 40 URLs, incl. gallery + labs per language", () => {
+  const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
+  assert.equal((sm.match(/<loc>/g) || []).length, 40, "sitemap must list exactly 40 URLs (portal+atom+gallery+labs+16 learn, ×2 langs)");
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/artifacts\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/artifacts\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/labs\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/labs\/<\/loc>/);
+});
+
+test("llms.txt links the gallery + labs per language, without crossing languages", () => {
+  const llmsEs = readFileSync(new URL("../site/llms.txt", import.meta.url), "utf8");
+  const llmsEn = readFileSync(new URL("../site/en/llms.txt", import.meta.url), "utf8");
+  assert.match(llmsEs, /\(https:\/\/academy\.milpa\.lat\/artifacts\/\)/, "es llms must link the es gallery");
+  assert.match(llmsEs, /\(https:\/\/academy\.milpa\.lat\/labs\/\)/, "es llms must link the es labs");
+  assert.match(llmsEn, /\(https:\/\/academy\.milpa\.lat\/en\/artifacts\/\)/, "en llms must link the en gallery");
+  assert.match(llmsEn, /\(https:\/\/academy\.milpa\.lat\/en\/labs\/\)/, "en llms must link the en labs");
+  assert.doesNotMatch(llmsEs, /\/en\//, "es llms must not point at /en/ pages");
 });
 
 /* Refuerzo más allá del brief: la neutralidad de la lógica pura (projectOperation)

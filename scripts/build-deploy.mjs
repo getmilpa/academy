@@ -42,19 +42,24 @@ mkdirSync(OUT, { recursive: true });
 //    /atomo/ + /en/atomo/, plus sitemap.xml/robots.txt/llms.txt/en/llms.txt.
 cpSync(path.join(ROOT, "site"), OUT, { recursive: true });
 
-// 2. App dirs, verbatim (es-only — Plan B bilingualizes them). Exception:
-//    learn/index.html is the obsolete hash-router app-shell (Plan B moved
-//    the learn-index to SSG). site/ already placed the SSG learn-index at
-//    OUT/learn/index.html above; copying the app-dir verbatim would clobber
-//    it with the blank shell. So the learn/ copy SKIPS that one file — the
-//    SSG page wins — while learn.js/learn.css (the hydration bundle the SSG
-//    page still loads) keep shipping. Unit pages (learn/<t>/<u>/) live only
-//    under site/ and don't collide.
-const LEARN_SHELL = path.join(ROOT, "learn", "index.html");
+// 2. App dirs, verbatim. Exception: the SSG now owns three index.html shells
+//    that site/ already placed at the deploy root (learn/, labs/, artifacts/).
+//    The legacy app-dir index.html for each is an obsolete shell (learn's
+//    hash-router; labs'/artifacts' es-only single-language pages) that would
+//    CLOBBER the SSG page if copied verbatim. So the app-dir copy SKIPS those
+//    three files — the bilingual SSG page wins — while every OTHER file in the
+//    dir keeps shipping: the hydration/runtime bundles the SSG pages still load
+//    (learn.js/learn.css, artifacts.js/artifacts-core.js/milpa-artifact.js/
+//    artifacts.css/content/, labs.js/catalog.js/lab-verifier.js/labs.css) and
+//    every non-colliding page (learn/<t>/<u>/ unit pages live only under site/).
+const EXCLUDED_SHELLS = new Set(
+  ["learn", "labs", "artifacts"].map((dir) => path.join(ROOT, dir, "index.html")),
+);
 for (const dir of APP_DIRS) {
-  const options = { recursive: true };
-  if (dir === "learn") options.filter = (src) => path.resolve(src) !== LEARN_SHELL;
-  cpSync(path.join(ROOT, dir), path.join(OUT, dir), options);
+  cpSync(path.join(ROOT, dir), path.join(OUT, dir), {
+    recursive: true,
+    filter: (src) => !EXCLUDED_SHELLS.has(path.resolve(src)),
+  });
 }
 
 // 3. Shared dirs referenced by relative path from the portal/atom/apps.

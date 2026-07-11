@@ -100,6 +100,64 @@ test("build-deploy: learn.js y learn.css se siguen deployando", () => {
   }
 });
 
+/* Colisión galería + labs (Task 5): los app-dirs artifacts/ y labs/ traen un
+   index.html legado (galería es-only / shell de labs es-only) que ANTES habría
+   clobbeado la SSG bilingüe que site/ ya colocó. EXCLUDED_SHELLS hace ganar a la
+   SSG. Verificamos por CONTENIDO: la galería trae lang="es-MX" + los 9 section
+   ids; el shell de labs trae el resumen estático de los 4 labs. */
+test("build-deploy: _deploy/artifacts/index.html es la galería SSG (9 artifacts), no el shell legado", () => {
+  const html = fs.readFileSync(path.join(deploy, "artifacts", "index.html"), "utf8");
+  assert.match(html, /<html lang="es-MX"/, "artifacts/index.html debe ser la galería SSG es");
+  for (const id of ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo"]) {
+    assert.match(html, new RegExp(`id="${id}"`), "falta la sección " + id);
+  }
+  assert.match(html, /<milpa-artifact id="atomo-artifact"/, "falta el átomo hidratable");
+  assert.ok(fs.existsSync(path.join(deploy, "en", "artifacts", "index.html")), "falta la galería en");
+});
+
+test("build-deploy: _deploy/labs/index.html es el shell SSG (resumen de 4 labs), no el shell legado", () => {
+  const html = fs.readFileSync(path.join(deploy, "labs", "index.html"), "utf8");
+  assert.match(html, /<html lang="es-MX"/, "labs/index.html debe ser el shell SSG es");
+  assert.match(html, /class="ac-labs-summary"/, "falta el resumen estático de labs");
+  assert.match(html, /id="lab-workspace"/, "falta el hook del runner");
+  assert.ok(fs.existsSync(path.join(deploy, "en", "labs", "index.html")), "falta el shell de labs en");
+});
+
+/* Los assets de runtime de los app-dirs artifacts/ y labs/ (los que las páginas
+   SSG cargan por ruta relativa colapsada) SÍ deben seguir deployándose aunque
+   sus index.html queden excluidos del app-dir copy. */
+test("build-deploy: los assets de runtime de galería y labs se siguen deployando", () => {
+  const assets = [
+    "artifacts/artifacts.js", "artifacts/artifacts-core.js", "artifacts/milpa-artifact.js", "artifacts/artifacts.css",
+    "labs/labs.js", "labs/catalog.js", "labs/lab-verifier.js", "labs/labs.css",
+  ];
+  for (const asset of assets) assert.ok(fs.existsSync(path.join(deploy, asset)), `falta _deploy/${asset}`);
+});
+
+/* Task 5 — coherencia de idioma de los cross-links tras el colapso ../ → /:
+   las páginas en deben aterrizar en el árbol /en/ (galería/labs), no en el es. */
+test("build-deploy: los cross-links de páginas en aterrizan en /en/ (Step 5), es queda en la raíz", () => {
+  // Portal en: nav/cards a /en/learn|labs|artifacts.
+  const portalEn = fs.readFileSync(path.join(deploy, "en", "index.html"), "utf8");
+  for (const dir of ["learn", "labs", "artifacts"]) {
+    assert.match(portalEn, new RegExp(`href="/en/${dir}/"`), `portal en debe enlazar /en/${dir}/`);
+    assert.doesNotMatch(portalEn, new RegExp(`href="/${dir}/"`), `portal en NO debe enlazar el árbol es /${dir}/`);
+  }
+  // Portal es: nav/cards a la raíz.
+  const portalEsHtml = fs.readFileSync(path.join(deploy, "index.html"), "utf8");
+  for (const dir of ["learn", "labs", "artifacts"]) {
+    assert.match(portalEsHtml, new RegExp(`href="/${dir}/"`), `portal es debe enlazar /${dir}/`);
+  }
+  // Unidad en (see → /en/artifacts/#x, do → /en/labs/#x); su gemela es queda en la raíz.
+  const unitEn = fs.readFileSync(path.join(deploy, "en", "learn", "fundamentos", "contratos-grafo", "index.html"), "utf8");
+  assert.match(unitEn, /href="\/en\/artifacts\/#siembra"/, "unit en see → /en/artifacts/#siembra");
+  assert.match(unitEn, /href="\/en\/labs\/#capabilities"/, "unit en do → /en/labs/#capabilities");
+  assert.doesNotMatch(unitEn, /href="\/artifacts\/#siembra"/, "unit en NO debe apuntar al árbol es");
+  const unitEs = fs.readFileSync(path.join(deploy, "learn", "fundamentos", "contratos-grafo", "index.html"), "utf8");
+  assert.match(unitEs, /href="\/artifacts\/#siembra"/, "unit es se queda en la raíz");
+  assert.match(unitEs, /href="\/labs\/#capabilities"/, "unit es se queda en la raíz");
+});
+
 /* Las páginas de unidad SSG (no colisionan con el app-dir) deben existir en
    ambos idiomas para las 15 unidades del catálogo. */
 test("build-deploy: existen las páginas de unidad SSG en _deploy (es + en)", () => {

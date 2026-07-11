@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es-MX" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorios · Milpa Academy</title>
+<meta name="description" content="Cuatro prácticas verificables para arrancar, validar y extender una aplicación Milpa real.">
+<link rel="canonical" href="https://academy.milpa.lat/labs/">
+<link rel="alternate" hreflang="es" href="https://academy.milpa.lat/labs/">
+<link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/labs/">
+<link rel="alternate" hreflang="x-default" href="https://academy.milpa.lat/labs/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+<link rel="icon" href="../../assets/milpa-app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../labs/labs.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RNV9LK6RLL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{language:'es',page_type:'labs'});gtag('config','G-RNV9LK6RLL');</script>
+<script src="../../analytics.js" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","inLanguage":"es","name":"Laboratorios · Milpa Academy","description":"Cuatro prácticas verificables para arrancar, validar y extender una aplicación Milpa real.","itemListElement":[{"@type":"ListItem","position":1,"name":"Arranca una Milpa real","description":"Crear el skeleton, arrancar su kernel y reconocer en la salida las piezas que efectivamente quedaron conectadas."},{"@type":"ListItem","position":2,"name":"Rompe y repara un contrato","description":"Observar que `requires/provides` falla antes del boot y comprobar que agregar un provider repara el grafo."},{"@type":"ListItem","position":3,"name":"Genera e inspecciona una ruta","description":"Usar devtools para generar código y después comprobar la ruta desde el kernel arrancado, no desde el filesystem."},{"@type":"ListItem","position":4,"name":"Activa la superficie agent-ready","description":"Habilitar MCP de forma explícita, generar una tool y comprobar que el runtime la registró con nombre y descripción."}]}</script>
+</head>
+<body class="mui-page">
+  <a class="ac-skip" href="#lab-workspace">Saltar a la práctica</a>
+
+  <header class="mui-header ac-header">
+    <div class="mui-container mui-container--wide mui-header__row">
+      <a class="mui-header__brand ac-brand" href="../../" aria-label="Milpa Academy, inicio">
+        <img src="../../assets/milpa-symbol-color.svg" alt="" width="24" height="24">
+        <strong>Milpa Academy</strong>
+        <span class="mui-badge">labs</span>
+      </a>
+      <nav class="mui-header__nav" aria-label="Principal">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../learn/">Aprender</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../artifacts/">Artifacts</a>
+      </nav>
+      <div class="mui-header__actions">
+        <button class="mui-btn mui-btn--ghost mui-btn--icon mui-btn--sm" id="theme-toggle" type="button" aria-label="Cambiar a tema claro" title="Cambiar tema">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mui-section mui-section--tight ac-intro" aria-labelledby="labs-title">
+      <div class="mui-container mui-container--wide">
+        <div class="ac-intro__copy">
+          <p class="mui-section__kicker">hacer · observar · verificar</p>
+          <h1 class="mui-section__title" id="labs-title">Laboratorios con evidencia real</h1>
+          <p class="mui-section__lede">Ejecuta cada práctica en tu copia del skeleton. Academy revisa la salida que pegues; nunca simula ni ejecuta comandos en tu máquina.</p>
+        </div>
+        <div class="ac-progress-block">
+          <div class="ac-progress-block__label">
+            <span>Progreso local</span>
+            <output id="progress-label">0 de 4 prácticas</output>
+          </div>
+          <div class="mui-progress" id="course-progress" role="progressbar" aria-label="Progreso de laboratorios" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+            <span class="mui-progress__bar" id="course-progress-bar" style="width:0%"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ac-labs" aria-label="Prácticas">
+      <div class="mui-container mui-container--wide ac-labs__layout">
+        <aside class="ac-labs__nav" aria-label="Ruta de laboratorios">
+          <p class="ac-eyebrow">Ruta práctica</p>
+          <ol class="mui-steps ac-step-list" id="lab-navigation"></ol>
+        </aside>
+
+        <article class="ac-workspace" id="lab-workspace" tabindex="-1">
+      <section class="ac-labs-summary" aria-labelledby="labs-summary-title">
+        <h2 id="labs-summary-title">Las cuatro prácticas</h2>
+        <ol class="mui-steps">
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">01</span> Arranca una Milpa real</p>
+            <p class="mui-steps__body">Crear el skeleton, arrancar su kernel y reconocer en la salida las piezas que efectivamente quedaron conectadas.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">02</span> Rompe y repara un contrato</p>
+            <p class="mui-steps__body">Observar que <code>requires/provides</code> falla antes del boot y comprobar que agregar un provider repara el grafo.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">03</span> Genera e inspecciona una ruta</p>
+            <p class="mui-steps__body">Usar devtools para generar código y después comprobar la ruta desde el kernel arrancado, no desde el filesystem.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">04</span> Activa la superficie agent-ready</p>
+            <p class="mui-steps__body">Habilitar MCP de forma explícita, generar una tool y comprobar que el runtime la registró con nombre y descripción.</p>
+          </div>
+        </li>
+        </ol>
+      </section>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ac-footer">
+    <div class="mui-container mui-container--wide ac-footer__row">
+      <span>@milpa/design 0.9.0</span>
+      <span>Comandos verificados contra milpa/skeleton · corte 2026-07-10</span>
+    </div>
+  </footer>
+
+  <script src="../../i18n.js" defer></script>
+  <script src="../../labs/catalog.js" defer></script>
+  <script src="../../labs/lab-verifier.js" defer></script>
+  <script src="../../inline-code.js" defer></script>
+  <script src="../../labs/labs.js" defer></script>
+</body>
+</html>

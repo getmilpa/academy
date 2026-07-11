@@ -9,10 +9,15 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // catalog.js es UMD; se carga con require (cjs-module-lexer no ve sus exports).
 const require = createRequire(import.meta.url);
 const catalog = require("../curriculum/catalog.js");
+/* Task 5: labs/index.html + artifacts/index.html salen del contrato es-MX plano
+   — la galería y el shell de labs pasaron a SSG bilingüe (site/[en/]artifacts/,
+   site/[en/]labs/) y sus index.html legado quedan como shells NO deployados
+   (EXCLUDED_SHELLS en build-deploy), igual que learn/index.html. Sus contratos
+   (lang/hreflang/6-bundles) se verifican ahora sobre las páginas generadas
+   (generatedHtmlFiles). learn/index.html se conserva acá porque otros tests
+   siguen leyendo su bundle de hidratación (orden de scripts learn-strings→learn). */
 const htmlFiles = [
   "learn/index.html",
-  "labs/index.html",
-  "artifacts/index.html",
   "webinars/index.html",
 ];
 const bundleOrder = [
@@ -34,6 +39,11 @@ const generatedHtmlFiles = [
   { relative: "site/en/atomo/index.html", lang: "en" },
   { relative: "site/index.html", lang: "es-MX" },
   { relative: "site/en/index.html", lang: "en" },
+  /* Task 5: galería completa + shell de labs (SSG bilingüe). */
+  { relative: "site/artifacts/index.html", lang: "es-MX" },
+  { relative: "site/en/artifacts/index.html", lang: "en" },
+  { relative: "site/labs/index.html", lang: "es-MX" },
+  { relative: "site/en/labs/index.html", lang: "en" },
   /* Task 6: learn index + 30 unit pages (bilingual SSG). */
   { relative: "site/learn/index.html", lang: "es-MX" },
   { relative: "site/en/learn/index.html", lang: "en" },
@@ -235,5 +245,34 @@ test("las páginas learn-index SSG muestran las 4 tarjetas de track y #globalPro
     assert.equal((html.match(/mui-card--interactive ac-track-card/g) || []).length, catalog.tracks.length, rel + ": 4 tarjetas");
     assert.match(html, /id="globalProgress">0\/\d+</, rel + ": #globalProgress");
     assert.match(html, /id="courseNav"/, rel + ": courseNav");
+  }
+});
+
+/* Task 5 — PE de la galería: los 9 artifacts (chrome + 8 hidden + el átomo)
+   renderizan como HTML real sin JS, ambos idiomas. artifacts.js sólo hidrata. */
+test("la galería SSG muestra los 9 artifacts sin JS (chrome + 8 hidden + átomo), es/en", () => {
+  const ids = ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo"];
+  for (const rel of ["site/artifacts/index.html", "site/en/artifacts/index.html"]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    for (const id of ids) assert.match(html, new RegExp(`id="${id}"`), rel + ": falta la sección " + id);
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 8, rel + ": deben quedar 8 artifacts hidden (2-9)");
+    assert.match(html, /<milpa-artifact id="atomo-artifact" lang="(?:es|en)">/, rel + ": falta el wrapper del átomo");
+    assert.match(html, /id="app-shell"/, rel + ": falta el shell");
+    assert.match(html, /id="artifact-nav"/, rel + ": falta el sidebar");
+    assert.match(html, /id="main"/, rel + ": falta el main");
+  }
+});
+
+/* Task 5 — PE del shell de labs: el resumen estático de los 4 labs (título +
+   objetivo) es visible sin JS, y los hooks del runner existen. labs.js reemplaza
+   el resumen dentro de #lab-workspace al hidratar en el idioma del <html lang>. */
+test("el shell de labs SSG muestra el resumen de los 4 labs sin JS + hooks del runner, es/en", () => {
+  for (const rel of ["site/labs/index.html", "site/en/labs/index.html"]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    for (const hook of ["lab-navigation", "lab-workspace", "course-progress", "course-progress-bar", "progress-label", "theme-toggle"]) {
+      assert.match(html, new RegExp(`id="${hook}"`), rel + ": falta el hook " + hook);
+    }
+    assert.match(html, /class="ac-labs-summary"/, rel + ": falta el resumen estático");
+    assert.ok((html.match(/mui-steps__title/g) || []).length >= 4, rel + ": el resumen debe listar los 4 labs");
   }
 });

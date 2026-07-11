@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labs · Milpa Academy</title>
+<meta name="description" content="Four verifiable practices to boot, validate and extend a real Milpa application.">
+<link rel="canonical" href="https://academy.milpa.lat/en/labs/">
+<link rel="alternate" hreflang="es" href="https://academy.milpa.lat/labs/">
+<link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/labs/">
+<link rel="alternate" hreflang="x-default" href="https://academy.milpa.lat/labs/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/dist/milpa-tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/motion/milpa-motion.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/primitives/milpa-primitives.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/components/milpa-components.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/artifacts/milpa-artifacts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milpa/design@0.9.0/layouts/milpa-layouts.css">
+<link rel="icon" href="../../../assets/milpa-app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../labs/labs.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RNV9LK6RLL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{language:'en',page_type:'labs'});gtag('config','G-RNV9LK6RLL');</script>
+<script src="../../../analytics.js" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","inLanguage":"en","name":"Labs · Milpa Academy","description":"Four verifiable practices to boot, validate and extend a real Milpa application.","itemListElement":[{"@type":"ListItem","position":1,"name":"Boot a real Milpa","description":"Create the skeleton, boot its kernel and recognize in the output the pieces that actually got wired up."},{"@type":"ListItem","position":2,"name":"Break and repair a contract","description":"Observe that `requires/provides` fails before boot and confirm that adding a provider repairs the graph."},{"@type":"ListItem","position":3,"name":"Generate and inspect a route","description":"Use devtools to generate code and then check the route from the booted kernel, not from the filesystem."},{"@type":"ListItem","position":4,"name":"Activate the agent-ready surface","description":"Enable MCP explicitly, generate a tool and confirm the runtime registered it with a name and description."}]}</script>
+</head>
+<body class="mui-page">
+  <a class="ac-skip" href="#lab-workspace">Skip to the practice</a>
+
+  <header class="mui-header ac-header">
+    <div class="mui-container mui-container--wide mui-header__row">
+      <a class="mui-header__brand ac-brand" href="../../../en/" aria-label="Milpa Academy, home">
+        <img src="../../../assets/milpa-symbol-color.svg" alt="" width="24" height="24">
+        <strong>Milpa Academy</strong>
+        <span class="mui-badge">labs</span>
+      </a>
+      <nav class="mui-header__nav" aria-label="Main">
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../../en/learn/">Learn</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="../../../en/artifacts/">Artifacts</a>
+      </nav>
+      <div class="mui-header__actions">
+        <button class="mui-btn mui-btn--ghost mui-btn--icon mui-btn--sm" id="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mui-section mui-section--tight ac-intro" aria-labelledby="labs-title">
+      <div class="mui-container mui-container--wide">
+        <div class="ac-intro__copy">
+          <p class="mui-section__kicker">do · observe · verify</p>
+          <h1 class="mui-section__title" id="labs-title">Labs with real evidence</h1>
+          <p class="mui-section__lede">Run each practice on your own copy of the skeleton. Academy reviews the output you paste; it never simulates or runs commands on your machine.</p>
+        </div>
+        <div class="ac-progress-block">
+          <div class="ac-progress-block__label">
+            <span>Local progress</span>
+            <output id="progress-label">0 of 4 practices</output>
+          </div>
+          <div class="mui-progress" id="course-progress" role="progressbar" aria-label="Labs progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+            <span class="mui-progress__bar" id="course-progress-bar" style="width:0%"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ac-labs" aria-label="Practices">
+      <div class="mui-container mui-container--wide ac-labs__layout">
+        <aside class="ac-labs__nav" aria-label="Labs path">
+          <p class="ac-eyebrow">Practice path</p>
+          <ol class="mui-steps ac-step-list" id="lab-navigation"></ol>
+        </aside>
+
+        <article class="ac-workspace" id="lab-workspace" tabindex="-1">
+      <section class="ac-labs-summary" aria-labelledby="labs-summary-title">
+        <h2 id="labs-summary-title">The four practices</h2>
+        <ol class="mui-steps">
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">01</span> Boot a real Milpa</p>
+            <p class="mui-steps__body">Create the skeleton, boot its kernel and recognize in the output the pieces that actually got wired up.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">02</span> Break and repair a contract</p>
+            <p class="mui-steps__body">Observe that <code>requires/provides</code> fails before boot and confirm that adding a provider repairs the graph.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">03</span> Generate and inspect a route</p>
+            <p class="mui-steps__body">Use devtools to generate code and then check the route from the booted kernel, not from the filesystem.</p>
+          </div>
+        </li>
+        <li class="mui-steps__item">
+          <span class="mui-steps__marker" aria-hidden="true"></span>
+          <div>
+            <p class="mui-steps__title"><span class="mui-badge mui-badge--accent">04</span> Activate the agent-ready surface</p>
+            <p class="mui-steps__body">Enable MCP explicitly, generate a tool and confirm the runtime registered it with a name and description.</p>
+          </div>
+        </li>
+        </ol>
+      </section>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ac-footer">
+    <div class="mui-container mui-container--wide ac-footer__row">
+      <span>@milpa/design 0.9.0</span>
+      <span>Commands verified against milpa/skeleton · snapshot 2026-07-10</span>
+    </div>
+  </footer>
+
+  <script src="../../../i18n.js" defer></script>
+  <script src="../../../labs/catalog.js" defer></script>
+  <script src="../../../labs/lab-verifier.js" defer></script>
+  <script src="../../../inline-code.js" defer></script>
+  <script src="../../../labs/labs.js" defer></script>
+</body>
+</html>

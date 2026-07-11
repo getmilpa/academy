@@ -21,6 +21,26 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/atomo/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/artifacts/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/artifacts/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/artifacts/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/artifacts/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/artifacts/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/artifacts/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/labs/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/labs/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/labs/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/labs/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/labs/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/labs/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/learn/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/"/>

@@ -8,6 +8,8 @@ Milpa is a PHP framework whose distinguishing trait is that it opens pluggable p
 
 - [Milpa Academy](https://academy.milpa.lat/en/): The curriculum home: learning tracks, verifiable labs, and architecture artifacts.
 - [The atom and its doors](https://academy.milpa.lat/en/atomo/): Artifact 09: the same handler, projected through three doors, with its guarantees per surface.
+- [Milpa Academy · Architecture artifacts](https://academy.milpa.lat/en/artifacts/): The full gallery: the 9 interactive architecture artifacts, from the webinar to engineering inspection.
+- [Labs · Milpa Academy](https://academy.milpa.lat/en/labs/): Four verifiable practices: boot a host, break and repair a contract, generate a route and activate the agent-ready surface.
 
 ## Learn
 

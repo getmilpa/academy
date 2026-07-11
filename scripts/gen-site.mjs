@@ -12,6 +12,9 @@ import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
 import { htmlOpen, renderHead } from "./gen/page.mjs";
 import { buildLearnPages } from "./gen/learn.mjs";
+import { renderAtomoFallback } from "./gen/atomo.mjs";
+import { buildGalleryPages } from "./gen/gallery.mjs";
+import { buildLabsPages } from "./gen/labs.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["es", "en"];
@@ -41,6 +44,13 @@ function gtagBootstrap(lang, pageType) {
    volumen (30 unit pages + 2 learn index) crecería demasiado este archivo. */
 const LEARN = buildLearnPages({ BASE, gtagBootstrap });
 
+/* Galería completa (9 artifacts, es/en) + shell de laboratorios (es/en). Mismo
+   contrato que buildLearnPages ({ pages, sitemapPages, llms }); los generadores
+   viven en gen/gallery.mjs y gen/labs.mjs por volumen. Sus index.html ganan la
+   colisión con el app-dir en build-deploy (EXCLUDED_SHELLS). */
+const GALLERY_PAGES = buildGalleryPages({ BASE, gtagBootstrap });
+const LABS_PAGES = buildLabsPages({ BASE, gtagBootstrap });
+
 function urlFor(lang) {
   return lang === "es" ? `${BASE}/atomo/` : `${BASE}/en/atomo/`;
 }
@@ -54,98 +64,6 @@ function pathFor(lang) {
    (en) está a tres niveles. Hardcodear "../../artifacts/" en ambas rompe la página en. */
 function assetPrefix(lang) {
   return lang === "es" ? "../.." : "../../..";
-}
-
-function stage(lang, id, label) {
-  return `<div class="mui-pipeline__stage" data-stage="${id}"><span class="mui-pipeline__label">${label[lang]}</span><p class="mui-pipeline__note"></p></div>`;
-}
-
-function pipelineColumn(lang, asset, surfaceId, surface) {
-  const stages = ATOMO.stages.map((item) => stage(lang, item.id, item.label)).join("\n                ");
-  return `          <section class="wb-surface-column" data-surface="${surfaceId}" aria-label="${surface.sectionAriaLabel[lang]}">
-            <h2 class="wb-surface-column__title">${surface.columnTitle[lang]}</h2>
-            <p class="wb-surface-column__invocation" id="inv-${surfaceId}"><code>${surface.invocation}</code></p>
-            <div class="mui-pipeline mui-pipeline--vertical" id="pipe-${surfaceId}" aria-label="${surface.pipelineAriaLabel[lang]}">
-              <div class="mui-pipeline__track" style="--_pipeline-progress: 0">
-                <span class="mui-pipeline__marker" aria-hidden="true"></span>
-                ${stages}
-              </div>
-            </div>
-            <p class="wb-surface-column__status" id="status-${surfaceId}" role="status" aria-live="polite">${surface.initialStatus[lang]}</p>
-          </section>`;
-}
-
-/* Estructura estática interior de <milpa-artifact id="atomo-artifact">, la
-   MISMA que hidrata milpa-artifact.js (artifacts/index.html, bloque #atomo).
-   data-stage, data-surface, ids de pipeline/status/scope-toggle: idénticos
-   entre es/en — únicamente cambia el texto visible. */
-function renderAtomo(lang, asset) {
-  const runtimeHref = `${asset}/artifacts/#runtime`;
-  const warning = ATOMO.warning[lang].replace("{runtimeHref}", runtimeHref);
-  const guaranteeRows = ATOMO.guarantees.rows
-    .map((row) => `            <tr><td>${row.surface}</td><td>${row.confirm[lang]}</td><td>${row.scopes[lang]}</td></tr>`)
-    .join("\n");
-  const sourceItems = ATOMO.sources.items.map((item) => `            <li>${item[lang]}</li>`).join("\n");
-
-  return `<header class="wb-artifact__header">
-          <div class="wb-artifact__meta">
-            <span class="mui-badge mui-badge--accent">${ATOMO.badges.artifact[lang]}</span>
-            <span class="mui-badge mui-badge--secondary">${ATOMO.badges.kind[lang]}</span>
-          </div>
-          <h1 id="atomo-title">${ATOMO.title[lang]}</h1>
-          <p>${ATOMO.lede[lang]}</p>
-        </header>
-
-        <article class="wb-atom-card" aria-label="${ATOMO.atomCard.ariaLabel[lang]}">
-          <p class="wb-atom-card__name"><code>${ATOMO.atomCard.name}</code></p>
-          <ul class="wb-atom-card__chips">
-            <li class="mui-badge mui-badge--warning">${ATOMO.atomCard.chips.mutating}</li>
-            <li class="mui-badge mui-badge--warning">${ATOMO.atomCard.chips.requiresConfirmation}</li>
-            <li class="mui-badge mui-badge--secondary">${ATOMO.atomCard.chips.scopes}</li>
-            <li class="mui-badge mui-badge--secondary">${ATOMO.atomCard.chips.handler}</li>
-          </ul>
-        </article>
-
-        <div class="wb-surface-controls" role="group" aria-label="${ATOMO.surfaceControls.groupLabel[lang]}">
-          <button class="mui-btn mui-btn--lg mui-btn--primary wb-surface" type="button" data-surface="cli">${ATOMO.surfaceControls.buttons.cli[lang]}</button>
-          <button class="mui-btn mui-btn--lg mui-btn--secondary wb-surface" type="button" data-surface="mcp">${ATOMO.surfaceControls.buttons.mcp[lang]}</button>
-          <button class="mui-btn mui-btn--lg mui-btn--secondary wb-surface" type="button" data-surface="http">${ATOMO.surfaceControls.buttons.http[lang]}</button>
-          <label class="mui-choice wb-scope-toggle">
-            <input class="mui-switch" id="scope-toggle" type="checkbox" role="switch">
-            <span>${ATOMO.surfaceControls.toggleLabel[lang]}</span>
-          </label>
-        </div>
-
-        <div class="mui-callout mui-callout--warning" role="note">
-          <p><strong>${ATOMO.warning.lead[lang]}</strong> ${warning}</p>
-        </div>
-
-        <div class="wb-projection">
-${pipelineColumn(lang, asset, "cli", ATOMO.surfaces.cli)}
-${pipelineColumn(lang, asset, "mcp", ATOMO.surfaces.mcp)}
-${pipelineColumn(lang, asset, "http", ATOMO.surfaces.http)}
-        </div>
-
-        <table class="mui-table mui-table--compact wb-guarantees">
-          <caption>${ATOMO.guarantees.caption[lang]}</caption>
-          <thead><tr><th scope="col">${ATOMO.guarantees.headers.surface[lang]}</th><th scope="col">${ATOMO.guarantees.headers.confirm[lang]}</th><th scope="col">${ATOMO.guarantees.headers.scopes[lang]}</th></tr></thead>
-          <tbody id="atomo-matrix">
-${guaranteeRows}
-          </tbody>
-        </table>
-
-        <div class="wb-lesson mui-callout" role="note">
-          <p>${ATOMO.lesson[lang]}</p>
-        </div>
-
-        <details class="wb-source">
-          <summary>${ATOMO.sources.summary[lang]}</summary>
-          <p>${ATOMO.sources.scope[lang]}</p>
-          <h3>${ATOMO.sources.heading[lang]}</h3>
-          <ul>
-${sourceItems}
-          </ul>
-        </details>`;
 }
 
 function jsonld(lang) {
@@ -183,7 +101,7 @@ ${head}
 <h1 class="wb-hero">${ATOMO.hero[lang]}</h1>
 <p class="wb-intro">${ATOMO.intro[lang]}</p>
 <milpa-artifact id="atomo-artifact" lang="${lang}">
-        ${renderAtomo(lang, asset)}
+        ${renderAtomoFallback(lang, `${asset}/artifacts/#runtime`)}
       </milpa-artifact>
 </main>
 <script src="${asset}/artifacts/artifacts-core.js" defer></script>
@@ -217,6 +135,13 @@ function portalPathFor(lang) {
    assetPrefix() arriba, aplicado a la profundidad del portal. */
 function portalAssetPrefix(lang) {
   return lang === "es" ? ".." : "../..";
+}
+
+/* Enlace a un app-dir bilingüe (learn/labs/artifacts) coherente por idioma: el
+   portal en enlaza al árbol /en/ (colapsa a /en/learn/ …), el es al árbol raíz
+   (/learn/ …). assets compartidos siguen usando portalAssetPrefix directo. */
+function portalAppHref(lang, asset, dir) {
+  return `${asset}/${lang === "en" ? "en/" : ""}${dir}/`;
 }
 
 /* Switch de idioma: <a href> real, sin JS, hacia el portal del otro
@@ -264,9 +189,9 @@ function renderPortalHeader(lang, asset, sw) {
         <span>${PORTAL.meta.title[lang]}</span>
       </a>
       <nav class="mui-header__nav" aria-label="${c.sectionsAriaLabel[lang]}">
-        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/learn/">${PORTAL.nav.learn[lang]}</a>
-        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/labs/">${PORTAL.nav.labs[lang]}</a>
-        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${asset}/artifacts/">${PORTAL.nav.artifacts[lang]}</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${portalAppHref(lang, asset, "learn")}">${PORTAL.nav.learn[lang]}</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${portalAppHref(lang, asset, "labs")}">${PORTAL.nav.labs[lang]}</a>
+        <a class="mui-btn mui-btn--ghost mui-btn--sm" href="${portalAppHref(lang, asset, "artifacts")}">${PORTAL.nav.artifacts[lang]}</a>
       </nav>
       <div class="mui-header__actions">
         <a class="mui-btn mui-btn--ghost mui-btn--sm" id="langSwitch" href="${sw.href}" hreflang="${sw.hreflang}" rel="alternate">${sw.label}</a>
@@ -287,9 +212,9 @@ function renderPortalDrawer(lang, asset) {
     </header>
     <div class="mui-drawer__body">
       <nav class="ac-mobile-nav" aria-label="${c.sectionsAriaLabel[lang]}">
-        <a class="mui-docs__nav-item" href="${asset}/learn/">${PORTAL.nav.learn[lang]}</a>
-        <a class="mui-docs__nav-item" href="${asset}/labs/">${PORTAL.nav.labs[lang]}</a>
-        <a class="mui-docs__nav-item" href="${asset}/artifacts/">${PORTAL.nav.artifacts[lang]}</a>
+        <a class="mui-docs__nav-item" href="${portalAppHref(lang, asset, "learn")}">${PORTAL.nav.learn[lang]}</a>
+        <a class="mui-docs__nav-item" href="${portalAppHref(lang, asset, "labs")}">${PORTAL.nav.labs[lang]}</a>
+        <a class="mui-docs__nav-item" href="${portalAppHref(lang, asset, "artifacts")}">${PORTAL.nav.artifacts[lang]}</a>
         <a class="mui-docs__nav-item" href="${sourceHref}" data-outbound-kind="repo">${PORTAL.nav.source[lang]}</a>
       </nav>
     </div>
@@ -308,8 +233,8 @@ function renderPortalHero(lang, asset) {
           <div class="mui-callout__content"><p class="mui-callout__body">“${PORTAL.hero.thesis[lang]}”</p></div>
         </div>
         <div class="ac-overview__actions">
-          <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="${asset}/learn/">${PORTAL.hero.ctaPrimary[lang]}</a>
-          <a class="mui-btn" id="secondaryLearningAction" href="${asset}/labs/">${PORTAL.hero.ctaSecondary[lang]}</a>
+          <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="${portalAppHref(lang, asset, "learn")}">${PORTAL.hero.ctaPrimary[lang]}</a>
+          <a class="mui-btn" id="secondaryLearningAction" href="${portalAppHref(lang, asset, "labs")}">${PORTAL.hero.ctaSecondary[lang]}</a>
         </div>
         <div class="ac-overview__stats" aria-label="${PORTAL.chrome.statsAriaLabel[lang]}">
           <div class="mui-stat"><span class="mui-stat__label">${s.tracks[lang]}</span><strong class="mui-stat__value" id="trackCount">4</strong><span class="mui-stat__meta">${s.tracksMeta[lang]}</span></div>
@@ -340,10 +265,10 @@ function renderPortalPractice(lang, asset) {
         <p class="mui-section__kicker">${p.kicker[lang]}</p>
         <h2 class="mui-section__title" id="practiceTitle">${p.title[lang]}</h2>
         <div class="ac-tool-grid">
-          <a class="mui-card mui-card--interactive ac-tool" href="${asset}/labs/">
+          <a class="mui-card mui-card--interactive ac-tool" href="${portalAppHref(lang, asset, "labs")}">
             <div class="mui-card__body"><span class="mui-badge mui-badge--accent">${p.labs.badge[lang]}</span><h3>${p.labs.h3[lang]}</h3><p>${p.labs.body[lang]}</p><span class="ac-tool__link">${p.labs.link[lang]}</span></div>
           </a>
-          <a class="mui-card mui-card--interactive ac-tool" href="${asset}/artifacts/">
+          <a class="mui-card mui-card--interactive ac-tool" href="${portalAppHref(lang, asset, "artifacts")}">
             <div class="mui-card__body"><span class="mui-badge mui-badge--secondary">${p.artifacts.badge[lang]}</span><h3>${p.artifacts.h3[lang]}</h3><p>${p.artifacts.body[lang]}</p><span class="ac-tool__link">${p.artifacts.link[lang]}</span></div>
           </a>
         </div>
@@ -431,6 +356,8 @@ ${renderPortalFooter(lang)}
 const SITEMAP_PAGES = [
   { es: portalUrlFor("es"), en: portalUrlFor("en") },
   { es: urlFor("es"), en: urlFor("en") },
+  ...GALLERY_PAGES.sitemapPages,
+  ...LABS_PAGES.sitemapPages,
   ...LEARN.sitemapPages,
 ];
 
@@ -492,6 +419,9 @@ function llmsPath(lang) {
 function llms(lang) {
   const repos = ATOMO.jsonld.isBasedOn.map((url) => `- [${llmsRepoLabel(url)}](${url})`).join("\n");
   const learnLinks = LEARN.llms[lang].map((entry) => `- [${entry.label}](${entry.url}): ${entry.note}`).join("\n");
+  // Galería + laboratorios: mismo idioma que la página (nunca cruza idiomas).
+  const practiceLinks = [...GALLERY_PAGES.llms[lang], ...LABS_PAGES.llms[lang]]
+    .map((entry) => `- [${entry.label}](${entry.url}): ${entry.note}`).join("\n");
   return `# Milpa
 
 > ${ATOMO.hero[lang]}
@@ -502,6 +432,7 @@ ${LLMS_COPY.what[lang]}
 
 - [${PORTAL.meta.title[lang]}](${portalUrlFor(lang)}): ${LLMS_COPY.portalLinkNote[lang]}
 - [${ATOMO.title[lang]}](${urlFor(lang)}): ${LLMS_COPY.pageLinkNote[lang]}
+${practiceLinks}
 
 ## ${PORTAL.nav.learn[lang]}
 
@@ -530,6 +461,11 @@ for (const learnPage of LEARN.pages) {
   writeFileSync(path.join(ROOT, learnPage.path), learnPage.html, "utf8");
 }
 
+for (const genPage of [...GALLERY_PAGES.pages, ...LABS_PAGES.pages]) {
+  mkdirSync(path.join(ROOT, path.dirname(genPage.path)), { recursive: true });
+  writeFileSync(path.join(ROOT, genPage.path), genPage.html, "utf8");
+}
+
 writeFileSync(path.join(ROOT, "site/sitemap.xml"), sitemap(), "utf8");
 writeFileSync(path.join(ROOT, "site/robots.txt"), robots(), "utf8");
 for (const lang of LANGS) {
@@ -544,6 +480,8 @@ console.log(
     ...LANGS.map(pathFor),
     ...LANGS.map(portalPathFor),
     `${LEARN.pages.length} learn pages (units + index, es/en)`,
+    ...GALLERY_PAGES.pages.map((p) => p.path),
+    ...LABS_PAGES.pages.map((p) => p.path),
     "site/sitemap.xml",
     "site/robots.txt",
     ...LANGS.map(llmsPath),

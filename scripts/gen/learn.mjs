@@ -95,6 +95,29 @@ function unitRel(lang, trackId, unitId) {
 }
 function portalHomeHref(lang, rootPrefix) { return lang === "es" ? rootPrefix : rootPrefix + "en/"; }
 
+/* Ruta relativa (post-rootPrefix) a un app-dir bilingüe coherente por idioma:
+   en → árbol /en/ (colapsa a /en/labs/ …), es → raíz (/labs/ …). webinars/ es
+   es-only y NO pasa por acá. */
+function appRel(lang, dir) { return (lang === "en" ? "en/" : "") + dir + "/"; }
+
+/* Reescribe un href see.href/do.href del catálogo (`../artifacts/#x`,
+   `../labs/#x`, `../artifacts/`) al árbol /en/ en páginas en, para que colapse a
+   /en/artifacts/#x / /en/labs/#x en deploy (es queda igual). Sólo redirige
+   destinos que existen en el árbol en (el index.html de la galería/labs: dir
+   raíz, ancla #, o index.html); recursos es-only compartidos como
+   `../artifacts/README.md` se dejan intactos (colapsan a /artifacts/README.md).
+   Externos (https://…) y otros no coinciden y pasan sin tocar. */
+function crossLink(lang, rootPrefix, href) {
+  if (lang === "es") return href;
+  const match = href.match(/^\.\.\/(artifacts|labs)\/(.*)$/);
+  if (!match) return href;
+  const rest = match[2];
+  if (rest === "" || rest.startsWith("#") || rest.startsWith("index.html")) {
+    return rootPrefix + "en/" + match[1] + "/" + rest;
+  }
+  return href;
+}
+
 const BASE_URL = { fn: null };
 function unitUrl(lang, trackId, unitId) {
   return BASE_URL.fn + (lang === "es" ? "/learn/" : "/en/learn/") + trackId + "/" + unitId + "/";
@@ -175,8 +198,8 @@ function navMarkup(lang, rootPrefix, currentKey, mobile) {
   });
   if (mobile) {
     html = '<div class="mui-docs__nav-group"><p class="mui-docs__nav-heading">' + escapeHtml(t.mobileAcademyHeading)
-      + '</p><a class="mui-docs__nav-item" href="' + rootPrefix + 'labs/">' + escapeHtml(t.navLabs)
-      + '</a><a class="mui-docs__nav-item" href="' + rootPrefix + 'artifacts/">' + escapeHtml(t.navArtifacts)
+      + '</p><a class="mui-docs__nav-item" href="' + rootPrefix + appRel(lang, "labs") + '">' + escapeHtml(t.navLabs)
+      + '</a><a class="mui-docs__nav-item" href="' + rootPrefix + appRel(lang, "artifacts") + '">' + escapeHtml(t.navArtifacts)
       + '</a><a class="mui-docs__nav-item" href="' + rootPrefix + 'webinars/">' + escapeHtml(t.navWebinar) + "</a></div>" + html;
   }
   return html;
@@ -255,12 +278,12 @@ function lessonMarkup(lang, rootPrefix, track, unit, index, quiz) {
   const seeMarkup = '<section class="ac-phase" id="ver"><h2><span class="ac-phase-index" aria-hidden="true">2</span>'
     + escapeHtml(t.phaseSee) + '</h2><div class="mui-callout mui-callout--note mui-not-prose" role="note"><span class="mui-callout__icon" aria-hidden="true">↗</span><div class="mui-callout__content"><p class="mui-callout__title">'
     + escapeHtml(pick(unit.see.label, lang)) + '</p><p class="mui-callout__body">' + escapeHtml(pick(unit.see.note, lang))
-    + '</p><div class="ac-action-row"><a class="mui-btn mui-btn--primary mui-btn--sm" href="' + escapeHtml(unit.see.href)
+    + '</p><div class="ac-action-row"><a class="mui-btn mui-btn--primary mui-btn--sm" href="' + escapeHtml(crossLink(lang, rootPrefix, unit.see.href))
     + '">' + escapeHtml(t.openArtifactButton) + "</a></div></div></div></section>";
 
   const doMarkup = '<section class="ac-phase" id="hacer"><h2><span class="ac-phase-index" aria-hidden="true">3</span>'
     + escapeHtml(t.phaseDo) + "</h2><p>" + escapeHtml(t.doIntro) + "</p>" + terminalMarkup(t, unit.do.commands)
-    + '<div class="ac-action-row mui-not-prose"><a class="mui-btn mui-btn--secondary" href="' + escapeHtml(unit.do.href)
+    + '<div class="ac-action-row mui-not-prose"><a class="mui-btn mui-btn--secondary" href="' + escapeHtml(crossLink(lang, rootPrefix, unit.do.href))
     + '">' + escapeHtml(pick(unit.do.label, lang)) + "</a></div></section>";
 
   const verifyMarkup = '<section class="ac-phase" id="verificar"><h2><span class="ac-phase-index" aria-hidden="true">4</span>'
@@ -365,8 +388,8 @@ function documentHtml(lang, rootPrefix, headHtml, parts) {
     "    </a>",
     '    <nav class="mui-docs__topbar-nav" aria-label="' + escapeHtml(pick(PORTAL.chrome.sectionsAriaLabel, lang)) + '">',
     '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + learnIndexRel(lang) + '">' + escapeHtml(pick(PORTAL.nav.learn, lang)) + "</a>",
-    '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + 'labs/">' + escapeHtml(pick(PORTAL.nav.labs, lang)) + "</a>",
-    '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + 'artifacts/">' + escapeHtml(pick(PORTAL.nav.artifacts, lang)) + "</a>",
+    '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + appRel(lang, "labs") + '">' + escapeHtml(pick(PORTAL.nav.labs, lang)) + "</a>",
+    '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + appRel(lang, "artifacts") + '">' + escapeHtml(pick(PORTAL.nav.artifacts, lang)) + "</a>",
     '      <a class="mui-btn mui-btn--ghost mui-btn--sm" href="' + rootPrefix + 'webinars/">' + escapeHtml(t.navWebinar) + "</a>",
     "    </nav>",
     '    <div class="mui-docs__topbar-actions">',
