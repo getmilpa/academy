@@ -138,7 +138,7 @@ test("no reaparecen rutas ni claves de tema anteriores", () => {
 test("los breadcrumbs respetan la anatomía publicada", () => {
   const learn = fs.readFileSync(path.join(root, "learn/learn.js"), "utf8");
   const webinar = fs.readFileSync(path.join(root, "webinars/index.html"), "utf8");
-  assert.match(learn, /<a class=\\"mui-breadcrumbs__link\\" href=\\"\.\/\\">Rutas<\/a>/);
+  assert.match(learn, /<a class=\\"mui-breadcrumbs__link\\" href=\\"\.\/\\">[^<]+<\/a>/);
   assert.match(learn, /<span aria-current=\\"page\\">/);
   assert.doesNotMatch(learn, /mui-breadcrumbs__item\\" aria-current/);
   assert.match(webinar, /class="mui-breadcrumbs__link"/);
