@@ -610,4 +610,188 @@ export const GALLERY = {
       component: "atomo",
     },
   ],
+
+  /* ── Artifact 10: frontera — GRADUACIÓN del Almácigo (lección boundary-map) ──
+     Nace bilingüe (no hay es verbatim en index.html: este artifact no existe en
+     el HTML legacy). Se STAGEA como GALLERY.frontera —y NO dentro de artifacts[]—
+     a propósito: gen/gallery.mjs itera artifacts[] con RENDERERS[a.id] y no tiene
+     (todavía) un renderer 'frontera', así que meterlo al array reventaría el SSG.
+     El walk de completeness y el pin de leaf-count SÍ lo recorren (vive dentro de
+     GALLERY); los dos tests de fidelidad es-verbatim contra HTML lo excluyen por
+     prefijo de path (ver comentarios en i18n-contract.test.mjs).
+
+     CONTRATO PARA TASK 2 (esqueleto SSG + demo interactivo + GA4):
+       1. Promover GALLERY.frontera → GALLERY.artifacts[9] (mover el objeto).
+       2. navLabel → chrome.sidebar.links.frontera; extender el grupo
+          engineeringInspect de renderSidebar a [3..9] (frontera es index 9).
+       3. Registrar renderFrontera en RENDERERS (scripts/gen/gallery.mjs) usando
+          este shape; sección hidden como los 8 (solo #siembra visible).
+       4. Cablear el demo en artifacts.js con AcademyCore.frontierProject /
+          coupleCheck sobre demo.outputs + demo.enMap (gap: demo.gapCode); GA4.
+       5. Des-scopear los dos tests es-verbatim (frontera ya rinde a HTML) y
+          bajar el pin si el objeto se movió sin cambiar hojas (no debería). */
+  frontera: {
+    id: "frontera",
+    /* data-kind de la <section> (alimenta el topbar). Grupo del sidebar:
+       "Ingeniería · inspeccionar" (engineeringInspect). */
+    kind: { es: "Ingeniería · inspeccionar", en: "Engineering · inspect" },
+    /* Etiqueta de nav (Task 2 la mueve a chrome.sidebar.links.frontera). */
+    navLabel: { es: "El mapa en la frontera", en: "The map at the boundary" },
+    badges: {
+      index: { es: "Artifact 10", en: "Artifact 10" },
+      tag: { es: "modelo didáctico", en: "didactic model" },
+    },
+    title: { es: "El mapa en la frontera", en: "The map at the boundary" },
+    lede: {
+      es: "Cuando la lógica pura emite prosa en un idioma, localizarla te obliga a elegir dónde vive la traducción. Mapear en la frontera preserva la API — pero abre una clase de fuga: es hermética solo si <em>cada</em> punto de consumo pasa por el mapa.",
+      en: "When pure logic emits prose in one language, localizing it forces a choice about where the translation lives. Mapping at the boundary keeps the API intact — but it opens a leak class: it is airtight only if <em>every</em> consumption point goes through the map.",
+    },
+
+    /* ── Entender: dos arquitecturas ── */
+    understand: {
+      kicker: { es: "entender · dos arquitecturas", en: "understand · two architectures" },
+      title: { es: "¿Dónde vive la traducción?", en: "Where does the translation live?" },
+      optionA: {
+        name: { es: "Códigos neutros en el núcleo", en: "Neutral codes in the core" },
+        body: {
+          es: "El núcleo emite códigos (<code>rejected_by_construction</code>, <code>missing_scope</code>) y el componente presenta. El idioma se resuelve en un solo lugar, contra un enum cerrado. La fuga es imposible por construcción: no hay prosa que escape porque el núcleo nunca la produce.",
+          en: "The core emits codes (<code>rejected_by_construction</code>, <code>missing_scope</code>) and the component presents. Language resolves in one place, against a closed enum. The leak is impossible by construction: no prose can escape because the core never produces any.",
+        },
+      },
+      optionB: {
+        name: { es: "Mapa en la frontera", en: "Map at the boundary" },
+        body: {
+          es: "El núcleo sigue emitiendo prosa en un idioma y el consumidor la traduce con un mapa código→idioma en el límite. Preserva la API — nada del núcleo cambia — pero la hermeticidad ahora depende de disciplina: cada punto de consumo tiene que pasar por el mapa.",
+          en: "The core keeps emitting prose in one language and the consumer translates it with a code→language map at the boundary. It keeps the API intact — nothing in the core changes — but airtightness now rests on discipline: every consumption point has to go through the map.",
+        },
+      },
+      when: {
+        es: "Prefiere (a) cuando puedes refactorizar el núcleo: la garantía la da el compilador, no tu memoria. Usa (b) cuando la API tiene que quedarse quieta — y entonces trátala como lo que es: un contrato de cobertura total.",
+        en: "Prefer (a) when you can refactor the core: the guarantee comes from the compiler, not your memory. Use (b) when the API must stay still — and then treat it for what it is: a total-coverage contract.",
+      },
+    },
+
+    /* ── Ver: la fuga ── */
+    see: {
+      kicker: { es: "ver · la fuga", en: "see · the leak" },
+      title: { es: "Un punto sin mapear", en: "One unmapped point" },
+      body: {
+        es: "La frontera de abajo tiene varias salidas del núcleo. Cambia el idioma del demo a <strong>en</strong> y elige la salida que el mapa no cubre: el motor reporta <code>mapped:false</code> y el consumidor, sin traducción, deja pasar el código crudo — un literal en español dentro de la vista en inglés. Un solo punto olvidado basta.",
+        en: "The frontier below has several core outputs. Switch the demo's language to <strong>en</strong> and pick the output the map doesn't cover: the engine reports <code>mapped:false</code> and the consumer, with no translation, passes the raw code through — a Spanish literal inside the English view. One forgotten point is enough.",
+      },
+    },
+
+    /* ── Hacer: la reparación ── */
+    do: {
+      kicker: { es: "hacer · la reparación", en: "do · the repair" },
+      title: { es: "Completa el mapa", en: "Complete the map" },
+      body: {
+        es: "Agrega la clave que falta con <strong>Agregar al mapa</strong>. La salida que fugaba ahora resuelve a su traducción y la vista en inglés queda limpia. Reparaste el síntoma; lo que sigue evita que vuelva.",
+        en: "Add the missing key with <strong>Add to map</strong>. The output that was leaking now resolves to its translation and the English view comes out clean. You fixed the symptom; what comes next keeps it from coming back.",
+      },
+    },
+
+    /* ── Verificar: la red en CI ── */
+    verify: {
+      kicker: { es: "verificar · la red en CI", en: "verify · the net in CI" },
+      title: { es: "El test de acople", en: "The coupling test" },
+      body: {
+        es: "<code>coupleCheck</code> acopla los códigos que emite el núcleo con las claves que traduce el mapa. Reporta <code>missing</code> (un código sin traducción) y <code>orphan</code> (una clave muerta) y solo dice <code>ok</code> si la cobertura es total en ambos sentidos. Un estado nuevo del núcleo sin su clave rompe CI — no se cuela a producción por el <code>?? code</code> de fallback.",
+        en: "<code>coupleCheck</code> couples the codes the core emits with the keys the map translates. It reports <code>missing</code> (a code with no translation) and <code>orphan</code> (a dead key), and only says <code>ok</code> when coverage is total both ways. A new core state without its key breaks CI — it doesn't slip into production through the <code>?? code</code> fallback.",
+      },
+    },
+
+    /* ── El error real (aprendible) · commit 058fdf9 ── */
+    bug: {
+      kicker: { es: "el error real · 058fdf9", en: "the real bug · 058fdf9" },
+      title: { es: "La fuga que cazó el review", en: "The leak review caught" },
+      body: {
+        es: "Al bilingüizar esta galería, <code>applyGateDecision</code> localizó el resultado visible (<code>#gate-result</code>) pero el push al registro de auditoría siguió usando la prosa cruda del núcleo (<code>verdict.reason</code>). En <code>/en/</code>, el flujo de auto-aprobación mostraba una oración completa en español dentro del audit trail. El review lo cazó enumerando <em>todas</em> las salidas de las cuatro funciones y persiguiendo cada punto de consumo; el smoke del navegador no lo vio porque miró el resultado, no el registro. El fix empujó <code>t.gateConstructionReason</code> (localizado) en vez de <code>verdict.reason</code>.",
+        en: "While making this gallery bilingual, <code>applyGateDecision</code> localized the visible result (<code>#gate-result</code>) but the push to the audit trail kept using the core's raw prose (<code>verdict.reason</code>). On <code>/en/</code>, the self-approval flow showed a full Spanish sentence inside the audit trail. Review caught it by enumerating <em>every</em> output of the four functions and chasing each consumption point; the browser smoke missed it because it looked at the result, not the log. The fix pushed <code>t.gateConstructionReason</code> (localized) instead of <code>verdict.reason</code>.",
+      },
+    },
+
+    /* El gate modelo-vs-implementación, explícito en la prosa. */
+    modelNote: {
+      es: "Este demo es el patrón destilado: una frontera de juguete para que veas la fuga y la cierres. La implementación auditada vive en <code>artifacts.js</code> (los mapas <code>PROJECTION_*_EN</code>, el fix del audit trail) y en <code>artifacts-core.js</code> (el núcleo neutro) de esta misma galería.",
+      en: "This demo is the distilled pattern: a toy boundary so you can see the leak and close it. The audited implementation lives in <code>artifacts.js</code> (the <code>PROJECTION_*_EN</code> maps, the audit-trail fix) and <code>artifacts-core.js</code> (the neutral core) of this very gallery.",
+    },
+
+    /* ── Controles del demo (Task 2 los cablea con frontierProject/coupleCheck) ── */
+    demo: {
+      intro: {
+        es: "Una frontera con ocho salidas del núcleo y un mapa que traduce al inglés. Falta una clave a propósito.",
+        en: "A frontier with eight core outputs and a map that translates to English. One key is missing on purpose.",
+      },
+      codeSelectorLabel: { es: "Salida del núcleo", en: "Core output" },
+      langToggleLabel: { es: "Idioma del demo", en: "Demo language" },
+      langToggleHint: {
+        es: "Cambia el idioma de esta frontera de juguete — no el de la página.",
+        en: "Switches the language of this toy frontier — not the page's.",
+      },
+      langOptionEs: { es: "es · crudo", en: "es · raw" },
+      langOptionEn: { es: "en · mapeado", en: "en · mapped" },
+      projectionLabel: { es: "Lo que renderiza la frontera", en: "What the frontier renders" },
+      mappedBadge: { es: "mapeado", en: "mapped" },
+      leakBadge: { es: "fuga", en: "leak" },
+      repairButton: { es: "Agregar al mapa", en: "Add to map" },
+      repairHint: {
+        es: "Inserta la clave faltante para la salida seleccionada.",
+        en: "Inserts the missing key for the selected output.",
+      },
+      resetButton: { es: "Reiniciar", en: "Reset" },
+      coupling: {
+        title: { es: "Test de acople", en: "Coupling test" },
+        runLabel: { es: "Correr acople", en: "Run coupling" },
+        okLabel: { es: "ok", en: "ok" },
+        missingLabel: { es: "faltan", en: "missing" },
+        orphanLabel: { es: "huérfanas", en: "orphan" },
+        okDesc: {
+          es: "Cobertura total: cada salida del núcleo tiene su clave y no hay claves muertas.",
+          en: "Total coverage: every core output has its key and there are no dead keys.",
+        },
+        gapDesc: {
+          es: "Con la clave faltante, el acople falla: eso es exactamente lo que rompería CI antes de llegar a producción.",
+          en: "With the missing key, the coupling fails: that is exactly what would break CI before it reaches production.",
+        },
+      },
+      /* ESQUELETO / FIXTURE neutro (strings planos — el walk de completeness NO
+         los toca porque no llevan par {es,en}). Las salidas son los estados que
+         proyecta el runtime real (projectProcess, artifact 06); enMap es su
+         traducción es→en. "detenido" se omite a propósito: es la fuga. */
+      outputs: [
+        "sin iniciar",
+        "solicitado",
+        "esperando verificación",
+        "listo para ejecutar",
+        "detenido",
+        "ejecutando",
+        "completado",
+        "fallido",
+      ],
+      enMap: {
+        "sin iniciar": "not started",
+        "solicitado": "requested",
+        "esperando verificación": "awaiting verification",
+        "listo para ejecutar": "ready to execute",
+        "ejecutando": "executing",
+        "completado": "completed",
+        "fallido": "failed",
+      },
+      gapCode: "detenido",
+      gapValue: "stopped",
+    },
+
+    lesson: {
+      title: { es: "Una frontera es cobertura total, no mayoría", en: "A boundary is total coverage, not a majority" },
+      body: {
+        es: "Las defensas reales, en orden: prefiere códigos neutros en el núcleo cuando puedas (la fuga se vuelve imposible por construcción); si mapeas en la frontera, acopla los enums del núcleo a las claves del mapa con un test que rompa CI ante un estado sin traducir; y verifica la superficie completa, no solo el happy path que se ve. Es la gemela de i18n de <strong>La compuerta</strong>: lo que el sistema garantiza por construcción contra lo que promete por disciplina.",
+        en: "The real defenses, in order: prefer neutral codes in the core when you can (the leak becomes impossible by construction); if you map at the boundary, couple the core enums to the map keys with a test that breaks CI on an untranslated state; and verify the full surface, not just the happy path you can see. It is the i18n twin of <strong>The gate</strong>: what the system guarantees by construction versus what it promises by discipline.",
+      },
+    },
+    sources: {
+      es: "<code>artifacts/artifacts.js</code> (mapas <code>PROJECTION_*_EN</code>, fix del audit trail) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (acople enum↔mapa) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.",
+      en: "<code>artifacts/artifacts.js</code> (<code>PROJECTION_*_EN</code> maps, audit-trail fix) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (enum↔map coupling) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.",
+    },
+  },
 };

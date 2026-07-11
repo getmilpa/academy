@@ -8,10 +8,12 @@ const {
   CHAOS_MODULES,
   MODULE_CATALOG,
   conceptualPipelineResult,
+  coupleCheck,
   createGenerationPlan,
   decideVerification,
   evaluatePlanting,
   evaluateThemePair,
+  frontierProject,
   projectOperation,
   projectProcess,
   resolveModuleOrder,
@@ -144,4 +146,52 @@ test("projectOperation emits neutral codes, no locale prose", () => {
   const success = projectOperation(OP, "mcp");
   assert.equal(success.reasonCode, "applied");
   assert.equal(success.scope, null);
+});
+
+/* frontierProject: el motor de la frontera SOLO reporta si un código está en el
+   mapa; no decide el passthrough (esa es la lección — el consumidor decide, y ahí
+   se filtra el idioma equivocado). Neutro: sin prosa, sin locale. */
+test("frontierProject reports the mapped value when the code is in the map", () => {
+  const map = { "sin iniciar": "not started", detenido: "stopped" };
+  assert.deepEqual(frontierProject("detenido", map), { code: "detenido", mapped: true, value: "stopped" });
+});
+test("frontierProject reports mapped:false / value:null for a code the map does not cover (the leak)", () => {
+  const map = { "sin iniciar": "not started" };
+  assert.deepEqual(frontierProject("detenido", map), { code: "detenido", mapped: false, value: null });
+});
+test("frontierProject on an empty map never claims coverage", () => {
+  assert.deepEqual(frontierProject("detenido", {}), { code: "detenido", mapped: false, value: null });
+});
+test("frontierProject: a code absent from a map that still has orphan keys is unmapped, not passed through", () => {
+  const map = { orphan_a: "A", orphan_b: "B" };
+  const r = frontierProject("detenido", map);
+  assert.equal(r.mapped, false);
+  assert.equal(r.value, null);
+});
+
+/* coupleCheck: acopla los códigos que EMITE el núcleo con las claves que TRADUCE
+   el mapa de la frontera. missing = un código sin traducción (se filtraría en
+   prod); orphan = una clave muerta que el núcleo ya no emite. ok sólo si la
+   cobertura es total en ambos sentidos. Neutro: opera sobre arrays de códigos. */
+test("coupleCheck is ok when core codes and map keys cover each other exactly", () => {
+  const r = coupleCheck(["a", "b", "c"], ["c", "b", "a"]);
+  assert.deepEqual(r, { missing: [], orphan: [], ok: true });
+});
+test("coupleCheck detects a core code with no map key (missing translation)", () => {
+  const r = coupleCheck(["a", "b", "c"], ["a", "b"]);
+  assert.deepEqual(r.missing, ["c"]);
+  assert.deepEqual(r.orphan, []);
+  assert.equal(r.ok, false);
+});
+test("coupleCheck detects a map key the core never emits (orphan)", () => {
+  const r = coupleCheck(["a", "b"], ["a", "b", "z"]);
+  assert.deepEqual(r.missing, []);
+  assert.deepEqual(r.orphan, ["z"]);
+  assert.equal(r.ok, false);
+});
+test("coupleCheck reports both a missing translation and an orphan key at once", () => {
+  const r = coupleCheck(["a", "b", "c"], ["a", "b", "z"]);
+  assert.deepEqual(r.missing, ["c"]);
+  assert.deepEqual(r.orphan, ["z"]);
+  assert.equal(r.ok, false);
 });

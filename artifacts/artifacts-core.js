@@ -519,6 +519,30 @@ function createGenerationPlan({ targetExists = false, force = false } = {}) {
   };
 }
 
+/* frontierProject: el motor de una frontera código→idioma. SOLO reporta si el
+   `code` existe en `map` y con qué valor; NO decide el passthrough. Esa decisión
+   es del consumidor, y ahí es donde nace la clase de fuga: si el consumidor pasa
+   el código crudo cuando mapped=false, renderiza el idioma equivocado. Mantener
+   el motor neutro (sin prosa, sin locale) hace que la fuga sea SIEMPRE una
+   decisión visible del consumidor, no un descuido escondido en la traducción. */
+function frontierProject(code, map) {
+  const has = map != null && Object.prototype.hasOwnProperty.call(map, code);
+  return { code, mapped: has, value: has ? map[code] : null };
+}
+
+/* coupleCheck: acopla los códigos que emite el núcleo (`coreCodes`) con las
+   claves que traduce el mapa de la frontera (`mapKeys`). `missing` = códigos sin
+   traducción (se filtrarían en producción); `orphan` = claves muertas que el
+   núcleo ya no emite. `ok` sólo si la cobertura es total en ambos sentidos — el
+   mismo contrato que un test de acople enum↔mapa aplica en CI. */
+function coupleCheck(coreCodes, mapKeys) {
+  const codes = new Set(coreCodes);
+  const keys = new Set(mapKeys);
+  const missing = coreCodes.filter((code) => !keys.has(code));
+  const orphan = mapKeys.filter((key) => !codes.has(key));
+  return { missing, orphan, ok: missing.length === 0 && orphan.length === 0 };
+}
+
 /* Exposición para navegador (script clásico — funciona en file:// donde los
    módulos ES no cargan) y para el test (que lo importa por side effect). */
 globalThis.AcademyCore = Object.freeze({
@@ -540,5 +564,7 @@ globalThis.AcademyCore = Object.freeze({
   contrastRatio,
   evaluateThemePair,
   createGenerationPlan,
+  frontierProject,
+  coupleCheck,
 });
 })();

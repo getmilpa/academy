@@ -239,9 +239,17 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
   collectEsLeaves(GALLERY, "GALLERY", leaves);
   /* Task 5 CARRY: pin the GALLERY walk leaf-count (como el key-count de
      learn-strings). Cierra el blind-spot de completitud — borrar un artifact
-     del módulo bajaría el conteo y pasaría el fidelity test silenciosamente. */
-  assert.equal(leaves.length, 324, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     del módulo bajaría el conteo y pasaría el fidelity test silenciosamente.
+     Almácigo (frontera): 324 → 372 (+48 hojas es del Artifact 10 "frontera", la
+     graduación de la lección boundary-map). El pin cuenta TODAS las hojas
+     (frontera incluida) para seguir guardando contra borrados. */
+  assert.equal(leaves.length, 372, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+  /* frontera NACE bilingüe: no hay es verbatim en el index.html legacy (el
+     archivo lo precede — su HTML lo emitirá Task 2 desde el SSG). Se excluye del
+     check verbatim por prefijo de path; los 9 artifacts preexistentes SÍ se
+     verifican. Task 2 lo des-scopéa cuando el generador emita la sección. */
   const missing = leaves
+    .filter(([path]) => !path.startsWith("GALLERY.frontera"))
     .filter(([, es]) => !normalizedHtml.includes(squashWhitespace(es)))
     .map(([path, es]) => `${path}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings not found verbatim in index.html:\n${missing.join("\n")}`);
@@ -257,7 +265,12 @@ test("gallery es content-parity: every GALLERY es leaf appears in the GENERATED 
   const normalized = squashWhitespace(galleryEs);
   const leaves = [];
   collectEsLeaves(GALLERY, "GALLERY", leaves);
+  /* frontera (Artifact 10) se stagea como GALLERY.frontera y gen/gallery.mjs aún
+     no lo rinde (no tiene renderer 'frontera'): sus hojas es no están en el HTML
+     generado todavía. Se excluye por prefijo de path; Task 2 lo des-scopéa al
+     registrar renderFrontera. Los 9 artifacts emitidos SÍ se verifican. */
   const missing = leaves
+    .filter(([path]) => !path.startsWith("GALLERY.frontera"))
     .filter(([, es]) => !normalized.includes(squashWhitespace(es)))
     .map(([p, es]) => `${p}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings missing in generated gallery:\n${missing.join("\n")}`);
