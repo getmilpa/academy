@@ -6,7 +6,7 @@
    idénticos — así site/ committeado queda limpio en un re-gen. */
 
 import { mkdirSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
@@ -384,8 +384,11 @@ function robots() {
 /* llms.txt: mapa curado para agentes/LLMs, uno por idioma. Cada idioma
    enlaza SOLO a URLs de su propio idioma — un agente que entra por /en/ no
    debe terminar en una página en español, y viceversa. Prosa propia de este
-   archivo (no vive en ATOMO: es contenido de nivel sitio, no del artifact). */
-const LLMS_COPY = {
+   archivo (no vive en ATOMO: es contenido de nivel sitio, no del artifact).
+   Exportado para que el walk de completitud i18n (tests/i18n-contract.test.mjs)
+   lo recorra como toda hoja {es,en} — antes era el único {es,en} fuera de los
+   módulos de contenido. */
+export const LLMS_COPY = {
   pagesHeading: { es: "Páginas", en: "Pages" },
   reposHeading: { es: "Repositorios del paquete", en: "Package repositories" },
   pageLinkNote: {
@@ -444,46 +447,56 @@ ${repos}
 `;
 }
 
-for (const lang of LANGS) {
-  const out = pathFor(lang);
-  mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
-  writeFileSync(path.join(ROOT, out), page(lang), "utf8");
+/* Todo lo emitido a disco vive detrás de este guard de módulo-principal: correr
+   `node scripts/gen-site.mjs` (npm run gen, CI, execFileSync de los tests) genera
+   el sitio; importar el módulo (p. ej. el test de completitud que consume
+   LLMS_COPY) NO escribe nada. La salida byte a byte es idéntica — site/ no cambia. */
+function emitSite() {
+  for (const lang of LANGS) {
+    const out = pathFor(lang);
+    mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
+    writeFileSync(path.join(ROOT, out), page(lang), "utf8");
+  }
+
+  for (const lang of LANGS) {
+    const out = portalPathFor(lang);
+    mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
+    writeFileSync(path.join(ROOT, out), portalPage(lang), "utf8");
+  }
+
+  for (const learnPage of LEARN.pages) {
+    mkdirSync(path.join(ROOT, path.dirname(learnPage.path)), { recursive: true });
+    writeFileSync(path.join(ROOT, learnPage.path), learnPage.html, "utf8");
+  }
+
+  for (const genPage of [...GALLERY_PAGES.pages, ...LABS_PAGES.pages]) {
+    mkdirSync(path.join(ROOT, path.dirname(genPage.path)), { recursive: true });
+    writeFileSync(path.join(ROOT, genPage.path), genPage.html, "utf8");
+  }
+
+  writeFileSync(path.join(ROOT, "site/sitemap.xml"), sitemap(), "utf8");
+  writeFileSync(path.join(ROOT, "site/robots.txt"), robots(), "utf8");
+  for (const lang of LANGS) {
+    const out = llmsPath(lang);
+    mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
+    writeFileSync(path.join(ROOT, out), llms(lang), "utf8");
+  }
+
+  console.log(
+    "gen-site: emitted",
+    [
+      ...LANGS.map(pathFor),
+      ...LANGS.map(portalPathFor),
+      `${LEARN.pages.length} learn pages (units + index, es/en)`,
+      ...GALLERY_PAGES.pages.map((p) => p.path),
+      ...LABS_PAGES.pages.map((p) => p.path),
+      "site/sitemap.xml",
+      "site/robots.txt",
+      ...LANGS.map(llmsPath),
+    ].join(", "),
+  );
 }
 
-for (const lang of LANGS) {
-  const out = portalPathFor(lang);
-  mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
-  writeFileSync(path.join(ROOT, out), portalPage(lang), "utf8");
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  emitSite();
 }
-
-for (const learnPage of LEARN.pages) {
-  mkdirSync(path.join(ROOT, path.dirname(learnPage.path)), { recursive: true });
-  writeFileSync(path.join(ROOT, learnPage.path), learnPage.html, "utf8");
-}
-
-for (const genPage of [...GALLERY_PAGES.pages, ...LABS_PAGES.pages]) {
-  mkdirSync(path.join(ROOT, path.dirname(genPage.path)), { recursive: true });
-  writeFileSync(path.join(ROOT, genPage.path), genPage.html, "utf8");
-}
-
-writeFileSync(path.join(ROOT, "site/sitemap.xml"), sitemap(), "utf8");
-writeFileSync(path.join(ROOT, "site/robots.txt"), robots(), "utf8");
-for (const lang of LANGS) {
-  const out = llmsPath(lang);
-  mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
-  writeFileSync(path.join(ROOT, out), llms(lang), "utf8");
-}
-
-console.log(
-  "gen-site: emitted",
-  [
-    ...LANGS.map(pathFor),
-    ...LANGS.map(portalPathFor),
-    `${LEARN.pages.length} learn pages (units + index, es/en)`,
-    ...GALLERY_PAGES.pages.map((p) => p.path),
-    ...LABS_PAGES.pages.map((p) => p.path),
-    "site/sitemap.xml",
-    "site/robots.txt",
-    ...LANGS.map(llmsPath),
-  ].join(", "),
-);

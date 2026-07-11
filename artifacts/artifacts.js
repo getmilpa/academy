@@ -38,11 +38,14 @@ function pick(node) {
 }
 
 // GA4 de la galería (Task 4): artifacts.js corre con `defer`, igual que
-// analytics.js. En el shell legado analytics.js NO se carga: track() no-opea
+// analytics.js. En el shell legado analytics.js NO se carga: trackEvent() no-opea
 // para siempre — nunca rompe la galería. En el shell SSG (Task 5) analytics.js
 // será defer y precederá a artifacts.js, así que MilpaAnalytics ya estará
 // definido. Guardado con try/catch: la telemetría nunca debe romper la UX.
-function track(name, params) {
+// Nombre `trackEvent` (no `track`): dentro de runConceptualPipeline hay un
+// `const track` local (el nodo DOM del carril) que lo sombrearía — el rename
+// elimina esa trampa latente.
+function trackEvent(name, params) {
   if (!window.MilpaAnalytics) return;
   try { window.MilpaAnalytics.track(name, params); } catch { /* telemetry must never break UX */ }
 }
@@ -120,6 +123,7 @@ const STRINGS = {
     planGuardLog: "assertWritable() para todos los targets",
     planWriteLog: (count) => `${count} archivos · directorios asegurados`,
     planWaitingLog: "esperando plan…",
+    planFileExists: (file) => `${file} ya existe (usa --force para sobrescribir)`,
   },
   en: {
     navToggleAria: (open) => (open ? "Close navigation" : "Open navigation"),
@@ -181,6 +185,7 @@ const STRINGS = {
     planGuardLog: "assertWritable() for all targets",
     planWriteLog: (count) => `${count} files · directories ensured`,
     planWaitingLog: "waiting for plan…",
+    planFileExists: (file) => `${file} already exists (use --force to overwrite)`,
   },
 };
 
@@ -283,7 +288,7 @@ function showArtifact(id, { updateHash = true, focus = false } = {}) {
   // GA4 (Task 4): un artifact_view por artifact mostrado. Se OMITE el slug
   // "atomo": su <milpa-artifact> ya emite artifact_view {artifact_id:"atomo"}
   // al hidratar (milpa-artifact.js), así que emitirlo acá lo duplicaría.
-  if (id !== "atomo") track("artifact_view", { artifact_id: id });
+  if (id !== "atomo") trackEvent("artifact_view", { artifact_id: id });
 
   currentArtifactIndex = nextIndex;
   artifacts.forEach((section, index) => { section.hidden = index !== nextIndex; });
@@ -970,7 +975,10 @@ async function applyPlan() {
 
   if (!planState.plan.writable) {
     setPlanStep("preflight", "failed");
-    appendTerminalLine($("#plan-log"), "error", planState.plan.reason, "error");
+    // El core devuelve plan.reason en inglés (prosa neutra, rama única). En vez
+    // de renderizar esa prosa, se localiza acá derivando el filename de la MISMA
+    // fuente que usa el core (files[0]) — no se parsea el string inglés.
+    appendTerminalLine($("#plan-log"), "error", t.planFileExists(planState.plan.files[0].path), "error");
     $("#apply-plan").removeAttribute("aria-busy");
     return;
   }

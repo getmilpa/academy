@@ -7,6 +7,10 @@ import { ATOMO } from "../artifacts/content/atomo.content.mjs";
 import { GALLERY } from "../artifacts/content/gallery.content.mjs";
 import { LABS_SHELL } from "../labs/labs.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
+// LLMS_COPY es la única tabla {es,en} que vive fuera de los módulos de contenido
+// (prosa de nivel sitio en gen-site.mjs). gen-site.mjs sólo emite el sitio tras
+// su guard de módulo-principal, así que este import es libre de efectos.
+import { LLMS_COPY } from "../scripts/gen-site.mjs";
 
 // catalog.js es UMD (module.exports = factory()); cjs-module-lexer no ve sus
 // named exports a través de un import estático, así que se carga con require.
@@ -126,6 +130,13 @@ test("translation completeness: every leaf string has es and en", () => {
       if (keys.includes("es") || keys.includes("en")) {
         if (!node.es) missing.push(path + ".es");
         if (!node.en) missing.push(path + ".en");
+        // Un nodo hoja puede además cargar hijos {es,en} anidados junto a su
+        // propio es/en (p. ej. ATOMO.warning: { lead:{es,en}, es, en }). El
+        // early-return anterior los saltaba — seguí recorriendo las claves que
+        // no son de idioma para no dejar esos leaves fuera del walk.
+        for (const k of keys) {
+          if (k !== "es" && k !== "en") walk(node[k], `${path}.${k}`);
+        }
         return;
       }
       for (const k of keys) walk(node[k], `${path}.${k}`);
@@ -138,7 +149,62 @@ test("translation completeness: every leaf string has es and en", () => {
   walk(LABS_SHELL, "LABS_SHELL");
   walk(catalog.tracks, "catalog.tracks");
   walk(labsCatalog.labs, "labs.labs");
+  walk(LLMS_COPY, "LLMS_COPY");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
+});
+
+/* Task 1 (cierre de la clase de fuga boundary-map): acople enums↔maps.
+   projectProcess() en artifacts-core.js proyecta el log de eventos a estos
+   literales es de state/verification. artifacts.js los traduce por su valor con
+   los mapas PROJECTION_STATE_EN / PROJECTION_VERIFICATION_EN. Si el core AGREGA
+   un estado nuevo, esta lista canónica DEBE actualizarse junto con los mapas —
+   ese es el punto del test: un estado del core sin traducción tiene que romper
+   CI, no colarse silenciosamente al `?? state` de fallback.
+
+   Como artifacts.js es un script clásico (usa window/document en top-level, no
+   es importable en Node), las keys de los mapas se leen del source por regex —
+   mismo precedente que site-contract. */
+const CORE_STATES = [
+  "sin iniciar",
+  "solicitado",
+  "esperando verificación",
+  "listo para ejecutar",
+  "detenido",
+  "ejecutando",
+  "completado",
+  "fallido",
+];
+const CORE_VERIFICATIONS = ["ninguna", "pendiente", "aprobada", "rechazada", "exonerada"];
+
+test("boundary-map coupling: every projectProcess() literal is a map key AND still emitted by the core", () => {
+  const coreSrc = readFileSync(new URL("../artifacts/artifacts-core.js", import.meta.url), "utf8");
+  const artSrc = readFileSync(new URL("../artifacts/artifacts.js", import.meta.url), "utf8");
+
+  // (b) keys presentes en el source de cada mapa de artifacts.js.
+  const mapKeys = (mapName) => {
+    const block = artSrc.match(new RegExp(`const ${mapName} = \\{([\\s\\S]*?)\\};`));
+    assert.ok(block, `${mapName} block not found in artifacts.js`);
+    return new Set([...block[1].matchAll(/"([^"]+)":/g)].map((m) => m[1]));
+  };
+  const stateKeys = mapKeys("PROJECTION_STATE_EN");
+  const verifKeys = mapKeys("PROJECTION_VERIFICATION_EN");
+
+  for (const state of CORE_STATES) {
+    // (b) traducción presente en el mapa; quitar la key del mapa → falla acá.
+    assert.ok(stateKeys.has(state), `PROJECTION_STATE_EN is missing a translation key: "${state}"`);
+    // (c) el core sigue emitiendo ese literal; si el core lo renombra → falla acá
+    // y obliga a actualizar test + mapa juntos.
+    assert.ok(coreSrc.includes(`"${state}"`), `core no longer emits the state literal: "${state}"`);
+  }
+  for (const verification of CORE_VERIFICATIONS) {
+    assert.ok(verifKeys.has(verification), `PROJECTION_VERIFICATION_EN is missing a translation key: "${verification}"`);
+    assert.ok(coreSrc.includes(`"${verification}"`), `core no longer emits the verification literal: "${verification}"`);
+  }
+
+  // Cobertura recíproca: los mapas no llevan keys muertas (que ni el core emite
+  // ni esta lista canónica declara) — mantiene el mapa y esta lista sincronizados.
+  for (const key of stateKeys) assert.ok(CORE_STATES.includes(key), `PROJECTION_STATE_EN has an orphan key not in CORE_STATES: "${key}"`);
+  for (const key of verifKeys) assert.ok(CORE_VERIFICATIONS.includes(key), `PROJECTION_VERIFICATION_EN has an orphan key not in CORE_VERIFICATIONS: "${key}"`);
 });
 
 /* Task 3: la galería (8 artifacts estáticos + chrome del shell) se extrajo a
