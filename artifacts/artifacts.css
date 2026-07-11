@@ -98,6 +98,31 @@ body {
 
 .wb-artifact[hidden] { display: none; }
 
+/* Standalone atomo page only (scripts/gen-site.mjs): manifesto tagline + its
+   lede paragraph, ahead of the milpa-artifact block. Pinned by class (not tag)
+   so the a11y retag h1→h2 (single h1 per page — see gen-site.mjs) doesn't
+   change how this reads: font-size/weight/leading match what the browser's h1
+   UA default was already rendering here, so the retag is visual no-op. The
+   intro paragraph gets the same secondary-color/max-width treatment as
+   .wb-artifact__header > p below, for the same reason that one has it: a
+   full-bleed line of body-colored text at 90+ch is uncomfortable to read. */
+.wb-hero {
+  margin: 0 0 var(--space-4);
+  max-width: 60ch;
+  color: var(--text);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+.wb-intro {
+  margin: 0 0 var(--space-6);
+  max-width: 72ch;
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+
 .wb-artifact__header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 34rem);

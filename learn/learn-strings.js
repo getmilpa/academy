@@ -26,8 +26,6 @@
       navLabs: "Laboratorios",
       navArtifacts: "Artifacts",
       navWebinar: "Webinar",
-      resumeTitle: "Continúa donde estabas",
-      resumeButton: "Continuar",
       dashboardKicker: function (version) {
         return "Currículo público · v" + version;
       },
@@ -58,7 +56,6 @@
       methodTitle: "Método",
       methodCopy: "Entender → Ver → Hacer → Evaluar.",
       dashboardTitle: "Aprender · Milpa Academy",
-      titleSuffix: " · Milpa Academy",
       terminalAriaLabel: "Comandos de la práctica",
       terminalRegionAriaLabel: "Comandos",
       onThisPage: "En esta página",
@@ -88,8 +85,6 @@
       },
       submitGrade: "Calificar evaluación",
       gradingNote: "La calificación valida respuestas en este navegador; no certifica identidad.",
-      quizUnavailableTitle: "Evaluación no disponible",
-      quizUnavailableBody: "La unidad no puede completarse porque su banco de preguntas no está registrado.",
       breadcrumbsAriaLabel: "Migas de pan",
       breadcrumbRoutes: "Rutas",
       unitOfTotal: function (index, total) {
@@ -129,8 +124,6 @@
       navLabs: "Labs",
       navArtifacts: "Artifacts",
       navWebinar: "Webinar",
-      resumeTitle: "Continue where you left off",
-      resumeButton: "Continue",
       dashboardKicker: function (version) {
         return "Public curriculum · v" + version;
       },
@@ -161,7 +154,6 @@
       methodTitle: "Method",
       methodCopy: "Understand → See → Do → Assess.",
       dashboardTitle: "Learn · Milpa Academy",
-      titleSuffix: " · Milpa Academy",
       terminalAriaLabel: "Practice commands",
       terminalRegionAriaLabel: "Commands",
       onThisPage: "On this page",
@@ -191,8 +183,6 @@
       },
       submitGrade: "Grade assessment",
       gradingNote: "Grading validates answers in this browser; it doesn't certify identity.",
-      quizUnavailableTitle: "Assessment unavailable",
-      quizUnavailableBody: "This unit can't be completed because its question bank isn't registered.",
       breadcrumbsAriaLabel: "Breadcrumb",
       breadcrumbRoutes: "Routes",
       unitOfTotal: function (index, total) {

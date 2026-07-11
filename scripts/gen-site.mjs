@@ -78,6 +78,15 @@ function jsonld(lang) {
   });
 }
 
+/* a11y: exactly one h1 on this standalone page. ATOMO.title ("El átomo y sus
+   puertas") renders as <h1 id="atomo-title"> inside renderAtomoFallback()'s
+   wb-artifact__header — that's the page's real topic (it's also what <title>/
+   canonical/jsonld name() use above), and it matches the h1-per-card pattern
+   every other artifact uses in gen/gallery.mjs. ATOMO.hero is a manifesto-style
+   tagline that doubles as the meta description; it's a lead-in, not a second
+   top-level heading, so it renders as h2 (wb-hero keeps its class/appearance —
+   only the tag changed, see the .wb-hero rule in artifacts.css that pins the
+   same size/weight now that it's off the h1 UA default). */
 function page(lang) {
   const asset = assetPrefix(lang);
   const head = renderHead({
@@ -98,7 +107,7 @@ function page(lang) {
 ${head}
 <body>
 <main>
-<h1 class="wb-hero">${ATOMO.hero[lang]}</h1>
+<h2 class="wb-hero">${ATOMO.hero[lang]}</h2>
 <p class="wb-intro">${ATOMO.intro[lang]}</p>
 <milpa-artifact id="atomo-artifact" lang="${lang}">
         ${renderAtomoFallback(lang, `${asset}/artifacts/#runtime`)}
