@@ -42,9 +42,19 @@ mkdirSync(OUT, { recursive: true });
 //    /atomo/ + /en/atomo/, plus sitemap.xml/robots.txt/llms.txt/en/llms.txt.
 cpSync(path.join(ROOT, "site"), OUT, { recursive: true });
 
-// 2. App dirs, verbatim (es-only — Plan B bilingualizes them).
+// 2. App dirs, verbatim (es-only — Plan B bilingualizes them). Exception:
+//    learn/index.html is the obsolete hash-router app-shell (Plan B moved
+//    the learn-index to SSG). site/ already placed the SSG learn-index at
+//    OUT/learn/index.html above; copying the app-dir verbatim would clobber
+//    it with the blank shell. So the learn/ copy SKIPS that one file — the
+//    SSG page wins — while learn.js/learn.css (the hydration bundle the SSG
+//    page still loads) keep shipping. Unit pages (learn/<t>/<u>/) live only
+//    under site/ and don't collide.
+const LEARN_SHELL = path.join(ROOT, "learn", "index.html");
 for (const dir of APP_DIRS) {
-  cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
+  const options = { recursive: true };
+  if (dir === "learn") options.filter = (src) => path.resolve(src) !== LEARN_SHELL;
+  cpSync(path.join(ROOT, dir), path.join(OUT, dir), options);
 }
 
 // 3. Shared dirs referenced by relative path from the portal/atom/apps.

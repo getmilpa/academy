@@ -242,6 +242,28 @@
   var menuClose = document.getElementById("navClose");
   var themeButton = document.getElementById("themeBtn");
 
+  // GA4 de aprendizaje: emisión guardada. analytics.js se carga con `defer`,
+  // así que cuando learn.js corre al final del <body> todavía no definió
+  // MilpaAnalytics. Los eventos del quiz se emiten en interacción del usuario
+  // —mucho después, con MilpaAnalytics ya presente— y salen de inmediato;
+  // unit_open, que se emite durante la hidratación de carga, se encola hasta
+  // DOMContentLoaded (para entonces los scripts `defer` ya corrieron). Si
+  // analytics.js nunca carga (p.ej. el bundle embebido cross-origin) todo
+  // queda en no-op: nunca lanza, nunca altera el flujo de la lección —los
+  // eventos son telemetría, no control—. analytics.js agrega { language }; acá
+  // pasamos sólo los params del evento.
+  function track(name, params) {
+    if (window.MilpaAnalytics) {
+      window.MilpaAnalytics.track(name, params);
+      return;
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.MilpaAnalytics) window.MilpaAnalytics.track(name, params);
+      }, { once: true });
+    }
+  }
+
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, function (character) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[character];
@@ -319,6 +341,9 @@
     var key = article.getAttribute("data-unit");
     if (!key) return;
     store.visit(key);
+    // unit_id = la data-unit key completa ("<track>/<unit>", única global);
+    // track_id = su primer segmento. Una vez por carga de página.
+    track("unit_open", { unit_id: key, track_id: key.split("/")[0] });
     updateNavigation();
     updateTrackAside(key.split("/")[0]);
     wireQuiz(key);
@@ -337,6 +362,16 @@
     var stored = store.read().assessments[key] || null;
     // Reflejar los intentos reales en el badge servido (que arranca en 0).
     if (attemptsBadge && stored) attemptsBadge.textContent = t.attemptsBadge(stored.attempts);
+
+    // quiz_start: una sola vez por carga de página, en la primera interacción
+    // (enfocar un campo o enviar el form), lo que ocurra primero.
+    var quizStarted = false;
+    function markQuizStart() {
+      if (quizStarted) return;
+      quizStarted = true;
+      track("quiz_start", { unit_id: key });
+    }
+    form.addEventListener("focusin", markQuizStart);
 
     function fieldsetFor(questionId) {
       return Array.prototype.find.call(form.querySelectorAll("[data-question-id]"), function (fieldset) {
@@ -364,6 +399,7 @@
 
     function onSubmit(event) {
       event.preventDefault();
+      markQuizStart();
       var data = new FormData(form);
       var responses = {};
       quiz.questions.forEach(function (question) {
@@ -396,12 +432,18 @@
         fieldset.setAttribute("aria-describedby", feedback.id);
         feedback.innerHTML = "<strong>" + (item.correct ? escapeHtml(t.correctLabel) : escapeHtml(t.incorrectLabel)) + "</strong><p>" + escapeInline(item.explanation) + "</p>";
         feedback.hidden = false;
+        // quiz_answer: una por pregunta calificada, en cada envío completo.
+        track("quiz_answer", { question_id: item.questionId, correct: item.correct });
       });
 
       updateNavigation();
       updateTrackAside(key.split("/")[0]);
 
       if (result.passed) {
+        // En la calificación aprobatoria: unit_complete (la evaluación pasa) +
+        // quiz_pass (mastery = % de aciertos, 100 al aprobar 3/3).
+        track("unit_complete", { unit_id: key, track_id: key.split("/")[0] });
+        track("quiz_pass", { unit_id: key, mastery: result.percentage });
         form.removeEventListener("change", onChange);
         form.removeEventListener("submit", onSubmit);
         showPassed(recorded);

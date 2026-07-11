@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 /* Cobertura de scripts/build-deploy.mjs (antes en cero — el bug real de
    profundidad relativa que motiva este archivo pasó desapercibido sin
@@ -15,6 +16,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const deploy = path.join(root, "_deploy");
+// catalog.js es UMD; se carga con require (cjs-module-lexer no ve sus exports).
+const catalog = createRequire(import.meta.url)("../curriculum/catalog.js");
 
 test.before(() => {
   execFileSync(process.execPath, ["scripts/gen-site.mjs"], { cwd: root, stdio: "pipe" });
@@ -73,6 +76,43 @@ test("build-deploy: _deploy/index.html es el portal, no el átomo (regresión de
   const atom = fs.readFileSync(path.join(deploy, "atomo", "index.html"), "utf8");
   assert.match(atom, /id="atomo-title"/, "atomo/index.html no tiene el título del átomo");
   assert.doesNotMatch(atom, /id="academyTitle"/, "atomo/index.html contiene el portal, no el átomo");
+});
+
+/* Colisión learn-index (Task 8): el app-dir learn/ trae un index.html legado
+   (el shell hash-router, ahora obsoleto — 0/0, sin track cards) que ANTES
+   clobbeaba la learn-index SSG que site/ ya había colocado. El fix hace ganar
+   a la SSG. Verificamos por CONTENIDO, no sólo por existencia: la SSG trae una
+   tarjeta por track y un total real (0/N), el shell trae 0/0 y cero tarjetas. */
+test("build-deploy: _deploy/learn/index.html es la learn-index SSG, no el shell legado", () => {
+  const html = fs.readFileSync(path.join(deploy, "learn", "index.html"), "utf8");
+  const cards = (html.match(/mui-card--interactive ac-track-card/g) || []).length;
+  assert.equal(cards, catalog.tracks.length, "learn/index.html no trae las tarjetas de track de la SSG (parece el shell legado)");
+  assert.match(html, /id="globalProgress">0\/\d+</, "learn/index.html no trae el contador global de la SSG");
+  assert.doesNotMatch(html, /id="globalProgress">0\/0</, "learn/index.html es el shell legado (0/0), no la SSG");
+  assert.match(html, /data-total-progress/, "learn/index.html no trae la barra de progreso total de la SSG");
+});
+
+/* Los assets del app-dir learn/ (bundle de hidratación) SÍ deben seguir
+   copiándose aunque su index.html quede excluido del app-dir copy. */
+test("build-deploy: learn.js y learn.css se siguen deployando", () => {
+  for (const asset of ["learn.js", "learn.css"]) {
+    assert.ok(fs.existsSync(path.join(deploy, "learn", asset)), `falta _deploy/learn/${asset}`);
+  }
+});
+
+/* Las páginas de unidad SSG (no colisionan con el app-dir) deben existir en
+   ambos idiomas para las 15 unidades del catálogo. */
+test("build-deploy: existen las páginas de unidad SSG en _deploy (es + en)", () => {
+  const missing = [];
+  for (const track of catalog.tracks) {
+    for (const unit of track.units) {
+      for (const prefix of ["learn", "en/learn"]) {
+        const rel = path.join(prefix, track.id, unit.id, "index.html");
+        if (!fs.existsSync(path.join(deploy, rel))) missing.push(rel);
+      }
+    }
+  }
+  assert.deepEqual(missing, []);
 });
 
 test("build-deploy: CNAME apunta al dominio publicado", () => {
