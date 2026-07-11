@@ -1,7 +1,8 @@
 name: Deploy Academy to Pages
 
-# Regenerates the bilingual pages, assembles the deploy tree (R1 pages at / and
-# /en/, shared assets at /artifacts/, CNAME), and publishes to GitHub Pages.
+# Regenerates the bilingual pages, assembles the full deploy tree (portal at / and
+# /en/, atom at /atomo/ and /en/atomo/, es-only apps, shared assets, sitemap/llms,
+# CNAME), and publishes to GitHub Pages.
 on:
   push:
     branches: [main]
