@@ -56,6 +56,18 @@ test("relative asset refs resolve at the right depth per language", () => {
   assert.match(en, /src="\.\.\/\.\.\/\.\.\/artifacts\/milpa-artifact\.js" defer/);
 });
 
+/* Task 2 (debt cleanup): portal + learn pages already ship a favicon link;
+   the atom was the one surface missing it (0 icon links before this fix).
+   Assert the tag AND the relative depth per language — same criterion as
+   the artifacts.css/js asserts above (es 2 levels, en 3 levels under
+   academy/, per assetPrefix()). */
+test("atom pages ship a favicon <link rel=\"icon\"> at the correct relative depth", () => {
+  assert.equal((es.match(/<link rel="icon"/g) || []).length, 1, "es atom page must have exactly one icon link");
+  assert.equal((en.match(/<link rel="icon"/g) || []).length, 1, "en atom page must have exactly one icon link");
+  assert.match(es, /<link rel="icon" href="\.\.\/\.\.\/assets\/milpa-app-icon\.svg" type="image\/svg\+xml">/);
+  assert.match(en, /<link rel="icon" href="\.\.\/\.\.\/\.\.\/assets\/milpa-app-icon\.svg" type="image\/svg\+xml">/);
+});
+
 test("machine identifiers are byte-identical between es and en (only visible text differs)", () => {
   const machineTokens = (html) => [...html.matchAll(/data-stage="([^"]+)"|data-surface="([^"]+)"|id="(pipe-[a-z]+|status-[a-z]+|scope-toggle|inv-[a-z]+)"/g)]
     .map((match) => match[1] || match[2] || match[3]);

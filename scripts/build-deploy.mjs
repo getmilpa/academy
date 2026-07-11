@@ -33,7 +33,7 @@ const DOMAIN = "academy.milpa.lat";
 
 const APP_DIRS = ["learn", "labs", "artifacts", "webinars"];
 const SHARED_DIRS = ["curriculum", "assets"];
-const SHARED_FILES = ["academy.css", "academy.js", "i18n.js", "analytics.js", "inline-code.js"];
+const SHARED_FILES = ["academy.css", "academy.js", "i18n.js", "analytics.js", "inline-code.js", "favicon.ico"];
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });

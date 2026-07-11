@@ -120,6 +120,16 @@ test("build-deploy: CNAME apunta al dominio publicado", () => {
   assert.equal(cname, "academy.milpa.lat");
 });
 
+/* Task 2 (debt cleanup): favicon.ico físico en la raíz del deploy para
+   crawlers/agents que lo piden a ciegas (404 antes de este fix). Se
+   commitea como binario generado una sola vez (no entra al pipeline de
+   gen), pero SHARED_FILES debe seguir copiándolo en cada build-deploy. */
+test("build-deploy: favicon.ico se copia a la raíz del deploy y no está vacío", () => {
+  const target = path.join(deploy, "favicon.ico");
+  assert.ok(fs.existsSync(target), "falta _deploy/favicon.ico");
+  assert.ok(fs.statSync(target).size > 0, "_deploy/favicon.ico existe pero pesa 0 bytes");
+});
+
 test("build-deploy: ningún href/src de ninguna página deployada conserva ../, /site/ o ..//", () => {
   const offenders = [];
   for (const file of listHtmlFiles(deploy)) {

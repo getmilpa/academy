@@ -170,6 +170,7 @@ function page(lang) {
     alternates: { es: urlFor("es"), en: urlFor("en"), "x-default": urlFor("es") },
     jsonld: jsonld(lang),
     extraHead: [
+      `<link rel="icon" href="${asset}/assets/milpa-app-icon.svg" type="image/svg+xml">`,
       `<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">`,
       gtagBootstrap(lang, "atomo"),
       `<script src="${asset}/analytics.js" defer></script>`,
