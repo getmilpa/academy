@@ -109,7 +109,7 @@ export const PORTAL = {
         es: "Manipula el grafo, el pipeline, las compuertas, el event log y los contratos sin reducirlos a diapositivas.",
         en: "Manipulate the graph, the pipeline, the gates, the event log, and the contracts without reducing them to slides.",
       },
-      link: { es: "Abrir 9 artifacts →", en: "Open 9 artifacts →" },
+      link: { es: "Abrir 10 artifacts →", en: "Open 10 artifacts →" },
     },
   },
 
