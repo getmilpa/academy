@@ -15,10 +15,34 @@
     return value !== null && typeof value === "object" && !Array.isArray(value);
   }
 
+  // Una hoja "localizada" es un objeto {es,en}. Detección y resolución idénticas
+  // a MilpaI18n.pick; se definen local porque i18n.js se carga después de este
+  // módulo en el sitio, así que el engine no depende de ese global.
+  function isLocalized(value) {
+    return isRecord(value) && ("es" in value || "en" in value);
+  }
+
+  function pick(node, lang) {
+    if (isLocalized(node)) return node[lang === "en" ? "en" : "es"];
+    return node;
+  }
+
   function requireText(value, path) {
     if (typeof value !== "string" || value.trim() === "") {
       fail(path, "debe ser un texto no vacío.");
     }
+  }
+
+  // Texto de contenido: acepta un string plano (unidades es-only) o una hoja
+  // bilingüe {es,en}. En el caso bilingüe exige ambos idiomas no vacíos, así
+  // que una traducción a medias falla la validación.
+  function requireLocalizedText(value, path) {
+    if (isLocalized(value)) {
+      requireText(value.es, path + ".es");
+      requireText(value.en, path + ".en");
+      return;
+    }
+    requireText(value, path);
   }
 
   function validateQuiz(quiz) {
@@ -37,7 +61,7 @@
         fail(questionPath + ".id", 'está duplicado: "' + question.id + '".');
       }
       questionIds.add(question.id);
-      requireText(question.prompt, questionPath + ".prompt");
+      requireLocalizedText(question.prompt, questionPath + ".prompt");
 
       if (!Array.isArray(question.options) || question.options.length < 2) {
         fail(questionPath + ".options", "debe incluir una respuesta y al menos un distractor.");
@@ -48,7 +72,7 @@
         var optionPath = questionPath + ".options[" + optionIndex + "]";
         if (!isRecord(option)) fail(optionPath, "debe ser un objeto.");
         requireText(option.id, optionPath + ".id");
-        requireText(option.text, optionPath + ".text");
+        requireLocalizedText(option.text, optionPath + ".text");
         if (optionIds.has(option.id)) {
           fail(optionPath + ".id", 'está duplicado: "' + option.id + '".');
         }
@@ -59,7 +83,7 @@
       if (!optionIds.has(question.answer)) {
         fail(questionPath + ".answer", 'debe coincidir con una opción; se recibió "' + question.answer + '".');
       }
-      requireText(question.explanation, questionPath + ".explanation");
+      requireLocalizedText(question.explanation, questionPath + ".explanation");
     });
 
     if (owns.call(quiz, "passScore")) {
@@ -78,7 +102,7 @@
     return true;
   }
 
-  function gradeQuiz(quiz, responses) {
+  function gradeQuiz(quiz, responses, lang) {
     validateQuiz(quiz);
     if (!isRecord(responses)) fail("responses", "debe ser un objeto.");
 
@@ -115,7 +139,7 @@
         questionId: question.id,
         selected: selected,
         correct: correct,
-        explanation: question.explanation,
+        explanation: pick(question.explanation, lang),
       };
     });
 

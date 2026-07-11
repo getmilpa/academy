@@ -147,9 +147,9 @@
       var errorId = "quiz-error-" + question.id;
       var feedbackId = "quiz-feedback-" + question.id;
       var options = question.options.map(function (option) {
-        return "<label class=\"mui-choice ac-quiz-option\"><input class=\"mui-radio\" type=\"radio\" name=\"" + escapeHtml(inputName) + "\" value=\"" + escapeHtml(option.id) + "\"><span class=\"mui-choice__text\">" + escapeInline(option.text) + "</span></label>";
+        return "<label class=\"mui-choice ac-quiz-option\"><input class=\"mui-radio\" type=\"radio\" name=\"" + escapeHtml(inputName) + "\" value=\"" + escapeHtml(option.id) + "\"><span class=\"mui-choice__text\">" + escapeInline(pick(option.text, lang)) + "</span></label>";
       }).join("");
-      return "<fieldset class=\"mui-field ac-quiz-question\" data-question-id=\"" + escapeHtml(question.id) + "\"><legend class=\"mui-field__label ac-quiz-prompt\"><span class=\"ac-quiz-index\">Pregunta " + (questionIndex + 1) + " de " + quiz.questions.length + "</span><span>" + escapeInline(question.prompt) + "</span></legend><div class=\"ac-quiz-options\">" + options + "</div><p class=\"mui-field__error\" id=\"" + errorId + "\" data-question-error hidden>Selecciona una respuesta antes de calificar.</p><div class=\"ac-quiz-feedback\" id=\"" + feedbackId + "\" data-question-feedback hidden></div></fieldset>";
+      return "<fieldset class=\"mui-field ac-quiz-question\" data-question-id=\"" + escapeHtml(question.id) + "\"><legend class=\"mui-field__label ac-quiz-prompt\"><span class=\"ac-quiz-index\">Pregunta " + (questionIndex + 1) + " de " + quiz.questions.length + "</span><span>" + escapeInline(pick(question.prompt, lang)) + "</span></legend><div class=\"ac-quiz-options\">" + options + "</div><p class=\"mui-field__error\" id=\"" + errorId + "\" data-question-error hidden>Selecciona una respuesta antes de calificar.</p><div class=\"ac-quiz-feedback\" id=\"" + feedbackId + "\" data-question-feedback hidden></div></fieldset>";
     }).join("");
 
     return "<form class=\"ac-quiz mui-not-prose\" id=\"lessonQuiz\" novalidate><div class=\"ac-quiz-head\"><div><p class=\"ac-quiz-eyebrow\">Evaluación calificable</p><p class=\"ac-quiz-copy\">Resuelve los " + quiz.questions.length + " escenarios. Esta unidad exige " + passScore + " de " + quiz.questions.length + " respuestas correctas.</p></div><span class=\"mui-badge\">" + attempts + " intento" + (attempts === 1 ? "" : "s") + "</span></div><div class=\"ac-quiz-questions\">" + questions + "</div><div class=\"ac-quiz-actions\"><button class=\"mui-btn mui-btn--primary\" type=\"submit\">Calificar evaluación</button><p>La calificación valida respuestas en este navegador; no certifica identidad.</p></div><div class=\"ac-quiz-result\" id=\"quizResult\" role=\"status\" aria-live=\"polite\" tabindex=\"-1\"></div></form>";
@@ -239,7 +239,7 @@
       });
 
       form.querySelectorAll("[data-question-id]").forEach(clearQuestionState);
-      var result = quizEngine.gradeQuiz(quiz, responses);
+      var result = quizEngine.gradeQuiz(quiz, responses, lang);
       if (result.answered < result.total) {
         result.results.filter(function (item) { return item.selected === null; }).forEach(function (item) {
           var fieldset = fieldsetFor(item.questionId);
