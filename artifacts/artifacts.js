@@ -10,10 +10,12 @@ const {
   SURFACES,
   availableCapabilities,
   conceptualPipelineResult,
+  coupleCheck,
   createGenerationPlan,
   decideVerification,
   evaluatePlanting,
   evaluateThemePair,
+  frontierProject,
   projectOperation,
   projectProcess,
   resolveModuleOrder,
@@ -124,6 +126,11 @@ const STRINGS = {
     planWriteLog: (count) => `${count} archivos · directorios asegurados`,
     planWaitingLog: "esperando plan…",
     planFileExists: (file) => `${file} ya existe (usa --force para sobrescribir)`,
+    // Artifact 10 (frontera): única cadena que ORIGINA artifacts.js (el aria del
+    // marcador de fuga clicable). El resto del chrome del demo (badges, labels y
+    // descripciones del acople) se lee del DOM (data-* que emite el SSG desde
+    // GALLERY) — fuente única, sin duplicar prosa acá.
+    frontierLeakHint: (code) => `Fuga sin traducir: ${code}. Actívala para marcarla.`,
   },
   en: {
     navToggleAria: (open) => (open ? "Close navigation" : "Open navigation"),
@@ -186,6 +193,7 @@ const STRINGS = {
     planWriteLog: (count) => `${count} files · directories ensured`,
     planWaitingLog: "waiting for plan…",
     planFileExists: (file) => `${file} already exists (use --force to overwrite)`,
+    frontierLeakHint: (code) => `Untranslated leak: ${code}. Activate to flag it.`,
   },
 };
 
@@ -1017,6 +1025,154 @@ $("#target-exists").addEventListener("change", () => {
 });
 $("#force-write").addEventListener("change", resetPlan);
 
+/* Artifact 10: frontier boundary-map demo. Runs the REAL AcademyCore.frontierProject
+   / coupleCheck over the fixture the SSG rendered into the DOM (single source =
+   GALLERY) — the demo executes the shipped coverage logic, that is the point.
+   Fully defensive: no-ops if the section, hooks, or core functions are absent. */
+function initFrontier() {
+  const demo = $(".wb-frontier-demo");
+  const codeSelect = $("#frontier-code");
+  if (!demo || !codeSelect || typeof frontierProject !== "function" || typeof coupleCheck !== "function") return;
+
+  const output = $("#frontier-output");
+  const mapBody = $("#frontier-map-body");
+  const repairBtn = $("#frontier-repair");
+  const resetBtn = $("#frontier-reset");
+  const runCoupleBtn = $("#frontier-run-couple");
+  const coupleResult = $("#frontier-coupling-result");
+  const langButtons = $$("[data-frontier-lang]", demo);
+
+  // Fixture read back from the DOM (the SSG emitted it from GALLERY): the map-table
+  // rows ARE the map, the container data-* carry the gap + localized demo chrome.
+  const rows = $$("[data-frontier-row]", mapBody);
+  const outputs = rows.map((row) => row.dataset.code);
+  const baseMap = {};
+  for (const row of rows) if (row.dataset.mapped === "true") baseMap[row.dataset.code] = row.dataset.value;
+  const gapCode = demo.dataset.gapCode;
+  const gapValue = demo.dataset.gapValue;
+  const chrome = {
+    mapped: demo.dataset.mappedBadge,
+    leak: demo.dataset.leakBadge,
+    ok: demo.dataset.coupleOk,
+    missing: demo.dataset.coupleMissing,
+    orphan: demo.dataset.coupleOrphan,
+    okDesc: demo.dataset.coupleOkDesc,
+    gapDesc: demo.dataset.coupleGapDesc,
+  };
+
+  const state = { lang: "es", code: outputs[0], map: { ...baseMap }, leakFired: false };
+
+  function renderProjection() {
+    output.dataset.lang = state.lang;
+    output.dataset.code = state.code;
+    output.replaceChildren();
+    // es = the core's raw prose: the frontier renders the code as-is, no leak
+    // possible (it IS the source language).
+    if (state.lang === "es") {
+      output.textContent = state.code;
+      return;
+    }
+    // en = through the map. frontierProject only REPORTS coverage; the consumer
+    // decides the passthrough — and that decision is where the leak is born.
+    const fp = frontierProject(state.code, state.map);
+    if (fp.mapped) {
+      output.textContent = fp.value;
+      return;
+    }
+    // Unmapped: the consumer passes the raw es code through → the leak. Rendered
+    // as a clickable button (keyboard-reachable): the reader discovers it.
+    const leak = createElement("button", "wb-frontier-leak");
+    leak.type = "button";
+    leak.dataset.frontierLeak = "";
+    leak.setAttribute("aria-label", t.frontierLeakHint(state.code));
+    leak.append(
+      createElement("span", "wb-frontier-leak__code", state.code),
+      createElement("span", "mui-badge mui-badge--warning", chrome.leak),
+    );
+    leak.addEventListener("click", () => {
+      leak.dataset.found = "true";
+      if (state.leakFired) return;
+      state.leakFired = true;
+      trackEvent("frontier_leak_found", { lang_shown: state.lang });
+    });
+    output.append(leak);
+  }
+
+  function renderMap() {
+    for (const row of rows) {
+      const mapped = Object.prototype.hasOwnProperty.call(state.map, row.dataset.code);
+      row.dataset.mapped = String(mapped);
+      const cell = row.children[1];
+      cell.replaceChildren();
+      if (mapped) {
+        row.removeAttribute("data-gap");
+        cell.append(
+          createElement("code", null, state.map[row.dataset.code]),
+          document.createTextNode(" "),
+          createElement("span", "mui-badge mui-badge--success", chrome.mapped),
+        );
+      } else {
+        row.setAttribute("data-gap", "");
+        const dash = createElement("span", "wb-frontier-dash", "—");
+        dash.setAttribute("aria-hidden", "true");
+        cell.append(dash, document.createTextNode(" "), createElement("span", "mui-badge mui-badge--warning wb-frontier-leak-badge", chrome.leak));
+      }
+    }
+  }
+
+  function renderCoupling() {
+    const result = coupleCheck(outputs, Object.keys(state.map));
+    let title;
+    if (result.ok) {
+      title = chrome.ok;
+    } else {
+      const parts = [];
+      if (result.missing.length) parts.push(`${chrome.missing}: ${result.missing.join(", ")}`);
+      if (result.orphan.length) parts.push(`${chrome.orphan}: ${result.orphan.join(", ")}`);
+      title = parts.join(" · ");
+    }
+    setAlert(coupleResult, result.ok ? "success" : "warning", title, result.ok ? chrome.okDesc : chrome.gapDesc);
+    coupleResult.dataset.state = result.ok ? "ok" : "missing";
+  }
+
+  function setLang(lang) {
+    state.lang = lang;
+    for (const button of langButtons) {
+      const active = button.dataset.frontierLang === lang;
+      button.setAttribute("aria-pressed", String(active));
+      button.classList.toggle("mui-btn--primary", active);
+    }
+    renderProjection();
+  }
+
+  codeSelect.addEventListener("change", () => {
+    state.code = codeSelect.value;
+    renderProjection();
+  });
+  for (const button of langButtons) {
+    button.addEventListener("click", () => setLang(button.dataset.frontierLang));
+  }
+  repairBtn.addEventListener("click", () => {
+    state.map[gapCode] = gapValue;
+    renderMap();
+    renderProjection();
+    renderCoupling();
+  });
+  runCoupleBtn.addEventListener("click", renderCoupling);
+  resetBtn.addEventListener("click", () => {
+    state.map = { ...baseMap };
+    state.code = outputs[0];
+    codeSelect.value = outputs[0];
+    setLang("es");
+    renderMap();
+    renderCoupling();
+  });
+
+  // Hydrate to the SAME state the SSG rendered (es · first code · gap present),
+  // so there is no flash; the static map + coupling panel already show the leak.
+  renderProjection();
+}
+
 /* Initial state */
 renderGraph();
 resetGate();
@@ -1026,6 +1182,7 @@ resetEvents();
 updateContrastLab();
 $("#force-write").disabled = true;
 resetPlan();
+initFrontier();
 syncSidebarState();
 showArtifact(artifactIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : artifactIds[0], { updateHash: true });
 })();

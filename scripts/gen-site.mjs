@@ -44,7 +44,7 @@ function gtagBootstrap(lang, pageType) {
    volumen (30 unit pages + 2 learn index) crecería demasiado este archivo. */
 const LEARN = buildLearnPages({ BASE, gtagBootstrap });
 
-/* Galería completa (9 artifacts, es/en) + shell de laboratorios (es/en). Mismo
+/* Galería completa (10 artifacts, es/en) + shell de laboratorios (es/en). Mismo
    contrato que buildLearnPages ({ pages, sitemapPages, llms }); los generadores
    viven en gen/gallery.mjs y gen/labs.mjs por volumen. Sus index.html ganan la
    colisión con el app-dir en build-deploy (EXCLUDED_SHELLS). */

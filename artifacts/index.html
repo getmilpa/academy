@@ -83,6 +83,10 @@
             <span class="mui-sidebar__item-icon wb-nav-index" aria-hidden="true">09</span>
             <span class="mui-sidebar__item-label">El átomo y sus puertas</span>
           </a>
+          <a class="mui-sidebar__item" href="#frontera" data-artifact-link="frontera">
+            <span class="mui-sidebar__item-icon wb-nav-index" aria-hidden="true">10</span>
+            <span class="mui-sidebar__item-label">El mapa en la frontera</span>
+          </a>
         </div>
 
         <div class="mui-sidebar__section" role="group" aria-labelledby="nav-demos-label">
@@ -115,7 +119,7 @@
 
       <div class="mui-topbar__end wb-topbar__end">
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="previous-artifact" type="button" aria-label="Artifact anterior" data-tip="Anterior">←</button>
-        <output class="wb-progress" id="artifact-progress" aria-label="Artifact actual">01 / 09</output>
+        <output class="wb-progress" id="artifact-progress" aria-label="Artifact actual">01 / 10</output>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="next-artifact" type="button" aria-label="Artifact siguiente" data-tip="Siguiente">→</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="theme-toggle" type="button" aria-label="Cambiar a tema claro" data-tip="Cambiar tema">◐</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip wb-fullscreen" id="fullscreen-toggle" type="button" aria-label="Entrar a pantalla completa" data-tip="Pantalla completa">⛶</button>
@@ -709,6 +713,176 @@
           </ul>
         </details>
         </milpa-artifact>
+      </section>
+
+      <section class="wb-artifact" id="frontera" data-artifact data-kind="Ingeniería · inspeccionar" aria-labelledby="frontera-title" hidden>
+        <header class="wb-artifact__header">
+          <div class="wb-artifact__meta">
+            <span class="mui-badge mui-badge--accent">Artifact 10</span>
+            <span class="mui-badge mui-badge--info">modelo didáctico</span>
+          </div>
+          <h1 id="frontera-title">El mapa en la frontera</h1>
+          <p>Cuando la lógica pura emite prosa en un idioma, localizarla te obliga a elegir dónde vive la traducción. Mapear en la frontera preserva la API — pero abre una clase de fuga: es hermética solo si <em>cada</em> punto de consumo pasa por el mapa.</p>
+        </header>
+
+        <section class="wb-frontier-understand" aria-labelledby="frontier-understand-title">
+          <header class="wb-zone__header">
+            <div>
+              <span class="wb-zone__kicker">entender · dos arquitecturas</span>
+              <h2 id="frontier-understand-title">¿Dónde vive la traducción?</h2>
+            </div>
+          </header>
+          <div class="wb-frontier-options">
+            <article class="wb-frontier-option"><h3>Códigos neutros en el núcleo</h3><p>El núcleo emite códigos (<code>rejected_by_construction</code>, <code>missing_scope</code>) y el componente presenta. El idioma se resuelve en un solo lugar, contra un enum cerrado. La fuga es imposible por construcción: no hay prosa que escape porque el núcleo nunca la produce.</p></article>
+            <article class="wb-frontier-option"><h3>Mapa en la frontera</h3><p>El núcleo sigue emitiendo prosa en un idioma y el consumidor la traduce con un mapa código→idioma en el límite. Preserva la API — nada del núcleo cambia — pero la hermeticidad ahora depende de disciplina: cada punto de consumo tiene que pasar por el mapa.</p></article>
+          </div>
+          <p class="wb-frontier-when">Prefiere (a) cuando puedes refactorizar el núcleo: la garantía la da el compilador, no tu memoria. Usa (b) cuando la API tiene que quedarse quieta — y entonces trátala como lo que es: un contrato de cobertura total.</p>
+        </section>
+
+        <section class="wb-frontier-see" aria-labelledby="frontier-see-title">
+          <span class="wb-zone__kicker">ver · la fuga</span>
+          <h2 id="frontier-see-title">Un punto sin mapear</h2>
+          <p>La frontera de abajo tiene varias salidas del núcleo. Cambia el idioma del demo a <strong>en</strong> y elige la salida que el mapa no cubre: el motor reporta <code>mapped:false</code> y el consumidor, sin traducción, deja pasar el código crudo — un literal en español dentro de la vista en inglés. Un solo punto olvidado basta.</p>
+        </section>
+
+        <section class="wb-frontier-demo" aria-label="El mapa en la frontera" data-gap-code="detenido" data-gap-value="stopped" data-mapped-badge="mapeado" data-leak-badge="fuga" data-couple-ok="ok" data-couple-missing="faltan" data-couple-orphan="huérfanas" data-couple-ok-desc="Cobertura total: cada salida del núcleo tiene su clave y no hay claves muertas." data-couple-gap-desc="Con la clave faltante, el acople falla: eso es exactamente lo que rompería CI antes de llegar a producción.">
+          <p class="wb-frontier-intro">Una frontera con ocho salidas del núcleo y un mapa que traduce al inglés. Falta una clave a propósito.</p>
+
+          <div class="wb-frontier-diagram" aria-hidden="true">
+            <div class="wb-frontier-stage wb-frontier-stage--core">
+              <span class="wb-frontier-stage__label">núcleo</span>
+              <div class="wb-frontier-chips"><code class="wb-frontier-chip">sin iniciar</code><code class="wb-frontier-chip">solicitado</code><code class="wb-frontier-chip">esperando verificación</code><code class="wb-frontier-chip">listo para ejecutar</code><code class="wb-frontier-chip">detenido</code><code class="wb-frontier-chip">ejecutando</code><code class="wb-frontier-chip">completado</code><code class="wb-frontier-chip">fallido</code></div>
+            </div>
+            <span class="wb-frontier-arrow">→</span>
+            <div class="wb-frontier-stage wb-frontier-stage--map"><span class="wb-frontier-stage__label">frontera · mapa es→en</span></div>
+            <span class="wb-frontier-arrow">→</span>
+            <div class="wb-frontier-stage wb-frontier-stage--screen"><span class="wb-frontier-stage__label">pantalla</span></div>
+          </div>
+
+          <div class="wb-frontier-controls">
+            <div class="mui-field">
+              <label class="mui-field__label" for="frontier-code">Salida del núcleo</label>
+              <select class="mui-select" id="frontier-code">
+                <option value="sin iniciar" selected>sin iniciar</option>
+                <option value="solicitado">solicitado</option>
+                <option value="esperando verificación">esperando verificación</option>
+                <option value="listo para ejecutar">listo para ejecutar</option>
+                <option value="detenido">detenido</option>
+                <option value="ejecutando">ejecutando</option>
+                <option value="completado">completado</option>
+                <option value="fallido">fallido</option>
+              </select>
+            </div>
+            <div class="wb-frontier-lang" role="group" aria-label="Idioma del demo">
+              <span class="mui-field__label">Idioma del demo</span>
+              <div class="wb-frontier-lang__buttons">
+                <button class="mui-btn mui-btn--sm mui-btn--primary" type="button" id="frontier-lang-es" data-frontier-lang="es" aria-pressed="true">es · crudo</button>
+                <button class="mui-btn mui-btn--sm" type="button" id="frontier-lang-en" data-frontier-lang="en" aria-pressed="false">en · mapeado</button>
+              </div>
+              <small class="wb-frontier-hint">Cambia el idioma de esta frontera de juguete — no el de la página.</small>
+            </div>
+          </div>
+
+          <div class="wb-frontier-projection">
+            <span class="wb-zone__kicker">Lo que renderiza la frontera</span>
+            <output class="wb-frontier-output" id="frontier-output" data-lang="es" data-code="sin iniciar">sin iniciar</output>
+          </div>
+
+          <div class="mui-table-wrap wb-frontier-map" role="region" aria-label="El mapa en la frontera" tabindex="0">
+            <table class="mui-table mui-table--compact">
+              <thead><tr><th>Salida del núcleo</th><th>en · mapeado</th></tr></thead>
+              <tbody id="frontier-map-body">
+                <tr data-frontier-row data-code="sin iniciar" data-mapped="true" data-value="not started">
+                  <td><code>sin iniciar</code></td>
+                  <td><code>not started</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="solicitado" data-mapped="true" data-value="requested">
+                  <td><code>solicitado</code></td>
+                  <td><code>requested</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="esperando verificación" data-mapped="true" data-value="awaiting verification">
+                  <td><code>esperando verificación</code></td>
+                  <td><code>awaiting verification</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="listo para ejecutar" data-mapped="true" data-value="ready to execute">
+                  <td><code>listo para ejecutar</code></td>
+                  <td><code>ready to execute</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="detenido" data-mapped="false" data-gap>
+                  <td><code>detenido</code></td>
+                  <td><span class="wb-frontier-dash" aria-hidden="true">—</span> <span class="mui-badge mui-badge--warning wb-frontier-leak-badge">fuga</span></td>
+                </tr>
+                <tr data-frontier-row data-code="ejecutando" data-mapped="true" data-value="executing">
+                  <td><code>ejecutando</code></td>
+                  <td><code>executing</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="completado" data-mapped="true" data-value="completed">
+                  <td><code>completado</code></td>
+                  <td><code>completed</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+                <tr data-frontier-row data-code="fallido" data-mapped="true" data-value="failed">
+                  <td><code>fallido</code></td>
+                  <td><code>failed</code> <span class="mui-badge mui-badge--success">mapeado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="wb-action-row">
+            <button class="mui-btn mui-btn--primary" type="button" id="frontier-repair">Agregar al mapa</button>
+            <button class="mui-btn mui-btn--ghost" type="button" id="frontier-reset">Reiniciar</button>
+          </div>
+          <small class="wb-frontier-hint">Inserta la clave faltante para la salida seleccionada.</small>
+
+          <section class="wb-frontier-coupling" aria-labelledby="frontier-coupling-title">
+            <header class="wb-zone__header">
+              <div>
+                <span class="wb-zone__kicker">verificar · la red en CI</span>
+                <h3 id="frontier-coupling-title">Test de acople</h3>
+              </div>
+              <button class="mui-btn mui-btn--sm" type="button" id="frontier-run-couple">Correr acople</button>
+            </header>
+            <div class="mui-alert mui-alert--warning wb-frontier-couple-result" id="frontier-coupling-result" data-state="missing" role="status" aria-live="polite">
+              <span class="mui-alert__icon" aria-hidden="true">!</span>
+              <div class="mui-alert__content">
+                <p class="mui-alert__title">faltan: <code>detenido</code></p>
+                <p class="mui-alert__desc">Con la clave faltante, el acople falla: eso es exactamente lo que rompería CI antes de llegar a producción.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="wb-frontier-do" aria-labelledby="frontier-do-title">
+          <span class="wb-zone__kicker">hacer · la reparación</span>
+          <h2 id="frontier-do-title">Completa el mapa</h2>
+          <p>Agrega la clave que falta con <strong>Agregar al mapa</strong>. La salida que fugaba ahora resuelve a su traducción y la vista en inglés queda limpia. Reparaste el síntoma; lo que sigue evita que vuelva.</p>
+        </section>
+
+        <section class="wb-frontier-verify" aria-labelledby="frontier-verify-title">
+          <span class="wb-zone__kicker">verificar · la red en CI</span>
+          <h2 id="frontier-verify-title">El test de acople</h2>
+          <p><code>coupleCheck</code> acopla los códigos que emite el núcleo con las claves que traduce el mapa. Reporta <code>missing</code> (un código sin traducción) y <code>orphan</code> (una clave muerta) y solo dice <code>ok</code> si la cobertura es total en ambos sentidos. Un estado nuevo del núcleo sin su clave rompe CI — no se cuela a producción por el <code>?? code</code> de fallback.</p>
+        </section>
+
+        <section class="wb-frontier-bug" aria-labelledby="frontier-bug-title">
+          <span class="wb-zone__kicker">el error real · 058fdf9</span>
+          <h2 id="frontier-bug-title">La fuga que cazó el review</h2>
+          <p>Al bilingüizar esta galería, <code>applyGateDecision</code> localizó el resultado visible (<code>#gate-result</code>) pero el push al registro de auditoría siguió usando la prosa cruda del núcleo (<code>verdict.reason</code>). En <code>/en/</code>, el flujo de auto-aprobación mostraba una oración completa en español dentro del audit trail. El review lo cazó enumerando <em>todas</em> las salidas de las cuatro funciones y persiguiendo cada punto de consumo; el smoke del navegador no lo vio porque miró el resultado, no el registro. El fix empujó <code>t.gateConstructionReason</code> (localizado) en vez de <code>verdict.reason</code>.</p>
+        </section>
+
+        <p class="wb-frontier-modelnote">Este demo es el patrón destilado: una frontera de juguete para que veas la fuga y la cierres. La implementación auditada vive en <code>artifacts.js</code> (los mapas <code>PROJECTION_*_EN</code>, el fix del audit trail) y en <code>artifacts-core.js</code> (el núcleo neutro) de esta misma galería.</p>
+
+        <div class="mui-callout mui-callout--tip wb-lesson" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content">
+            <p class="mui-callout__title">Una frontera es cobertura total, no mayoría</p>
+            <p class="mui-callout__body">Las defensas reales, en orden: prefiere códigos neutros en el núcleo cuando puedas (la fuga se vuelve imposible por construcción); si mapeas en la frontera, acopla los enums del núcleo a las claves del mapa con un test que rompa CI ante un estado sin traducir; y verifica la superficie completa, no solo el happy path que se ve. Es la gemela de i18n de <strong>La compuerta</strong>: lo que el sistema garantiza por construcción contra lo que promete por disciplina.</p>
+          </div>
+        </div>
+        <details class="wb-source">
+          <summary>Evidencia y alcance</summary>
+          <p><code>artifacts/artifacts.js</code> (mapas <code>PROJECTION_*_EN</code>, fix del audit trail) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (acople enum↔mapa) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.</p>
+        </details>
       </section>
     </main>
   </div>

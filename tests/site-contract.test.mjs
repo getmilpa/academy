@@ -248,18 +248,40 @@ test("las páginas learn-index SSG muestran las 4 tarjetas de track y #globalPro
   }
 });
 
-/* Task 5 — PE de la galería: los 9 artifacts (chrome + 8 hidden + el átomo)
-   renderizan como HTML real sin JS, ambos idiomas. artifacts.js sólo hidrata. */
-test("la galería SSG muestra los 9 artifacts sin JS (chrome + 8 hidden + átomo), es/en", () => {
-  const ids = ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo"];
+/* Task 5 + Almácigo T2 — PE de la galería: los 10 artifacts (chrome + 9 hidden +
+   el átomo) renderizan como HTML real sin JS, ambos idiomas. artifacts.js sólo
+   hidrata. frontera (Artifact 10) se sumó como sección hidden 2-10. */
+test("la galería SSG muestra los 10 artifacts sin JS (chrome + 9 hidden + átomo), es/en", () => {
+  const ids = ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo", "frontera"];
   for (const rel of ["site/artifacts/index.html", "site/en/artifacts/index.html"]) {
     const html = fs.readFileSync(path.join(root, rel), "utf8");
     for (const id of ids) assert.match(html, new RegExp(`id="${id}"`), rel + ": falta la sección " + id);
-    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 8, rel + ": deben quedar 8 artifacts hidden (2-9)");
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 9, rel + ": deben quedar 9 artifacts hidden (2-10)");
     assert.match(html, /<milpa-artifact id="atomo-artifact" lang="(?:es|en)">/, rel + ": falta el wrapper del átomo");
     assert.match(html, /id="app-shell"/, rel + ": falta el shell");
     assert.match(html, /id="artifact-nav"/, rel + ": falta el sidebar");
     assert.match(html, /id="main"/, rel + ": falta el main");
+  }
+});
+
+/* Almácigo T2 — PE de frontera (Artifact 10): la lección se entiende SIN JS. La
+   prosa del arco completo y — crucial — la FUGA (fila detenido marcada + panel de
+   acople en rojo) ya son visibles en el HTML estático, ambos idiomas. El demo JS
+   sólo la hace explorable; no la introduce. */
+test("frontera PE: prosa del arco + la fuga estática (detenido sin mapear + acople rojo) visibles sin JS, es/en", () => {
+  const prose = {
+    es: ["¿Dónde vive la traducción?", "Un punto sin mapear", "El test de acople", "La fuga que cazó el review"],
+    en: ["Where does the translation live?", "One unmapped point", "The coupling test", "The leak review caught"],
+  };
+  for (const [rel, lang] of [["site/artifacts/index.html", "es"], ["site/en/artifacts/index.html", "en"]]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    for (const p of prose[lang]) assert.ok(html.includes(p), `${rel}: falta la prosa "${p}"`);
+    // La fila del gap (detenido) sale marcada como fuga en el markup estático.
+    assert.match(html, /data-code="detenido" data-mapped="false" data-gap/, rel + ": la fila detenido debe salir como fuga sin JS");
+    assert.match(html, /wb-frontier-leak-badge/, rel + ": falta el badge de fuga en la tabla estática");
+    // El panel de acople arranca en rojo (missing) con el código faltante, sin JS.
+    assert.match(html, /id="frontier-coupling-result"[^>]*data-state="missing"/, rel + ": el panel de acople debe arrancar en missing");
+    assert.match(html, /faltan|missing/, rel + ": el panel debe nombrar el faltante");
   }
 });
 

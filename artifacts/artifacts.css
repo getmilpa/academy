@@ -730,3 +730,83 @@ body {
 @media (max-width: 820px) {
   .wb-projection { grid-template-columns: 1fr; }
 }
+
+/* Artifact 10 · el mapa en la frontera (boundary-map demo + coupling test) */
+.wb-frontier-understand,
+.wb-frontier-see,
+.wb-frontier-do,
+.wb-frontier-verify,
+.wb-frontier-bug { margin-block: var(--space-6); }
+.wb-frontier-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); margin-block: var(--space-4); }
+.wb-frontier-option { border: 1px solid var(--border-subtle); border-radius: var(--radius-base); background: var(--surface); padding: var(--space-4); }
+.wb-frontier-option h3 { margin: 0 0 var(--space-2); font-size: 1rem; }
+.wb-frontier-option p { margin: 0; color: var(--secondary-text); line-height: var(--leading-relaxed); }
+.wb-frontier-when { margin: 0; color: var(--secondary-text); }
+
+.wb-frontier-demo {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  background: var(--surface);
+  padding: var(--space-5);
+  margin-block: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.wb-frontier-intro { margin: 0; color: var(--secondary-text); }
+
+.wb-frontier-diagram { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.wb-frontier-stage { border: 1px solid var(--border-subtle); border-radius: var(--radius-base); background: var(--bg); padding: var(--space-3); flex: 1 1 auto; min-width: 8rem; }
+.wb-frontier-stage__label { display: block; font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--secondary-text); margin-block-end: var(--space-2); }
+.wb-frontier-stage--core { flex: 2 1 16rem; }
+.wb-frontier-chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.wb-frontier-chip { font-family: var(--font-mono, monospace); font-size: 0.75rem; padding: 0.1rem 0.35rem; border-radius: var(--radius-xs); background: var(--accent-subtle); color: var(--accent-text); }
+.wb-frontier-arrow { color: var(--secondary-text); font-size: 1.1rem; flex: 0 0 auto; }
+
+.wb-frontier-controls { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+.wb-frontier-lang { display: flex; flex-direction: column; gap: var(--space-2); }
+.wb-frontier-lang__buttons { display: flex; gap: var(--space-2); }
+.wb-frontier-hint { color: var(--secondary-text); font-size: 0.8rem; }
+
+.wb-frontier-projection { display: flex; flex-direction: column; gap: var(--space-2); }
+.wb-frontier-output {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.05rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-base);
+  background: var(--bg);
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.wb-frontier-leak {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: inherit;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) dashed var(--danger);
+  border-radius: var(--radius-xs);
+  background: var(--danger-bg);
+  color: var(--text);
+}
+.wb-frontier-leak__code { font-family: var(--font-mono, monospace); }
+.wb-frontier-leak[data-found="true"] { outline: 2px solid var(--danger); }
+.wb-frontier-leak:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); }
+
+.wb-frontier-map { margin-block: 0; }
+.wb-frontier-dash { color: var(--secondary-text); }
+.wb-frontier-coupling { border-block-start: 1px solid var(--border-subtle); padding-block-start: var(--space-4); }
+.wb-frontier-modelnote { color: var(--secondary-text); font-size: 0.9rem; margin-block: var(--space-4); }
+
+@media (max-width: 820px) {
+  .wb-frontier-options { grid-template-columns: 1fr; }
+  .wb-frontier-diagram { flex-direction: column; align-items: stretch; }
+  .wb-frontier-arrow { align-self: center; transform: rotate(90deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb-frontier-leak { transition: none; }
+}

@@ -244,18 +244,17 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      graduación de la lección boundary-map). El pin cuenta TODAS las hojas
      (frontera incluida) para seguir guardando contra borrados. */
   assert.equal(leaves.length, 372, `GALLERY es-leaf count drifted: found ${leaves.length}`);
-  /* frontera NACE bilingüe: no hay es verbatim en el index.html legacy (el
-     archivo lo precede — su HTML lo emitirá Task 2 desde el SSG). Se excluye del
-     check verbatim por prefijo de path; los 9 artifacts preexistentes SÍ se
-     verifican. Task 2 lo des-scopéa cuando el generador emita la sección. */
+  /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
+     artifacts[9] su <section> se autoró en artifacts/index.html (además de
+     emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los
+     otros 9. Ahora los 10 artifacts se verifican sin filtro. */
   const missing = leaves
-    .filter(([path]) => !path.startsWith("GALLERY.frontera"))
     .filter(([, es]) => !normalizedHtml.includes(squashWhitespace(es)))
     .map(([path, es]) => `${path}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings not found verbatim in index.html:\n${missing.join("\n")}`);
 });
 
-/* Task 5: la galería completa (9 artifacts) + el shell de labs pasaron a SSG
+/* Task 5: la galería completa (10 artifacts) + el shell de labs pasaron a SSG
    bilingüe (site/[en/]artifacts/, site/[en/]labs/). Estas guardas cubren el HTML
    efectivamente emitido: paridad de contenido es contra la galería generada,
    auditoría de hooks DOM que artifacts.js consulta (fundamento del smoke de T6),
@@ -265,12 +264,10 @@ test("gallery es content-parity: every GALLERY es leaf appears in the GENERATED 
   const normalized = squashWhitespace(galleryEs);
   const leaves = [];
   collectEsLeaves(GALLERY, "GALLERY", leaves);
-  /* frontera (Artifact 10) se stagea como GALLERY.frontera y gen/gallery.mjs aún
-     no lo rinde (no tiene renderer 'frontera'): sus hojas es no están en el HTML
-     generado todavía. Se excluye por prefijo de path; Task 2 lo des-scopéa al
-     registrar renderFrontera. Los 9 artifacts emitidos SÍ se verifican. */
+  /* Task 2 (Almácigo) des-scopeó frontera: gen/gallery.mjs ya registra
+     renderFrontera, así que sus hojas es se emiten en la galería generada como
+     las de los otros 9. Los 10 artifacts se verifican sin filtro. */
   const missing = leaves
-    .filter(([path]) => !path.startsWith("GALLERY.frontera"))
     .filter(([, es]) => !normalized.includes(squashWhitespace(es)))
     .map(([p, es]) => `${p}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings missing in generated gallery:\n${missing.join("\n")}`);
@@ -287,13 +284,13 @@ test("gallery hook-audit: every id-hook artifacts.js queries exists in the gener
     const missing = idHooks.filter((id) => !html.includes(`id="${id}"`));
     assert.deepEqual(missing, [], `id-hooks missing in generated gallery: ${missing.join(", ")}`);
   }
-  // Los 8 artifacts 2-9 quedan hidden; sólo #siembra visible (no-JS entra por el 01).
+  // Los 9 artifacts 2-10 quedan hidden; sólo #siembra visible (no-JS entra por el 01).
   for (const html of [galleryEs, galleryEn]) {
-    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 8);
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 9);
   }
 });
 
-test("gallery pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (9 items) per language", () => {
+test("gallery pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (10 items) per language", () => {
   for (const [html, lang] of [[galleryEs, "es"], [galleryEn, "en"]]) {
     const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}artifacts/`;
     assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`));

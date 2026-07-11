@@ -2,12 +2,12 @@
      - site/artifacts/index.html        (es, 2 niveles: ../../)
      - site/en/artifacts/index.html     (en, 3 niveles: ../../../)
 
-   Reproduce el DOM EXACTO de artifacts/index.html (chrome del shell + los 9
+   Reproduce el DOM EXACTO de artifacts/index.html (chrome del shell + los 10
    artifacts con su markup interactivo estático) sustituyendo cada string
    visible por su valor { es, en } desde GALLERY (artifacts/content/
    gallery.content.mjs). El átomo (#atomo, Artifact 09) renderiza su fallback
    estático desde ATOMO vía renderAtomoFallback() — fuente única compartida con
-   site/atomo/. La galería completa (9 artifacts) es visible sin JS en ambos
+   site/atomo/. La galería completa (10 artifacts) es visible sin JS en ambos
    idiomas; artifacts.js sólo hidrata sobre este DOM (T4).
 
    Determinismo: data pura, sin Date/Math.random, orden estable → byte-idéntico
@@ -132,7 +132,7 @@ function renderSidebar(lang, rootPrefix) {
   const s = GALLERY.chrome.sidebar;
   const a = GALLERY.artifacts;
   const webinarPlay = [0, 1, 2].map((i) => navLink(a[i], i, lang, i === 0)).join("\n");
-  const engineering = [3, 4, 5, 6, 7, 8].map((i) => navLink(a[i], i, lang, false)).join("\n");
+  const engineering = [3, 4, 5, 6, 7, 8, 9].map((i) => navLink(a[i], i, lang, false)).join("\n");
   return `    <nav class="mui-sidebar wb-sidebar" id="artifact-nav" aria-label="${L(s.navAriaLabel, lang)}">
       <a class="mui-sidebar__brand wb-sidebar__brand" href="${portalHome(lang, rootPrefix)}">
         <img src="${rootPrefix}assets/milpa-symbol-color.svg" alt="" width="24" height="24">
@@ -196,7 +196,7 @@ function renderTopbar(lang) {
 
       <div class="mui-topbar__end wb-topbar__end">
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="previous-artifact" type="button" aria-label="${L(t.previousAria, lang)}" data-tip="${L(t.previousTip, lang)}">←</button>
-        <output class="wb-progress" id="artifact-progress" aria-label="${L(t.progressAria, lang)}">01 / 09</output>
+        <output class="wb-progress" id="artifact-progress" aria-label="${L(t.progressAria, lang)}">01 / 10</output>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="next-artifact" type="button" aria-label="${L(t.nextAria, lang)}" data-tip="${L(t.nextTip, lang)}">→</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="theme-toggle" type="button" aria-label="${L(t.themeAria, lang)}" data-tip="${L(t.themeTip, lang)}">◐</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip wb-fullscreen" id="fullscreen-toggle" type="button" aria-label="${L(t.fullscreenAria, lang)}" data-tip="${L(t.fullscreenTip, lang)}">⛶</button>
@@ -732,6 +732,174 @@ function renderAtomoSection(a, lang) {
       </section>`;
 }
 
+/* ---- Artifact 10 · frontera (boundary-map demo + coupling test) --------- */
+
+function renderFrontera(a, lang) {
+  const d = a.demo;
+  const u = a.understand;
+  const c = d.coupling;
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  const mappedBadge = L(d.mappedBadge, lang);
+  const leakBadge = L(d.leakBadge, lang);
+  // Diagram labels are decorative skeleton (not GALLERY leaves): localized inline
+  // so the en page reads core→frontier→screen, not Spanish. The chips ARE the raw
+  // es codes the core emits — Spanish on BOTH pages IS the lesson.
+  const diag = lang === "en"
+    ? { core: "core", map: "frontier · es→en map", screen: "screen" }
+    : { core: "núcleo", map: "frontera · mapa es→en", screen: "pantalla" };
+
+  const coreChips = d.outputs.map((code) => `<code class="wb-frontier-chip">${code}</code>`).join("");
+  const options = d.outputs
+    .map((code, i) => `                <option value="${esc(code)}"${i === 0 ? " selected" : ""}>${code}</option>`)
+    .join("\n");
+
+  // Map table: 7 mapped rows + the gap row (gapCode) marked as a leak. The static
+  // render already SHOWS the leak (PE: the lesson reads with zero JS). The rows +
+  // container data-* ARE the demo fixture artifacts.js reads back (single source).
+  const rows = d.outputs
+    .map((code) => {
+      const mapped = Object.prototype.hasOwnProperty.call(d.enMap, code);
+      const value = mapped ? d.enMap[code] : "";
+      return `                <tr data-frontier-row data-code="${esc(code)}" data-mapped="${mapped}"${mapped ? ` data-value="${esc(value)}"` : " data-gap"}>
+                  <td><code>${code}</code></td>
+                  <td>${mapped
+                    ? `<code>${value}</code> <span class="mui-badge mui-badge--success">${mappedBadge}</span>`
+                    : `<span class="wb-frontier-dash" aria-hidden="true">—</span> <span class="mui-badge mui-badge--warning wb-frontier-leak-badge">${leakBadge}</span>`}</td>
+                </tr>`;
+    })
+    .join("\n");
+  const missingList = d.outputs.filter((code) => !Object.prototype.hasOwnProperty.call(d.enMap, code));
+
+  return `${sectionOpen(a, lang, "frontera-title", true)}
+        <header class="wb-artifact__header">
+          <div class="wb-artifact__meta">
+            <span class="mui-badge mui-badge--accent">${L(a.badges.index, lang)}</span>
+            <span class="mui-badge mui-badge--info">${L(a.badges.tag, lang)}</span>
+          </div>
+          <h1 id="frontera-title">${L(a.title, lang)}</h1>
+          <p>${L(a.lede, lang)}</p>
+        </header>
+
+        <section class="wb-frontier-understand" aria-labelledby="frontier-understand-title">
+          <header class="wb-zone__header">
+            <div>
+              <span class="wb-zone__kicker">${L(u.kicker, lang)}</span>
+              <h2 id="frontier-understand-title">${L(u.title, lang)}</h2>
+            </div>
+          </header>
+          <div class="wb-frontier-options">
+            <article class="wb-frontier-option"><h3>${L(u.optionA.name, lang)}</h3><p>${L(u.optionA.body, lang)}</p></article>
+            <article class="wb-frontier-option"><h3>${L(u.optionB.name, lang)}</h3><p>${L(u.optionB.body, lang)}</p></article>
+          </div>
+          <p class="wb-frontier-when">${L(u.when, lang)}</p>
+        </section>
+
+        <section class="wb-frontier-see" aria-labelledby="frontier-see-title">
+          <span class="wb-zone__kicker">${L(a.see.kicker, lang)}</span>
+          <h2 id="frontier-see-title">${L(a.see.title, lang)}</h2>
+          <p>${L(a.see.body, lang)}</p>
+        </section>
+
+        <section class="wb-frontier-demo" aria-label="${esc(stripTags(L(a.title, lang)))}" data-gap-code="${esc(d.gapCode)}" data-gap-value="${esc(d.gapValue)}" data-mapped-badge="${esc(mappedBadge)}" data-leak-badge="${esc(leakBadge)}" data-couple-ok="${esc(L(c.okLabel, lang))}" data-couple-missing="${esc(L(c.missingLabel, lang))}" data-couple-orphan="${esc(L(c.orphanLabel, lang))}" data-couple-ok-desc="${esc(L(c.okDesc, lang))}" data-couple-gap-desc="${esc(L(c.gapDesc, lang))}">
+          <p class="wb-frontier-intro">${L(d.intro, lang)}</p>
+
+          <div class="wb-frontier-diagram" aria-hidden="true">
+            <div class="wb-frontier-stage wb-frontier-stage--core">
+              <span class="wb-frontier-stage__label">${diag.core}</span>
+              <div class="wb-frontier-chips">${coreChips}</div>
+            </div>
+            <span class="wb-frontier-arrow">→</span>
+            <div class="wb-frontier-stage wb-frontier-stage--map"><span class="wb-frontier-stage__label">${diag.map}</span></div>
+            <span class="wb-frontier-arrow">→</span>
+            <div class="wb-frontier-stage wb-frontier-stage--screen"><span class="wb-frontier-stage__label">${diag.screen}</span></div>
+          </div>
+
+          <div class="wb-frontier-controls">
+            <div class="mui-field">
+              <label class="mui-field__label" for="frontier-code">${L(d.codeSelectorLabel, lang)}</label>
+              <select class="mui-select" id="frontier-code">
+${options}
+              </select>
+            </div>
+            <div class="wb-frontier-lang" role="group" aria-label="${esc(stripTags(L(d.langToggleLabel, lang)))}">
+              <span class="mui-field__label">${L(d.langToggleLabel, lang)}</span>
+              <div class="wb-frontier-lang__buttons">
+                <button class="mui-btn mui-btn--sm mui-btn--primary" type="button" id="frontier-lang-es" data-frontier-lang="es" aria-pressed="true">${L(d.langOptionEs, lang)}</button>
+                <button class="mui-btn mui-btn--sm" type="button" id="frontier-lang-en" data-frontier-lang="en" aria-pressed="false">${L(d.langOptionEn, lang)}</button>
+              </div>
+              <small class="wb-frontier-hint">${L(d.langToggleHint, lang)}</small>
+            </div>
+          </div>
+
+          <div class="wb-frontier-projection">
+            <span class="wb-zone__kicker">${L(d.projectionLabel, lang)}</span>
+            <output class="wb-frontier-output" id="frontier-output" data-lang="es" data-code="${esc(d.outputs[0])}">${d.outputs[0]}</output>
+          </div>
+
+          <div class="mui-table-wrap wb-frontier-map" role="region" aria-label="${esc(stripTags(L(a.title, lang)))}" tabindex="0">
+            <table class="mui-table mui-table--compact">
+              <thead><tr><th>${L(d.codeSelectorLabel, lang)}</th><th>${L(d.langOptionEn, lang)}</th></tr></thead>
+              <tbody id="frontier-map-body">
+${rows}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="wb-action-row">
+            <button class="mui-btn mui-btn--primary" type="button" id="frontier-repair">${L(d.repairButton, lang)}</button>
+            <button class="mui-btn mui-btn--ghost" type="button" id="frontier-reset">${L(d.resetButton, lang)}</button>
+          </div>
+          <small class="wb-frontier-hint">${L(d.repairHint, lang)}</small>
+
+          <section class="wb-frontier-coupling" aria-labelledby="frontier-coupling-title">
+            <header class="wb-zone__header">
+              <div>
+                <span class="wb-zone__kicker">${L(a.verify.kicker, lang)}</span>
+                <h3 id="frontier-coupling-title">${L(c.title, lang)}</h3>
+              </div>
+              <button class="mui-btn mui-btn--sm" type="button" id="frontier-run-couple">${L(c.runLabel, lang)}</button>
+            </header>
+            <div class="mui-alert mui-alert--warning wb-frontier-couple-result" id="frontier-coupling-result" data-state="missing" role="status" aria-live="polite">
+              <span class="mui-alert__icon" aria-hidden="true">!</span>
+              <div class="mui-alert__content">
+                <p class="mui-alert__title">${L(c.missingLabel, lang)}: ${missingList.map((code) => `<code>${code}</code>`).join(", ")}</p>
+                <p class="mui-alert__desc">${L(c.gapDesc, lang)}</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="wb-frontier-do" aria-labelledby="frontier-do-title">
+          <span class="wb-zone__kicker">${L(a.do.kicker, lang)}</span>
+          <h2 id="frontier-do-title">${L(a.do.title, lang)}</h2>
+          <p>${L(a.do.body, lang)}</p>
+        </section>
+
+        <section class="wb-frontier-verify" aria-labelledby="frontier-verify-title">
+          <span class="wb-zone__kicker">${L(a.verify.kicker, lang)}</span>
+          <h2 id="frontier-verify-title">${L(a.verify.title, lang)}</h2>
+          <p>${L(a.verify.body, lang)}</p>
+        </section>
+
+        <section class="wb-frontier-bug" aria-labelledby="frontier-bug-title">
+          <span class="wb-zone__kicker">${L(a.bug.kicker, lang)}</span>
+          <h2 id="frontier-bug-title">${L(a.bug.title, lang)}</h2>
+          <p>${L(a.bug.body, lang)}</p>
+        </section>
+
+        <p class="wb-frontier-modelnote">${L(a.modelNote, lang)}</p>
+
+        <div class="mui-callout mui-callout--tip wb-lesson" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content">
+            <p class="mui-callout__title">${L(a.lesson.title, lang)}</p>
+            <p class="mui-callout__body">${L(a.lesson.body, lang)}</p>
+          </div>
+        </div>
+${sourcesDetails(a.sources, lang)}
+      </section>`;
+}
+
 const RENDERERS = {
   siembra: renderSiembra,
   pipeline: renderPipeline,
@@ -742,6 +910,7 @@ const RENDERERS = {
   "design-contract": renderDesignContract,
   plan: renderPlan,
   atomo: renderAtomoSection,
+  frontera: renderFrontera,
 };
 
 /* ---- document ----------------------------------------------------------- */
@@ -788,8 +957,8 @@ export function buildGalleryPages({ BASE, gtagBootstrap }) {
   const pages = LANGS.map((lang) => ({ path: outPath(lang), html: galleryPage(lang, gtagBootstrap) }));
   const sitemapPages = [{ es: urlFor("es"), en: urlFor("en") }];
   const note = {
-    es: "La galería completa: los 9 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.",
-    en: "The full gallery: the 9 interactive architecture artifacts, from the webinar to engineering inspection.",
+    es: "La galería completa: los 10 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.",
+    en: "The full gallery: the 10 interactive architecture artifacts, from the webinar to engineering inspection.",
   };
   const llms = {
     es: [{ label: L(GALLERY.chrome.pageTitle, "es"), url: urlFor("es"), note: note.es }],

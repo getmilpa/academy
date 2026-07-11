@@ -103,12 +103,12 @@ test("build-deploy: learn.js y learn.css se siguen deployando", () => {
 /* Colisión galería + labs (Task 5): los app-dirs artifacts/ y labs/ traen un
    index.html legado (galería es-only / shell de labs es-only) que ANTES habría
    clobbeado la SSG bilingüe que site/ ya colocó. EXCLUDED_SHELLS hace ganar a la
-   SSG. Verificamos por CONTENIDO: la galería trae lang="es-MX" + los 9 section
+   SSG. Verificamos por CONTENIDO: la galería trae lang="es-MX" + los 10 section
    ids; el shell de labs trae el resumen estático de los 4 labs. */
-test("build-deploy: _deploy/artifacts/index.html es la galería SSG (9 artifacts), no el shell legado", () => {
+test("build-deploy: _deploy/artifacts/index.html es la galería SSG (10 artifacts), no el shell legado", () => {
   const html = fs.readFileSync(path.join(deploy, "artifacts", "index.html"), "utf8");
   assert.match(html, /<html lang="es-MX"/, "artifacts/index.html debe ser la galería SSG es");
-  for (const id of ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo"]) {
+  for (const id of ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo", "frontera"]) {
     assert.match(html, new RegExp(`id="${id}"`), "falta la sección " + id);
   }
   assert.match(html, /<milpa-artifact id="atomo-artifact"/, "falta el átomo hidratable");

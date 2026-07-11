@@ -8,7 +8,7 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 
 - [Milpa Academy](https://academy.milpa.lat/): El home del currículo: rutas de aprendizaje, laboratorios verificables y artifacts de arquitectura.
 - [El átomo y sus puertas](https://academy.milpa.lat/atomo/): Artifact 09: el mismo handler, proyectado a tres puertas, con sus garantías por superficie.
-- [Milpa Academy · Artifacts de arquitectura](https://academy.milpa.lat/artifacts/): La galería completa: los 9 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.
+- [Milpa Academy · Artifacts de arquitectura](https://academy.milpa.lat/artifacts/): La galería completa: los 10 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.
 - [Laboratorios · Milpa Academy](https://academy.milpa.lat/labs/): Cuatro prácticas verificables: arranca un host, rompe y repara un contrato, genera una ruta y activa la superficie agent-ready.
 
 ## Aprender
