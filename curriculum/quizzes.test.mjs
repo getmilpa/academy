@@ -10,10 +10,10 @@ const { pick } = require("../i18n.js");
 require("./quizzes-fundamentos.js");
 require("./quizzes-arquitectura.js");
 
-// Task 2 dejó bilingües fundamentos + construye (quizzes-fundamentos.js).
-// Task 3 hará lo mismo con arquitectura + disena (quizzes-arquitectura.js)
-// usando ESTE MISMO walk; hasta entonces esas unidades quedan pendientes.
-const BILINGUAL_PREFIXES = ["fundamentos/", "construye/"];
+// Task 2 dejó bilingües fundamentos + construye (quizzes-fundamentos.js) y
+// Task 3 completó arquitectura + disena (quizzes-arquitectura.js) con ESTE
+// MISMO walk; ya no queda ninguna unidad es-only pendiente.
+const BILINGUAL_PREFIXES = ["fundamentos/", "construye/", "arquitectura/", "disena/"];
 function isBilingual(unitKey) {
   return BILINGUAL_PREFIXES.some((prefix) => unitKey.indexOf(prefix) === 0);
 }
@@ -52,7 +52,7 @@ test("las 45 preguntas tienen IDs globales, escenarios y distractores únicos", 
 
 // Walk de translation-completeness: ninguna hoja de contenido sin es y en,
 // floors por idioma (prompt ≥45, explanation ≥50) y textos de opción únicos
-// POR IDIOMA. Es el mismo walk que Task 3 aplicará a quizzes-arquitectura.js.
+// POR IDIOMA. Cubre ambos archivos de quizzes (fundamentos + arquitectura).
 function assertBilingualQuiz(unitKey, quiz) {
   for (const question of quiz.questions) {
     const where = unitKey + "/" + question.id;
