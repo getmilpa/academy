@@ -158,6 +158,24 @@ test("build-deploy: los cross-links de páginas en aterrizan en /en/ (Step 5), e
   assert.match(unitEs, /href="\/labs\/#capabilities"/, "unit es se queda en la raíz");
 });
 
+/* CARRY de T5: assert dedicado para el chrome-nav (topbar + docs-nav móvil) de
+   las páginas de learn EN. A diferencia del test de arriba (que cubre los links
+   see/do CON hash del cuerpo de la unidad), esto protege la reescritura
+   lang-aware del CHROME — los links de nav "Labs"/"Artifacts" (SIN hash) deben
+   apuntar al árbol /en/, no al es. Hasta ahora sólo lo guardaba el output
+   commiteado; la reescritura del topbar/mobile no tenía assert propio. */
+test("build-deploy: el chrome-nav (topbar + móvil) de una página learn EN apunta a /en/labs/ y /en/artifacts/", () => {
+  const unitEn = fs.readFileSync(path.join(deploy, "en", "learn", "fundamentos", "contratos-grafo", "index.html"), "utf8");
+  assert.match(unitEn, /href="\/en\/labs\/"/, "chrome-nav EN debe enlazar /en/labs/");
+  assert.match(unitEn, /href="\/en\/artifacts\/"/, "chrome-nav EN debe enlazar /en/artifacts/");
+  // Sin fuga al árbol es: el chrome-nav (href sin hash) nunca debe ser /labs/ o /artifacts/.
+  assert.doesNotMatch(unitEn, /href="\/labs\/"/, "chrome-nav EN NO debe enlazar el árbol es /labs/");
+  assert.doesNotMatch(unitEn, /href="\/artifacts\/"/, "chrome-nav EN NO debe enlazar el árbol es /artifacts/");
+  // El chrome aparece 2× (topbar mui-btn + docs-nav mui-docs__nav-item), en ambos idiomas del árbol.
+  assert.equal((unitEn.match(/href="\/en\/labs\/"/g) || []).length, 2, "faltan las 2 apariciones del chrome-nav Labs EN (topbar + móvil)");
+  assert.equal((unitEn.match(/href="\/en\/artifacts\/"/g) || []).length, 2, "faltan las 2 apariciones del chrome-nav Artifacts EN (topbar + móvil)");
+});
+
 /* Las páginas de unidad SSG (no colisionan con el app-dir) deben existir en
    ambos idiomas para las 15 unidades del catálogo. */
 test("build-deploy: existen las páginas de unidad SSG en _deploy (es + en)", () => {

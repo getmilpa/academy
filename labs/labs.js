@@ -29,7 +29,7 @@
   const STRINGS = {
     es: {
       themeAriaSwitch: (toTheme) => `Cambiar a tema ${toTheme === "light" ? "claro" : "oscuro"}`,
-      progressLabel: (completed, total) => `${completed} de ${total} práctica${completed === 1 ? "" : "s"}`,
+      progressLabel: (completed, total) => `${completed} de ${total} práctica${total === 1 ? "" : "s"}`,
       statusLabel: (complete) => (complete ? "completa" : "pendiente"),
       statusAriaLabel: (complete) => (complete ? "Práctica completada" : "Práctica pendiente"),
       practiceBadge: (number) => `Práctica ${number}`,
@@ -53,7 +53,7 @@
     },
     en: {
       themeAriaSwitch: (toTheme) => `Switch to ${toTheme === "light" ? "light" : "dark"} theme`,
-      progressLabel: (completed, total) => `${completed} of ${total} practice${completed === 1 ? "" : "s"}`,
+      progressLabel: (completed, total) => `${completed} of ${total} practice${total === 1 ? "" : "s"}`,
       statusLabel: (complete) => (complete ? "done" : "pending"),
       statusAriaLabel: (complete) => (complete ? "Practice completed" : "Practice pending"),
       practiceBadge: (number) => `Practice ${number}`,
