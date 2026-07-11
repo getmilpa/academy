@@ -107,7 +107,9 @@ body {
    .wb-artifact__header > p below, for the same reason that one has it: a
    full-bleed line of body-colored text at 90+ch is uncomfortable to read. */
 .wb-hero {
-  margin: 0 0 var(--space-4);
+  /* Top margin ≈ el margen UA del h1 previo (~21px): sin él, el hero queda
+     al ras del viewport (primer hijo de <main> con body margin 0). */
+  margin: var(--space-5) 0 var(--space-4);
   max-width: 60ch;
   color: var(--text);
   font-size: var(--text-3xl);
