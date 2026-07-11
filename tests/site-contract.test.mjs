@@ -312,8 +312,10 @@ test("artifacts.css no tiene selectores globales sin scope (anti-fuga de embed)"
   const css = fs.readFileSync(path.join(root, "artifacts/artifacts.css"), "utf8");
   const offenders = [];
   for (const [i, line] of css.split("\n").entries()) {
-    // Selector top-level que empieza en *, html o body sin clase de contexto.
-    if (/^(\*|html|body)(\s|,|\{|$)/.test(line) && !/^html\.wb-|^body\.wb-/.test(line)) {
+    // Selector que empieza en *, html o body sin clase de contexto — EN
+    // CUALQUIER nivel de anidación (el bug real vivía indentado dentro de
+    // un @media (max-width:960px) y el escaneo top-level no lo veía).
+    if (/^\s*(\*|html|body)(\s|,|\{|$)/.test(line) && !/^\s*html\.wb-|^\s*body\.wb-/.test(line)) {
       offenders.push(`L${i + 1}: ${line.trim()}`);
     }
   }

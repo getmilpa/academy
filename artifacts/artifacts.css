@@ -663,7 +663,11 @@ milpa-artifact, milpa-artifact *, milpa-artifact *::before, milpa-artifact *::af
 }
 
 @media (max-width: 960px) {
-  body { overflow: hidden; }
+  /* Solo el shell de la galería bloquea (mismo scoping anti-fuga que arriba):
+     en móvil este body{overflow:hidden} sin scope mató el scroll táctil de
+     milpa.lat/getmilpa.com en iPhone (2026-07-11) — el gate ahora escanea
+     también dentro de @media. */
+  html.wb-app body { overflow: hidden; }
   .wb-shell { grid-template-rows: var(--header-h) minmax(0, 1fr); }
   .wb-topbar { grid-area: auto; grid-column: 1; grid-row: 1; }
   .wb-main { grid-area: auto; grid-column: 1; grid-row: 2; height: calc(100dvh - var(--header-h)); }
