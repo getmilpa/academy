@@ -176,6 +176,38 @@ test("sitemap + robots exist and reference the canonical origin", () => {
   assert.match(rb, /Sitemap:/);
 });
 
+/* GA4 instrumentation (Task 7): the bootstrap is a literal constant string
+   (GA_ID lives once in scripts/gen-site.mjs) — no Date()/timestamp is ever
+   evaluated by the SSG, so this must stay covered by the idempotence test
+   above. Assert it landed on BOTH the portal and the atom, in BOTH
+   languages, and that page_type is set per page kind (not just present). */
+test("portal + atom pages ship the GA4 gtag bootstrap with the real Measurement ID", () => {
+  for (const html of [portalEs, portalEn, es, en]) {
+    assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-RNV9LK6RLL/);
+    assert.match(html, /gtag\('config','G-RNV9LK6RLL'\)/);
+  }
+});
+
+test("GA4 bootstrap does NOT fire a manual page_view (gtag('config',…) already sends it)", () => {
+  for (const html of [portalEs, portalEn, es, en]) {
+    assert.doesNotMatch(html, /gtag\('event'\s*,\s*'page_view'/);
+  }
+});
+
+test("portal pages set page_type:'portal' and the atom pages set page_type:'atomo', per language", () => {
+  assert.match(portalEs, /gtag\('set',\{language:'es',page_type:'portal'\}\)/);
+  assert.match(portalEn, /gtag\('set',\{language:'en',page_type:'portal'\}\)/);
+  assert.match(es, /gtag\('set',\{language:'es',page_type:'atomo'\}\)/);
+  assert.match(en, /gtag\('set',\{language:'en',page_type:'atomo'\}\)/);
+});
+
+test("portal + atom pages load analytics.js, deferred, at the right relative depth", () => {
+  assert.match(portalEs, /<script src="\.\.\/analytics\.js" defer><\/script>/);
+  assert.match(portalEn, /<script src="\.\.\/\.\.\/analytics\.js" defer><\/script>/);
+  assert.match(es, /<script src="\.\.\/\.\.\/analytics\.js" defer><\/script>/);
+  assert.match(en, /<script src="\.\.\/\.\.\/\.\.\/analytics\.js" defer><\/script>/);
+});
+
 test("sitemap.xml lists the portal (home) as well as the atom, per language", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/<\/loc>/, "sitemap must list the es portal root");

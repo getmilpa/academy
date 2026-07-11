@@ -23,6 +23,9 @@
 <meta property="og:type" content="website">
 <link rel="icon" href="../../assets/milpa-app-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../academy.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RNV9LK6RLL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{language:'en',page_type:'portal'});gtag('config','G-RNV9LK6RLL');</script>
+<script src="../../analytics.js" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","inLanguage":"en","name":"Milpa Academy","description":"Learn Milpa's architecture through verifiable tracks, artifacts, and labs.","sameAs":["https://milpa.lat","https://github.com/getmilpa","https://www.npmjs.com/package/@milpa/design"]}</script>
 </head>
 <body class="mui-page">
@@ -57,7 +60,7 @@
         <a class="mui-docs__nav-item" href="../../learn/">Learn</a>
         <a class="mui-docs__nav-item" href="../../labs/">Labs</a>
         <a class="mui-docs__nav-item" href="../../artifacts/">Artifacts</a>
-        <a class="mui-docs__nav-item" href="https://github.com/getmilpa">Source code</a>
+        <a class="mui-docs__nav-item" href="https://github.com/getmilpa" data-outbound-kind="repo">Source code</a>
       </nav>
     </div>
   </dialog>
@@ -74,7 +77,7 @@
         </div>
         <div class="ac-overview__actions">
           <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="../../learn/">Start Fundamentals</a>
-          <a class="mui-btn" href="../../labs/">Open labs</a>
+          <a class="mui-btn" id="secondaryLearningAction" href="../../labs/">Open labs</a>
         </div>
         <div class="ac-overview__stats" aria-label="Curriculum summary">
           <div class="mui-stat"><span class="mui-stat__label">Public tracks</span><strong class="mui-stat__value" id="trackCount">4</strong><span class="mui-stat__meta">beginner to senior</span></div>
@@ -120,7 +123,7 @@
   <footer class="mui-footer">
     <div class="mui-footer__grid">
       <div class="mui-footer__brand"><strong>Milpa Academy</strong><p class="mui-footer__mantra">Learning architecture through evidence.</p></div>
-      <nav aria-labelledby="footerEcosystem"><p class="mui-footer__heading" id="footerEcosystem">Ecosystem</p><ul class="mui-footer__links"><li><a href="https://milpa.lat">milpa.lat</a></li><li><a href="https://github.com/getmilpa">GitHub</a></li><li><a href="https://www.npmjs.com/package/@milpa/design">@milpa/design</a></li></ul></nav>
+      <nav aria-labelledby="footerEcosystem"><p class="mui-footer__heading" id="footerEcosystem">Ecosystem</p><ul class="mui-footer__links"><li><a href="https://milpa.lat" data-outbound-kind="site">milpa.lat</a></li><li><a href="https://github.com/getmilpa" data-outbound-kind="repo">GitHub</a></li><li><a href="https://www.npmjs.com/package/@milpa/design" data-outbound-kind="npm">@milpa/design</a></li></ul></nav>
     </div>
     <div class="mui-footer__legal"><p>© 2026 Milpa · Apache-2.0</p></div>
   </footer>

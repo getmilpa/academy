@@ -51,6 +51,13 @@ class MilpaArtifact extends HTMLElement {
      run-ids por superficie (no un contador compartido), selectores reales del
      markup de la Task 2, y el texto de status con el sufijo "→ aplicada". */
   #hydrateAtomo(_preset) {
+    /* GA4 (Task 7): guardado a propósito — este componente se embebe
+       cross-origin en los sitios de marketing, que NO cargan analytics.js.
+       window.MilpaAnalytics ausente ahí, así que esto queda como no-op puro
+       y nunca dispara eventos en el analytics de ese otro sitio. */
+    if (window.MilpaAnalytics && window.MilpaAnalytics.track) {
+      window.MilpaAnalytics.track("artifact_view", { artifact_id: "atomo" });
+    }
     const { projectOperation, SURFACES } = core;
     if (!projectOperation) return; // sin lógica JS disponible → sigue estático, igual de legible
     const root = this;
@@ -106,10 +113,18 @@ class MilpaArtifact extends HTMLElement {
     }
 
     root.querySelectorAll(".wb-surface").forEach((button) =>
-      button.addEventListener("click", () => runProjection(button.dataset.surface)));
+      button.addEventListener("click", () => {
+        if (window.MilpaAnalytics && window.MilpaAnalytics.track) {
+          window.MilpaAnalytics.track("artifact_surface_click", { surface: button.dataset.surface });
+        }
+        runProjection(button.dataset.surface);
+      }));
     const toggle = root.querySelector("#scope-toggle");
     if (toggle) {
       toggle.addEventListener("change", () => {
+        if (window.MilpaAnalytics && window.MilpaAnalytics.track) {
+          window.MilpaAnalytics.track("chaos_toggle", { state: toggle.checked ? "on" : "off" });
+        }
         // Re-proyecta las tres puertas para que la asimetría se vea de una.
         (SURFACES || []).forEach((item) => runProjection(item.id));
       });

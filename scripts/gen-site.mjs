@@ -16,6 +16,24 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["es", "en"];
 const BASE = "https://academy.milpa.lat"; // canonical origin
 
+/* GA4 — única fuente de verdad del Measurement ID (Task 7). Ambas páginas
+   (portal y átomo) inyectan el mismo bootstrap vía gtagBootstrap() más abajo;
+   analytics.js (raíz) es el único punto donde el código del sitio llama
+   window.gtag. No fires manual page_view — gtag('config', GA_ID) ya lo
+   manda solo; duplicarlo con un track("page_view", …) doblaría el conteo. */
+const GA_ID = "G-RNV9LK6RLL";
+
+/* Bootstrap estándar de gtag.js con defaults de página (language, page_type)
+   seteados ANTES del config, así todo hit — incluido el page_view automático
+   de gtag('config', …) — ya los lleva. new Date() es texto literal de este
+   template: corre en el navegador cuando el HTML generado se parsea, nunca
+   en Node/SSG, por eso la salida sigue siendo un string constante y el
+   generador se mantiene determinista/idempotente. */
+function gtagBootstrap(lang, pageType) {
+  return `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{language:'${lang}',page_type:'${pageType}'});gtag('config','${GA_ID}');</script>`;
+}
+
 function urlFor(lang) {
   return lang === "es" ? `${BASE}/atomo/` : `${BASE}/en/atomo/`;
 }
@@ -144,7 +162,11 @@ function page(lang) {
     canonical: urlFor(lang),
     alternates: { es: urlFor("es"), en: urlFor("en"), "x-default": urlFor("es") },
     jsonld: jsonld(lang),
-    extraHead: `<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">`,
+    extraHead: [
+      `<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">`,
+      gtagBootstrap(lang, "atomo"),
+      `<script src="${asset}/analytics.js" defer></script>`,
+    ].join("\n"),
   });
   return `${htmlOpen(lang)}
 ${head}
@@ -220,6 +242,8 @@ function portalExtraHead(lang, asset) {
     '<meta property="og:type" content="website">',
     `<link rel="icon" href="${asset}/assets/milpa-app-icon.svg" type="image/svg+xml">`,
     `<link rel="stylesheet" href="${asset}/academy.css">`,
+    gtagBootstrap(lang, "portal"),
+    `<script src="${asset}/analytics.js" defer></script>`,
   ].join("\n");
 }
 
@@ -258,7 +282,7 @@ function renderPortalDrawer(lang, asset) {
         <a class="mui-docs__nav-item" href="${asset}/learn/">${PORTAL.nav.learn[lang]}</a>
         <a class="mui-docs__nav-item" href="${asset}/labs/">${PORTAL.nav.labs[lang]}</a>
         <a class="mui-docs__nav-item" href="${asset}/artifacts/">${PORTAL.nav.artifacts[lang]}</a>
-        <a class="mui-docs__nav-item" href="${sourceHref}">${PORTAL.nav.source[lang]}</a>
+        <a class="mui-docs__nav-item" href="${sourceHref}" data-outbound-kind="repo">${PORTAL.nav.source[lang]}</a>
       </nav>
     </div>
   </dialog>`;
@@ -277,7 +301,7 @@ function renderPortalHero(lang, asset) {
         </div>
         <div class="ac-overview__actions">
           <a class="mui-btn mui-btn--primary" id="primaryLearningAction" href="${asset}/learn/">${PORTAL.hero.ctaPrimary[lang]}</a>
-          <a class="mui-btn" href="${asset}/labs/">${PORTAL.hero.ctaSecondary[lang]}</a>
+          <a class="mui-btn" id="secondaryLearningAction" href="${asset}/labs/">${PORTAL.hero.ctaSecondary[lang]}</a>
         </div>
         <div class="ac-overview__stats" aria-label="${PORTAL.chrome.statsAriaLabel[lang]}">
           <div class="mui-stat"><span class="mui-stat__label">${s.tracks[lang]}</span><strong class="mui-stat__value" id="trackCount">4</strong><span class="mui-stat__meta">${s.tracksMeta[lang]}</span></div>
@@ -332,8 +356,9 @@ function renderPortalBoundary(lang) {
 function renderPortalFooter(lang) {
   const f = PORTAL.footer;
   const linkLabels = ["milpa.lat", "GitHub", "@milpa/design"]; // literales, mismos en ambos idiomas
+  const linkKinds = ["site", "repo", "npm"]; // paralelo a PORTAL.jsonld.sameAs, para el evento outbound_click
   const links = PORTAL.jsonld.sameAs
-    .map((href, i) => `<li><a href="${href}">${linkLabels[i]}</a></li>`)
+    .map((href, i) => `<li><a href="${href}" data-outbound-kind="${linkKinds[i]}">${linkLabels[i]}</a></li>`)
     .join("");
   return `  <footer class="mui-footer">
     <div class="mui-footer__grid">

@@ -56,10 +56,19 @@
   var allUnits = catalog.allUnits();
   var routeGrid = document.getElementById("routeGrid");
   var primary = document.getElementById("primaryLearningAction");
+  var secondary = document.getElementById("secondaryLearningAction");
   var themeButton = document.getElementById("themeBtn");
   var menu = document.getElementById("mainMenu");
   var menuToggle = document.getElementById("menuToggle");
   var menuClose = document.getElementById("menuClose");
+  var langSwitch = document.getElementById("langSwitch");
+
+  /* GA4 (Task 7): siempre guardado — window.MilpaAnalytics (analytics.js)
+     puede no estar cargado (p.ej. bajo test) y en ese caso no debe romper
+     el resto de la hidratación del portal. */
+  function track(name, params) {
+    if (window.MilpaAnalytics && window.MilpaAnalytics.track) window.MilpaAnalytics.track(name, params);
+  }
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, function (character) {
@@ -152,6 +161,26 @@
   });
   themeButton.addEventListener("click", function () {
     setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+  });
+
+  primary.addEventListener("click", function () {
+    track("cta_click", { cta_id: "primary" });
+  });
+  if (secondary) {
+    secondary.addEventListener("click", function () {
+      track("cta_click", { cta_id: "secondary" });
+    });
+  }
+  if (langSwitch) {
+    langSwitch.addEventListener("click", function () {
+      var to = langSwitch.getAttribute("hreflang") || (lang === "es" ? "en" : "es");
+      track("lang_switch", { from: lang, to: to });
+    });
+  }
+  [].forEach.call(document.querySelectorAll("[data-outbound-kind]"), function (link) {
+    link.addEventListener("click", function () {
+      track("outbound_click", { href: link.getAttribute("href"), kind: link.getAttribute("data-outbound-kind") });
+    });
   });
 
   var savedTheme = "dark";
