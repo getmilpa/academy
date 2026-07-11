@@ -5,7 +5,7 @@
   "description": "El Almácigo — el semillero educativo del ecosistema Milpa: docs, webinars y artifacts interactivos de arquitectura.",
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "python3 -m http.server 4325",
+    "dev": "node scripts/gen-site.mjs && node scripts/build-deploy.mjs && python3 -m http.server 4325 --directory _deploy",
     "gen": "node scripts/gen-site.mjs",
     "test": "node --test artifacts/*.test.mjs curriculum/*.test.mjs labs/*.test.mjs tests/*.test.mjs"
   }

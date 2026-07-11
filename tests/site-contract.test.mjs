@@ -72,7 +72,10 @@ test("las páginas generadas por idioma declaran su lang y llevan hreflang alter
 
 test("puerto de desarrollo y cortes técnicos no conservan valores anteriores", () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  assert.equal(packageJson.scripts.dev, "python3 -m http.server 4325");
+  assert.equal(
+    packageJson.scripts.dev,
+    "node scripts/gen-site.mjs && node scripts/build-deploy.mjs && python3 -m http.server 4325 --directory _deploy",
+  );
   const files = [
     "README.md",
     "artifacts/README.md",
