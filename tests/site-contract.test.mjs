@@ -149,11 +149,15 @@ test("no reaparecen rutas ni claves de tema anteriores", () => {
 });
 
 test("los breadcrumbs respetan la anatomía publicada", () => {
-  const learn = fs.readFileSync(path.join(root, "learn/learn.js"), "utf8");
+  // Task 7: learn.js ya no construye el breadcrumb de la unidad; lo sirve el
+  // SSG (scripts/gen/learn.mjs). Verificamos la anatomía sobre la página
+  // generada — link a la learn-index + <span aria-current> en el track, nunca
+  // aria-current sobre el <li>.
+  const unit = fs.readFileSync(path.join(root, "site/learn/fundamentos/sistema-vivo/index.html"), "utf8");
   const webinar = fs.readFileSync(path.join(root, "webinars/index.html"), "utf8");
-  assert.match(learn, /<a class=\\"mui-breadcrumbs__link\\" href=\\"\.\/\\">[^<]+<\/a>/);
-  assert.match(learn, /<span aria-current=\\"page\\">/);
-  assert.doesNotMatch(learn, /mui-breadcrumbs__item\\" aria-current/);
+  assert.match(unit, /<a class="mui-breadcrumbs__link" href="[^"]*learn\/">[^<]+<\/a>/);
+  assert.match(unit, /<span aria-current="page">/);
+  assert.doesNotMatch(unit, /mui-breadcrumbs__item" aria-current/);
   assert.match(webinar, /class="mui-breadcrumbs__link"/);
   assert.match(webinar, /<span aria-current="page">Webinar<\/span>/);
   assert.doesNotMatch(webinar, /mui-breadcrumbs__item" aria-current/);
