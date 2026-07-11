@@ -172,12 +172,37 @@ test("el lector carga y usa la evaluación antes de registrar progreso", () => {
     "quizzes-arquitectura.js",
     "quiz-engine.js",
     "progress.js",
+    "learn-strings.js",
     "learn.js",
   ].map((name) => html.indexOf(name));
   order.forEach((index, position) => assert.ok(index >= 0 && (position === 0 || index > order[position - 1]), "orden de scripts de evaluación"));
   assert.match(script, /quizEngine\.gradeQuiz/);
   assert.match(script, /store\.recordAssessment/);
   assert.doesNotMatch(script, /setCompleted|completeLesson|ac-evidence/);
+});
+
+/* Debt cleanup: learn/learn-strings.js single-sources the {es,en} chrome table
+   that both learn.js (runtime, reads window.MilpaLearnStrings) and the SSG read.
+   It MUST load immediately before learn.js on every learn surface — the legacy
+   shell and every generated page — or the global is undefined when learn.js
+   runs and the whole hydration no-ops. */
+test("learn-strings.js loads immediately before learn.js on every learn surface", () => {
+  const pages = [
+    "learn/index.html",
+    "site/learn/index.html",
+    "site/en/learn/index.html",
+    "site/learn/fundamentos/sistema-vivo/index.html",
+    "site/en/learn/fundamentos/sistema-vivo/index.html",
+  ];
+  for (const rel of pages) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    const srcs = [...html.matchAll(/<script src="[^"]*?([\w-]+\.js)"/g)].map((m) => m[1]);
+    const stringsIndex = srcs.indexOf("learn-strings.js");
+    const learnIndex = srcs.indexOf("learn.js");
+    assert.ok(stringsIndex >= 0, rel + ": falta el script learn-strings.js");
+    assert.ok(learnIndex >= 0, rel + ": falta el script learn.js");
+    assert.equal(stringsIndex, learnIndex - 1, rel + ": learn-strings.js debe ir justo antes de learn.js");
+  }
 });
 
 /* Task 6 — Progressive enhancement: every SSG unit page shows the full lesson

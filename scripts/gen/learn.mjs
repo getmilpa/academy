@@ -22,11 +22,10 @@
      - #courseAside / dashboard progress bars carry data-track-progress hooks
    and links point at real per-unit PAGES (not "#track/unit" hashes).
 
-   UI chrome text is the same wording as learn.js's STRINGS table (mirrored
-   below as LEARN_STRINGS — learn.js is a bare IIFE that touches document at
-   load, so it cannot be imported into Node; a shared single-source module is
-   deferred to Task 7). The shell chrome (skip link, menu, theme, section nav)
-   is single-sourced from PORTAL.chrome/PORTAL.nav. */
+   UI chrome text is single-sourced from learn/learn-strings.js (LEARN_STRINGS
+   below) — the same UMD table the runtime learn/learn.js reads, so the SSG and
+   the client cannot drift. The shell chrome (skip link, menu, theme, section
+   nav) is single-sourced from PORTAL.chrome/PORTAL.nav. */
 
 import { createRequire } from "node:module";
 import { renderHead, htmlOpen } from "./page.mjs";
@@ -41,123 +40,11 @@ const inlineCode = require("../../inline-code.js");
 
 const LANGS = ["es", "en"];
 
-/* Mirror of learn/learn.js STRINGS (both languages). Kept byte-faithful to
-   the client wording; tests/i18n-contract.test.mjs guards the load-bearing
-   chrome strings against drift between learn.js and this table. */
-const LEARN_STRINGS = {
-  es: {
-    allRoutesLink: "Todas las rutas",
-    statusDone: "Completada",
-    statusPending: "Pendiente",
-    mobileAcademyHeading: "Academy",
-    navLabs: "Laboratorios",
-    navArtifacts: "Artifacts",
-    navWebinar: "Webinar",
-    dashboardKicker: function (version) { return "Currículo público · v" + version; },
-    dashboardH1: "Aprende la arquitectura haciéndola visible",
-    dashboardLede: "Elige una ruta. Cada unidad conecta una explicación breve, un artifact, una práctica y una evaluación calificable con la fuente primaria.",
-    unitsBadge: function (count) { return count + " unidades"; },
-    passedBadge: function (count) { return count + " aprobadas"; },
-    validatedProgressBadge: "progreso validado",
-    unitsOfTotal: function (completed, total) { return completed + " de " + total + " unidades"; },
-    progressInLabel: function (trackTitle) { return "Progreso en " + trackTitle; },
-    tracksHeading: "Rutas públicas",
-    privateContextTitle: "Academy pública, contexto privado separado",
-    privateContextBody: "TeamX puede añadir un catálogo interno durante su propio deploy. El pack privado no se publica ni se esconde dentro de este bundle.",
-    resetProgressButton: "Reiniciar progreso",
-    totalProgressTitle: "Progreso total",
-    totalProgressCopy: function (completed, total) { return completed + " de " + total + " unidades aprobadas"; },
-    methodTitle: "Método",
-    methodCopy: "Entender → Ver → Hacer → Evaluar.",
-    dashboardTitle: "Aprender · Milpa Academy",
-    terminalAriaLabel: "Comandos de la práctica",
-    terminalRegionAriaLabel: "Comandos",
-    onThisPage: "En esta página",
-    phaseUnderstand: "Entender",
-    phaseSee: "Ver",
-    phaseDo: "Hacer",
-    phaseVerify: "Verificar",
-    tocSources: "Fuentes",
-    pagerAriaLabel: "Paginación de la ruta",
-    pagerPrev: "← Anterior",
-    pagerNext: "Siguiente →",
-    assessmentPassed: "Evaluación aprobada",
-    questionIndex: function (index, total) { return "Pregunta " + index + " de " + total; },
-    questionError: "Selecciona una respuesta antes de calificar.",
-    quizEyebrow: "Evaluación calificable",
-    quizIntro: function (count, passScore) { return "Resuelve los " + count + " escenarios. Esta unidad exige " + passScore + " de " + count + " respuestas correctas."; },
-    attemptsBadge: function (attempts) { return attempts + " intento" + (attempts === 1 ? "" : "s"); },
-    submitGrade: "Calificar evaluación",
-    gradingNote: "La calificación valida respuestas en este navegador; no certifica identidad.",
-    breadcrumbsAriaLabel: "Migas de pan",
-    breadcrumbRoutes: "Rutas",
-    unitOfTotal: function (index, total) { return "Unidad " + index + " de " + total; },
-    objectivesHeading: "Al terminar podrás",
-    openArtifactButton: "Abrir artifact",
-    doIntro: "Ejecuta la práctica en tu checkout y conserva la salida como evidencia.",
-    verifyIntro: "Demuestra que puedes aplicar la unidad. El progreso solo avanza al aprobar la evaluación.",
-    rubricTitle: "Criterios evaluados",
-    sourcesHeading: "Fuentes primarias",
-    verifiedPrefix: "Contenido verificado: ",
-    routeProgressTitle: "Progreso de la ruta"
-  },
-  en: {
-    allRoutesLink: "All routes",
-    statusDone: "Completed",
-    statusPending: "Pending",
-    mobileAcademyHeading: "Academy",
-    navLabs: "Labs",
-    navArtifacts: "Artifacts",
-    navWebinar: "Webinar",
-    dashboardKicker: function (version) { return "Public curriculum · v" + version; },
-    dashboardH1: "Learn the architecture by making it visible",
-    dashboardLede: "Choose a track. Each unit connects a short explanation, an artifact, a hands-on practice, and a graded assessment with the primary source.",
-    unitsBadge: function (count) { return count + " units"; },
-    passedBadge: function (count) { return count + " passed"; },
-    validatedProgressBadge: "validated progress",
-    unitsOfTotal: function (completed, total) { return completed + " of " + total + " units"; },
-    progressInLabel: function (trackTitle) { return "Progress in " + trackTitle; },
-    tracksHeading: "Public tracks",
-    privateContextTitle: "Public academy, private context kept separate",
-    privateContextBody: "TeamX can add an internal catalog during its own deploy. The private pack is never published or hidden inside this bundle.",
-    resetProgressButton: "Reset progress",
-    totalProgressTitle: "Total progress",
-    totalProgressCopy: function (completed, total) { return completed + " of " + total + " units passed"; },
-    methodTitle: "Method",
-    methodCopy: "Understand → See → Do → Assess.",
-    dashboardTitle: "Learn · Milpa Academy",
-    terminalAriaLabel: "Practice commands",
-    terminalRegionAriaLabel: "Commands",
-    onThisPage: "On this page",
-    phaseUnderstand: "Understand",
-    phaseSee: "See",
-    phaseDo: "Do",
-    phaseVerify: "Verify",
-    tocSources: "Sources",
-    pagerAriaLabel: "Track pagination",
-    pagerPrev: "← Previous",
-    pagerNext: "Next →",
-    assessmentPassed: "Assessment passed",
-    questionIndex: function (index, total) { return "Question " + index + " of " + total; },
-    questionError: "Select an answer before grading.",
-    quizEyebrow: "Graded assessment",
-    quizIntro: function (count, passScore) { return "Solve the " + count + " scenarios. This unit requires " + passScore + " of " + count + " correct answers."; },
-    attemptsBadge: function (attempts) { return attempts + " attempt" + (attempts === 1 ? "" : "s"); },
-    submitGrade: "Grade assessment",
-    gradingNote: "Grading validates answers in this browser; it doesn't certify identity.",
-    breadcrumbsAriaLabel: "Breadcrumb",
-    breadcrumbRoutes: "Routes",
-    unitOfTotal: function (index, total) { return "Unit " + index + " of " + total; },
-    objectivesHeading: "By the end, you'll be able to",
-    openArtifactButton: "Open artifact",
-    doIntro: "Run the practice in your checkout and keep the output as evidence.",
-    verifyIntro: "Show that you can apply the unit. Progress only advances once you pass the assessment.",
-    rubricTitle: "Criteria assessed",
-    sourcesHeading: "Primary sources",
-    verifiedPrefix: "Content verified: ",
-    routeProgressTitle: "Track progress"
-  }
-};
+/* Single-sourced learn chrome strings ({es,en}). learn/learn-strings.js is
+   the ONE table both this SSG and the runtime learn/learn.js consume, so the
+   two can never drift; tests/i18n-contract.test.mjs walks it for completeness.
+   It is a classic UMD module (module.exports), loaded here with require. */
+const LEARN_STRINGS = require("../../learn/learn-strings.js");
 
 /* Chrome strings that are neither in learn.js STRINGS nor in PORTAL.chrome
    (learn/index.html carried them as static Spanish). */
@@ -247,6 +134,7 @@ function scripts(rootPrefix) {
     "curriculum/progress.js",
     "inline-code.js",
     "i18n.js",
+    "learn/learn-strings.js",
     "learn/learn.js"
   ].map(function (src) { return '  <script src="' + rootPrefix + src + '"></script>'; }).join("\n");
 }

@@ -241,21 +241,44 @@ test("re-running the generator is idempotent for the new learn pages (byte-ident
   assert.deepEqual(after, before);
 });
 
-test("localized chrome on unit pages uses the same wording as learn.js STRINGS (drift guard)", () => {
-  const learnJs = readFileSync(new URL("../learn/learn.js", import.meta.url), "utf8");
-  const es = readUnitPage("es", "fundamentos", "sistema-vivo");
-  const en = readUnitPage("en", "fundamentos", "sistema-vivo");
-  // Apostrophe-free chrome so the same needle is present in both learn.js
-  // source (raw) and the generated HTML (escapeHtml only touches & < > " ').
-  const pairs = [
-    [es, "Al terminar podrás"], [es, "Evaluación calificable"], [es, "Fuentes primarias"],
-    [es, "Calificar evaluación"], [es, "Todas las rutas"],
-    [en, "Graded assessment"], [en, "Primary sources"], [en, "Grade assessment"], [en, "All routes"],
-  ];
-  for (const [html, needle] of pairs) {
-    assert.ok(html.includes(needle), `generated page missing chrome string: ${needle}`);
-    assert.ok(learnJs.includes(needle), `learn.js STRINGS drifted from generator: ${needle}`);
+/* Debt cleanup: learn/learn-strings.js is now the ONE chrome table both
+   learn/learn.js (runtime) and scripts/gen/learn.mjs (SSG) consume, so the two
+   can no longer drift by construction — the old ~9-needle drift guard is
+   obsolete. Replace it with a completeness walk over the module (exact es/en
+   key parity, no empty values, function values that actually use their args),
+   plus a couple of SSG-output smoke needles proving the wording still lands. */
+test("learn chrome strings module: es/en completeness + SSG render (single source)", () => {
+  const strings = require("../learn/learn-strings.js");
+  const { es: esT, en: enT } = strings;
+  // Same key-set, exactly, in both languages (deleting any key breaks this).
+  assert.deepEqual(Object.keys(esT).sort(), Object.keys(enT).sort());
+  for (const table of [esT, enT]) {
+    for (const [key, value] of Object.entries(table)) {
+      if (typeof value === "function") {
+        const one = value(1, 1, 1);
+        const two = value(2, 2, 2);
+        assert.equal(typeof one, "string", `${key}(1) is not a string`);
+        assert.equal(typeof two, "string", `${key}(2) is not a string`);
+        assert.ok(one.length > 0 && two.length > 0, `${key} returned an empty string`);
+        // A function must actually use its argument. Numeric probes 1 vs 2
+        // separate every fn except themeAriaSwitch, which branches on the
+        // categorical theme name — "light" vs "dark" separates that one.
+        const distinct = one !== two
+          || value("light", "light", "light") !== value("dark", "dark", "dark");
+        assert.ok(distinct, `${key} ignores its argument (looks constant)`);
+      } else {
+        assert.equal(typeof value, "string", `${key} is not a string`);
+        assert.ok(value.length > 0, `${key} is an empty string`);
+      }
+    }
   }
+  // SSG smoke: the generated pages render module wording (apostrophe-free so
+  // escapeHtml leaves them byte-identical), both languages.
+  const esPage = readUnitPage("es", "fundamentos", "sistema-vivo");
+  const enPage = readUnitPage("en", "fundamentos", "sistema-vivo");
+  assert.ok(esPage.includes(esT.sourcesHeading), "es page missing sourcesHeading");
+  assert.ok(esPage.includes(esT.submitGrade), "es page missing submitGrade");
+  assert.ok(enPage.includes(enT.quizEyebrow), "en page missing quizEyebrow");
 });
 
 test("unit + learn-index pages ship the GA4 gtag bootstrap with per-page page_type", () => {
