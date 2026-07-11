@@ -233,7 +233,6 @@
 
   var lang = MilpaI18n.currentLang();
   var t = STRINGS[lang];
-  var pick = i18n.pick;
   var store = progress.createStore(window.localStorage);
   var mobileNavRoot = document.getElementById("mobileCourseNav");
   var globalProgress = document.getElementById("globalProgress");
@@ -254,12 +253,18 @@
   // pasamos sólo los params del evento.
   function track(name, params) {
     if (window.MilpaAnalytics) {
-      window.MilpaAnalytics.track(name, params);
+      try {
+        window.MilpaAnalytics.track(name, params);
+      } catch (e) { /* telemetry must never break UX */ }
       return;
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", function () {
-        if (window.MilpaAnalytics) window.MilpaAnalytics.track(name, params);
+        if (window.MilpaAnalytics) {
+          try {
+            window.MilpaAnalytics.track(name, params);
+          } catch (e) { /* telemetry must never break UX */ }
+        }
       }, { once: true });
     }
   }

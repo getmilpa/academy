@@ -570,8 +570,8 @@ function learnIndexPage(lang, gtagBootstrap) {
   const t = LEARN_STRINGS[lang];
   const headHtml = renderHead({
     lang,
-    title: t.dashboardTitle,
-    description: t.dashboardLede,
+    title: escapeHtml(t.dashboardTitle),
+    description: escapeHtml(t.dashboardLede),
     canonical: indexUrl(lang),
     alternates: { es: indexUrl("es"), en: indexUrl("en"), "x-default": indexUrl("es") },
     jsonld: learnIndexJsonLd(lang),
