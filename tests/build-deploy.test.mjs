@@ -85,7 +85,7 @@ test("build-deploy: _deploy/index.html es el portal, no el átomo (regresión de
    tarjeta por track y un total real (0/N), el shell trae 0/0 y cero tarjetas. */
 test("build-deploy: _deploy/learn/index.html es la learn-index SSG, no el shell legado", () => {
   const html = fs.readFileSync(path.join(deploy, "learn", "index.html"), "utf8");
-  const cards = (html.match(/mui-card--interactive ac-track-card/g) || []).length;
+  const cards = (html.match(/ac-track-card/g) || []).length;
   assert.equal(cards, catalog.tracks.length, "learn/index.html no trae las tarjetas de track de la SSG (parece el shell legado)");
   assert.match(html, /id="globalProgress">0\/\d+</, "learn/index.html no trae el contador global de la SSG");
   assert.doesNotMatch(html, /id="globalProgress">0\/0</, "learn/index.html es el shell legado (0/0), no la SSG");

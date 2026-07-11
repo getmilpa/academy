@@ -7,6 +7,6 @@
   "scripts": {
     "dev": "node scripts/gen-site.mjs && node scripts/build-deploy.mjs && python3 -m http.server 4325 --directory _deploy",
     "gen": "node scripts/gen-site.mjs",
-    "test": "node --test artifacts/*.test.mjs curriculum/*.test.mjs labs/*.test.mjs tests/*.test.mjs"
+    "test": "node --test --test-concurrency=1 artifacts/*.test.mjs curriculum/*.test.mjs labs/*.test.mjs tests/*.test.mjs"
   }
 }

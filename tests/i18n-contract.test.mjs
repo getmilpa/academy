@@ -252,6 +252,9 @@ test("learn chrome strings module: es/en completeness + SSG render (single sourc
   const { es: esT, en: enT } = strings;
   // Same key-set, exactly, in both languages (deleting any key breaks this).
   assert.deepEqual(Object.keys(esT).sort(), Object.keys(enT).sort());
+  // Same-key-count deletion in BOTH languages preserves parity above but
+  // shrinks the table silently — pin the count so that still fails loudly.
+  assert.equal(Object.keys(esT).length, 73);
   for (const table of [esT, enT]) {
     for (const [key, value] of Object.entries(table)) {
       if (typeof value === "function") {

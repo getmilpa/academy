@@ -80,7 +80,7 @@ for (const unitKey of bank.keys()) {
   if (isBilingual(unitKey)) {
     test(title, () => assertBilingualQuiz(unitKey, bank.get(unitKey)));
   } else {
-    test(title, { todo: "Task 3 — quizzes-arquitectura.js sigue es-only" }, () => assertBilingualQuiz(unitKey, bank.get(unitKey)));
+    test(title, { todo: "track es-only — pendiente de conversión bilingüe" }, () => assertBilingualQuiz(unitKey, bank.get(unitKey)));
   }
 }
 
