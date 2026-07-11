@@ -30,7 +30,7 @@
             { es: "El host decide qué sembrar; el runtime arranca el sistema; los plugins aportan capacidades; los workflows coordinan acciones. Ninguna capa necesita fingir que es toda la plataforma.", en: "The host decides what to plant; the runtime boots the system; plugins contribute capabilities; workflows coordinate actions. No layer needs to pretend it is the whole platform." }
           ],
           see: { label: { es: "Abrir Siembra tu milpa", en: "Open Plant your milpa" }, href: "../artifacts/#siembra", note: { es: "Construye el grafo módulo por módulo y observa cuándo una dependencia todavía no puede germinar.", en: "Build the graph module by module and watch when a dependency can't germinate yet." } },
-          do: { label: { es: "Leer el mapa en lenguaje llano", en: "Read the map in plain language" }, href: "../docs/QUE-ES-MILPA.md", commands: [] },
+          do: { label: { es: "Construir el grafo", en: "Build the graph" }, href: "../artifacts/#siembra", commands: [] },
           verify: [
             { es: "Distingue las decisiones del host de las responsabilidades del runtime.", en: "Tell the host's decisions apart from the runtime's responsibilities." },
             { es: "Identifica responsabilidades que no pertenecen a Core.", en: "Identify responsibilities that don't belong to Core." }
@@ -188,7 +188,7 @@
             { es: "Consume una versión publicada. Academy puede probar composiciones ac-*, pero no debe duplicar la anatomía de una pieza mui-* ni leer archivos privados del paquete.", en: "Consume a published version. Academy can try out ac-* compositions, but it must not duplicate the anatomy of a mui-* piece or read the package's private files." }
           ],
           see: { label: { es: "Auditar el contrato ejecutable", en: "Audit the executable contract" }, href: "../artifacts/#design-contract", note: { es: "Cambia tema y superficie; el gate calcula contraste en vivo.", en: "Change theme and surface; the gate computes contrast live." } },
-          do: { label: { es: "Abrir la guía de contribución", en: "Open the contribution guide" }, href: "../docs/CONTRIBUIR.md", commands: [] },
+          do: { label: { es: "Abrir la guía de contribución", en: "Open the contribution guide" }, href: "https://github.com/getmilpa/design", commands: [] },
           verify: [
             { es: "Los bundles cargan tokens, motion, primitives, components, artifacts y layouts, en ese orden.", en: "The bundles load tokens, motion, primitives, components, artifacts and layouts, in that order." },
             { es: "La lógica de progreso vive en Academy, no en Design.", en: "Progress logic lives in Academy, not in Design." }
@@ -223,7 +223,7 @@
             { es: "Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar.", en: "An auditable architecture lets you trace a responsibility from the interface to the package that implements it. The map doesn't replace the code: it tells you where to start verifying." }
           ],
           see: { label: { es: "Abrir Atlas de límites", en: "Open Atlas of boundaries" }, href: "../artifacts/#atlas", note: { es: "Selecciona un paquete y sigue sus relaciones y fuentes primarias.", en: "Select a package and follow its relationships and primary sources." } },
-          do: { label: { es: "Consultar la referencia senior", en: "Check the senior reference" }, href: "../docs/REFERENCIA-SENIOR.md", commands: [] },
+          do: { label: { es: "Consultar la referencia senior", en: "Browse the senior reference (source packages)" }, href: "https://github.com/getmilpa", commands: [] },
           verify: [
             { es: "Ubica al dueño de boot, capabilities, tools, gates y estado.", en: "Locate the owner of boot, capabilities, tools, gates and state." },
             { es: "Sustenta cada afirmación importante con una fuente primaria.", en: "Back every important claim with a primary source." }
@@ -376,7 +376,7 @@
             { es: "Academy es laboratorio: puede inventar una composición ac-*. Design decide si sobrevive como mui-* cuando existe un caso real, aparece al menos dos veces, admite contrato, pasa gates y se consume sin hacks.", en: "Academy is a laboratory: it can invent an ac-* composition. Design decides whether it survives as mui-* when there is a real case, it shows up at least twice, it admits a contract, it passes gates and it's consumed without hacks." }
           ],
           see: { label: { es: "Ver el precedente de artifacts", en: "See the artifacts precedent" }, href: "../artifacts/", note: { es: "El cluster nació como composición local y hoy se consume desde @milpa/design@0.9.0.", en: "The cluster started as a local composition and today is consumed from @milpa/design@0.9.0." } },
-          do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "../docs/CONTRIBUIR.md", commands: [] },
+          do: { label: { es: "Leer cómo contribuir", en: "Read how to contribute" }, href: "https://github.com/getmilpa/design", commands: [] },
           verify: [
             { es: "Exige dos usos reales o evidencia fuerte antes de promover.", en: "Require two real uses or strong evidence before promoting." },
             { es: "Describe al candidato mediante anatomía, estados, a11y y motion.", en: "Describe the candidate through anatomy, states, a11y and motion." }
