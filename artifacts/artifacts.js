@@ -643,7 +643,10 @@ function applyGateDecision(decision, decider = "member:42") {
 
   if (!verdict.accepted) {
     gateState.status = "self-denied";
-    gateState.audit.push({ event: "decision.rejected_by_construction", actor: decider, detail: verdict.reason, chip: GATE_CHIPS["self-denied"], time: gateEntryTime() });
+    // detail localizado: verdict.reason es la prosa es del core (rama única
+    // self-denied); t.gateConstructionReason es byte-idéntica en es y aporta
+    // la traducción en en — el audit trail nunca mezcla idiomas.
+    gateState.audit.push({ event: "decision.rejected_by_construction", actor: decider, detail: t.gateConstructionReason, chip: GATE_CHIPS["self-denied"], time: gateEntryTime() });
     gateRoot.dataset.status = "self-denied";
     $("#gate-symbol").dataset.status = "self-denied";
     $("#gate-status-badge").className = "mui-badge mui-badge--danger";
