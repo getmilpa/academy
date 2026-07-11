@@ -10,6 +10,7 @@ import { PORTAL } from "../content/portal.content.mjs";
 // named exports a través de un import estático, así que se carga con require.
 const require = createRequire(import.meta.url);
 const catalog = require("../curriculum/catalog.js");
+const labsCatalog = require("../labs/catalog.js");
 
 execFileSync("node", ["scripts/gen-site.mjs"], { cwd: new URL("..", import.meta.url) });
 const es = readFileSync(new URL("../site/atomo/index.html", import.meta.url), "utf8");
@@ -128,6 +129,7 @@ test("translation completeness: every leaf string has es and en", () => {
   }
   walk(ATOMO, "ATOMO");
   walk(catalog.tracks, "catalog.tracks");
+  walk(labsCatalog.labs, "labs.labs");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
 });
 

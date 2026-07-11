@@ -4,6 +4,12 @@
   const { labs, getLab } = globalThis.MilpaLabCatalog;
   const { verifyLab } = globalThis.MilpaLabVerifier;
   const { splitCodeSpans } = globalThis.MilpaInlineCode;
+
+  // Transitional shim (Task 1): catalog/verifier prose is now {es,en}, but this
+  // consumer still renders es-only. pick() resolves an {es,en} leaf to its es
+  // string (and passes plain strings through untouched) so the page renders
+  // exactly as before. Task 2 replaces this with real language resolution.
+  function pick(n) { return n && typeof n === "object" && "es" in n ? n.es : n; }
   const storageKey = "milpa-academy-labs-v1";
   const themeKey = "milpa-academy-theme";
   const navigation = document.querySelector("#lab-navigation");
@@ -82,7 +88,7 @@
 
       const marker = element("span", "mui-steps__marker");
       marker.setAttribute("aria-hidden", "true");
-      const button = element("button", "mui-steps__title ac-step-button", lab.shortTitle);
+      const button = element("button", "mui-steps__title ac-step-button", pick(lab.shortTitle));
       button.type = "button";
       button.addEventListener("click", () => selectLab(lab.id, { focus: true }));
 
@@ -101,7 +107,7 @@
   function renderCommand(command, labId, index) {
     const terminal = element("div", "mui-terminal ac-command-terminal");
     const bar = element("div", "mui-terminal__bar");
-    const label = element("span", "ac-command-label", command.label);
+    const label = element("span", "ac-command-label", pick(command.label));
     const copy = element("button", "mui-btn mui-btn--ghost mui-btn--sm", "Copiar");
     copy.type = "button";
     copy.dataset.copy = `${labId}-${index}`;
@@ -114,7 +120,7 @@
 
     const body = element("div", "mui-terminal__body");
     body.tabIndex = 0;
-    body.setAttribute("aria-label", `Comandos: ${command.label}`);
+    body.setAttribute("aria-label", `Comandos: ${pick(command.label)}`);
     const line = element("div", "mui-terminal__line");
     line.append(element("span", "mui-terminal__out", command.code));
     body.append(line);
@@ -158,7 +164,7 @@
       mark.setAttribute("aria-hidden", "true");
       const copy = element("div");
       const evidenceLabel = element("p", "");
-      evidenceLabel.append(inlineCode(evidence.label));
+      evidenceLabel.append(inlineCode(pick(evidence.label)));
       copy.append(evidenceLabel);
       if (evidence.excerpt) copy.append(element("code", "", evidence.excerpt));
       item.append(mark, copy);
@@ -177,13 +183,13 @@
     const meta = element("div", "ac-lab-header__meta");
     meta.append(
       element("span", "mui-badge mui-badge--accent", `Práctica ${lab.number}`),
-      element("span", "mui-badge mui-badge--secondary", lab.level),
+      element("span", "mui-badge mui-badge--secondary", pick(lab.level)),
       element("span", "mui-badge", lab.duration),
     );
-    const title = element("h2", "", lab.title);
+    const title = element("h2", "", pick(lab.title));
     title.id = `title-${lab.id}`;
     const objective = element("p", "");
-    objective.append(inlineCode(lab.objective));
+    objective.append(inlineCode(pick(lab.objective)));
     header.append(meta, title, objective);
 
     const layout = element("div", "ac-practice-layout");
@@ -217,7 +223,7 @@
       const marker = element("span", "mui-steps__marker");
       marker.setAttribute("aria-hidden", "true");
       const stepBody = element("p", "mui-steps__body");
-      stepBody.append(inlineCode(step));
+      stepBody.append(inlineCode(pick(step)));
       item.append(marker, element("p", "mui-steps__title", `Paso ${index + 1}`), stepBody);
       steps.append(item);
     });
@@ -233,7 +239,7 @@
     const label = element("label", "", "Salida real de tu terminal");
     label.htmlFor = `output-${lab.id}`;
     const hint = element("p", "ac-field-hint");
-    hint.append(inlineCode(lab.evidenceHint));
+    hint.append(inlineCode(pick(lab.evidenceHint)));
     hint.id = `hint-${lab.id}`;
     const textarea = element("textarea", "mui-textarea ac-output");
     textarea.id = `output-${lab.id}`;
@@ -300,7 +306,7 @@
     const currentIndex = labs.findIndex((item) => item.id === lab.id);
     if (currentIndex < labs.length - 1) {
       const next = element("div", "ac-next");
-      const nextButton = element("button", "mui-btn mui-btn--secondary", `Siguiente: ${labs[currentIndex + 1].shortTitle}`);
+      const nextButton = element("button", "mui-btn mui-btn--secondary", `Siguiente: ${pick(labs[currentIndex + 1].shortTitle)}`);
       nextButton.type = "button";
       nextButton.addEventListener("click", () => selectLab(labs[currentIndex + 1].id, { focus: true }));
       next.append(nextButton);

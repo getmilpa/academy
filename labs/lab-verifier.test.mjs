@@ -89,3 +89,27 @@ test("tool rechaza agent-ready sin una tool registrada", () => {
 test("un id desconocido falla explícitamente", () => {
   assert.throws(() => verifyLab("missing", "anything"), /Laboratorio desconocido/);
 });
+
+test("cada regla de los 4 rule-sets expone un label bilingüe {es,en}", () => {
+  const sampleByLab = {
+    doctor: doctorOutput,
+    capabilities: capabilityOutput,
+    route: routeOutput,
+    tool: toolOutput,
+  };
+  for (const [id, output] of Object.entries(sampleByLab)) {
+    const { evidence } = verifyLab(id, output);
+    assert.ok(evidence.length > 0, `${id} no expone reglas`);
+    evidence.forEach((rule, i) => {
+      assert.ok(rule.label && typeof rule.label === "object" && !Array.isArray(rule.label), `${id}.rules[${i}] label no es objeto {es,en}`);
+      assert.ok(rule.label.es && rule.label.en, `${id}.rules[${i}] label {es,en}`);
+    });
+  }
+});
+
+test("los 4 transcripts de muestra siguen validando: los patterns matchean el output real sin cambios", () => {
+  assert.equal(verifyLab("doctor", doctorOutput).valid, true);
+  assert.equal(verifyLab("capabilities", capabilityOutput).valid, true);
+  assert.equal(verifyLab("route", routeOutput).valid, true);
+  assert.equal(verifyLab("tool", toolOutput).valid, true);
+});
