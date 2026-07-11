@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { GALLERY } from "../artifacts/content/gallery.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
 
 // catalog.js es UMD (module.exports = factory()); cjs-module-lexer no ve sus
@@ -128,9 +129,48 @@ test("translation completeness: every leaf string has es and en", () => {
     }
   }
   walk(ATOMO, "ATOMO");
+  walk(GALLERY, "GALLERY");
   walk(catalog.tracks, "catalog.tracks");
   walk(labsCatalog.labs, "labs.labs");
   assert.deepEqual(missing, [], `strings missing a language: ${missing.join(", ")}`);
+});
+
+/* Task 3: la galería (8 artifacts estáticos + chrome del shell) se extrajo a
+   artifacts/content/gallery.content.mjs. Dos guardas:
+
+   (a) completeness — el walk de arriba ya recorre GALLERY: cualquier hoja con
+       es|en incompleto falla.
+
+   (b) es-fidelity — cada string es del módulo debe aparecer VERBATIM en el
+       artifacts/index.html actual (normalizando el whitespace de indentación
+       HTML). Protege contra ediciones accidentales del español durante la
+       extracción: si un es no aparece tal cual en el HTML fuente, falla. */
+const galleryHtml = readFileSync(new URL("../artifacts/index.html", import.meta.url), "utf8");
+const squashWhitespace = (s) => s.replace(/\s+/g, " ").trim();
+
+function collectEsLeaves(node, path, out) {
+  if (node && typeof node === "object" && !Array.isArray(node)) {
+    const keys = Object.keys(node);
+    if (keys.includes("es") || keys.includes("en")) {
+      if (typeof node.es === "string") out.push([path, node.es]);
+      return;
+    }
+    for (const k of keys) collectEsLeaves(node[k], `${path}.${k}`, out);
+  } else if (Array.isArray(node)) {
+    node.forEach((v, i) => collectEsLeaves(v, `${path}[${i}]`, out));
+  }
+}
+
+test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.html", () => {
+  const normalizedHtml = squashWhitespace(galleryHtml);
+  const leaves = [];
+  collectEsLeaves(GALLERY, "GALLERY", leaves);
+  // Sanity: the walk actually found the bulk of the extracted strings.
+  assert.ok(leaves.length > 200, `expected >200 es leaves, found ${leaves.length}`);
+  const missing = leaves
+    .filter(([, es]) => !normalizedHtml.includes(squashWhitespace(es)))
+    .map(([path, es]) => `${path}: ${JSON.stringify(es)}`);
+  assert.deepEqual(missing, [], `es strings not found verbatim in index.html:\n${missing.join("\n")}`);
 });
 
 /* Task 6: per-unit SSG pages (site/learn/<track>/<unit>/) + learn index
