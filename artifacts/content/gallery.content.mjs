@@ -1,4 +1,4 @@
-/* Fuente bilingüe única de la galería de artifacts (artifacts/index.html: los 8
+/* Fuente bilingüe única de la galería de artifacts (artifacts/index.html: los 11
    artifacts estáticos + el chrome del shell). Todo string visible vive acá como
    { es, en }. Task 5 (SSG de la galería) lo consume para regenerar el DOM es/en;
    Task 4 (runtime) sigue leyendo ids/clases/data-attrs desde artifacts.js. Sin
@@ -52,7 +52,7 @@ export const GALLERY = {
     },
     skipLink: { es: "Saltar al artifact", en: "Skip to the artifact" },
 
-    /* <details><summary> compartido por los 8 artifacts (el del atomo vive en
+    /* <details><summary> compartido por los 10 artifacts (el del atomo vive en
        ATOMO.sources.summary). */
     sourcesSummary: { es: "Evidencia y alcance", en: "Evidence and scope" },
 
@@ -69,7 +69,7 @@ export const GALLERY = {
           },
         },
         /* Grupos 2 y 3: los labels; sus items son los artifact-links de abajo
-           (01-03 en webinarPlay, 04-10 en engineeringInspect). */
+           (01-03 en webinarPlay, 04-11 en engineeringInspect). */
         webinarPlay: { label: { es: "Webinar · jugar", en: "Webinar · play" } },
         engineeringInspect: { label: { es: "Ingeniería · inspeccionar", en: "Engineering · inspect" } },
         demos: {
@@ -98,7 +98,7 @@ export const GALLERY = {
       },
       footer: {
         versionBadge: { es: "@milpa/design 0.9.0", en: "@milpa/design 0.9.0" },
-        date: { es: "Corte técnico · 2026-07-10", en: "Technical snapshot · 2026-07-10" },
+        date: { es: "Corte técnico · 2026-07-13", en: "Technical snapshot · 2026-07-13" },
       },
     },
 
@@ -169,8 +169,8 @@ export const GALLERY = {
         },
       },
       sources: {
-        es: "<code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-runtime/src/Kernel.php:90-127</code> · <code>getmilpa-plugin/src/ContractResolver.php:80-143</code>.",
-        en: "<code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-runtime/src/Kernel.php:90-127</code> · <code>getmilpa-plugin/src/ContractResolver.php:80-143</code>.",
+        es: "<code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-resolver/src/Engine/GraphResolver.php:895-987</code> (computeLoadOrder, el Kahn real) · <code>getmilpa-runtime/src/Kernel.php:156-177</code> (la compuerta y el boot en loadOrder).",
+        en: "<code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-resolver/src/Engine/GraphResolver.php:895-987</code> (computeLoadOrder, the real Kahn pass) · <code>getmilpa-runtime/src/Kernel.php:156-177</code> (the gate and the loadOrder boot).",
       },
     },
 
@@ -322,17 +322,20 @@ export const GALLERY = {
         engines: { es: "↓ motores ↓", en: "↓ engines ↓" },
         contracts: { es: "↓ contratos y primitivas ↓", en: "↓ contracts and primitives ↓" },
       },
-      /* 12 nodos del mapa: badge = rol (traducido), name = nombre de paquete
+      /* 15 nodos del mapa: badge = rol (traducido), name = nombre de paquete
          (neutro salvo host → Aplicación), desc = línea corta. Todos { es, en }
          para que T5 los emita uniformemente; los neutros son idénticos. */
       nodes: [
         { node: "host", badge: { es: "host", en: "host" }, name: { es: "Aplicación", en: "Application" }, desc: { es: "CLI · HTTP · proceso", en: "CLI · HTTP · process" } },
         { node: "mcp-server", badge: { es: "adaptador", en: "adapter" }, name: { es: "mcp-server", en: "mcp-server" }, desc: { es: "JSON-RPC array in/out", en: "JSON-RPC array in/out" } },
         { node: "live-web", badge: { es: "adaptador", en: "adapter" }, name: { es: "live-web", en: "live-web" }, desc: { es: "HTTP + HTML", en: "HTTP + HTML" } },
+        { node: "ai-gateway", badge: { es: "adaptador", en: "adapter" }, name: { es: "ai-gateway", en: "ai-gateway" }, desc: { es: "LLM + loop de tools", en: "LLM + tool loop" } },
         { node: "runtime", badge: { es: "motor", en: "engine" }, name: { es: "runtime", en: "runtime" }, desc: { es: "kernel y boot", en: "kernel and boot" } },
+        { node: "resolver", badge: { es: "motor", en: "engine" }, name: { es: "resolver", en: "resolver" }, desc: { es: "gate + loadOrder[]", en: "gate + loadOrder[]" } },
         { node: "tool-runtime", badge: { es: "motor", en: "engine" }, name: { es: "tool-runtime", en: "tool-runtime" }, desc: { es: "acciones + policy", en: "actions + policy" } },
         { node: "orchestrator", badge: { es: "motor", en: "engine" }, name: { es: "orchestrator", en: "orchestrator" }, desc: { es: "procesos event-sourced", en: "event-sourced processes" } },
         { node: "core", badge: { es: "contrato", en: "contract" }, name: { es: "core", en: "core" }, desc: { es: "interfaces + resultados", en: "interfaces + results" } },
+        { node: "command", badge: { es: "contrato", en: "contract" }, name: { es: "command", en: "command" }, desc: { es: "Operation · N superficies", en: "Operation · N surfaces" } },
         { node: "plugin", badge: { es: "contrato", en: "contract" }, name: { es: "plugin", en: "plugin" }, desc: { es: "provides / requires", en: "provides / requires" } },
         { node: "workflow", badge: { es: "contrato", en: "contract" }, name: { es: "workflow", en: "workflow" }, desc: { es: "states + gates ORM", en: "states + gates ORM" } },
         { node: "event-store", badge: { es: "contrato", en: "contract" }, name: { es: "event-store", en: "event-store" }, desc: { es: "append + replay", en: "append + replay" } },
@@ -346,13 +349,13 @@ export const GALLERY = {
         kind: { es: "motor", en: "engine" },
         title: { es: "runtime", en: "runtime" },
         copy: {
-          es: "Compone core, container, events, HTTP y plugin; verifica contratos antes de iniciar módulos.",
-          en: "Composes core, container, events, HTTP, and plugin; verifies contracts before starting modules.",
+          es: "Compone core, command, container, events, HTTP y resolver; el gate de arquitectura corre antes de bootear en loadOrder.",
+          en: "Composes core, command, container, events, HTTP, and resolver; the architecture gate runs before booting in loadOrder.",
         },
         roleLabel: { es: "Rol", en: "Role" },
         role: { es: "composición", en: "composition" },
         depsLabel: { es: "Depende de", en: "Depends on" },
-        deps: { es: "core · container · events · http · plugin", en: "core · container · events · http · plugin" },
+        deps: { es: "core · command · container · events · http · resolver", en: "core · command · container · events · http · resolver" },
         sourceLabel: { es: "Fuente", en: "Source" },
         source: { es: "getmilpa-runtime/composer.json", en: "getmilpa-runtime/composer.json" },
       },
@@ -426,8 +429,8 @@ export const GALLERY = {
         },
       },
       sources: {
-        es: "<code>getmilpa-tool-runtime/src/ToolRegistry.php:353-570</code> · redacción en <code>ToolAuditLogger.php:45-57,204-232</code>.",
-        en: "<code>getmilpa-tool-runtime/src/ToolRegistry.php:353-570</code> · wording in <code>ToolAuditLogger.php:45-57,204-232</code>.",
+        es: "<code>getmilpa-tool-runtime/src/ToolRegistry.php:348-570</code> · redacción en <code>ToolAuditLogger.php:45-57,204-232</code>.",
+        en: "<code>getmilpa-tool-runtime/src/ToolRegistry.php:348-570</code> · wording in <code>ToolAuditLogger.php:45-57,204-232</code>.",
       },
     },
 
@@ -596,8 +599,8 @@ export const GALLERY = {
         },
       },
       sources: {
-        es: "<code>GenerationResult.php:7-28</code> · <code>PlannedFile.php:7-14</code> · <code>WriteGuard.php:7-31</code> · <code>getmilpa-skeleton/src/Console/Application.php:178-274</code>.",
-        en: "<code>GenerationResult.php:7-28</code> · <code>PlannedFile.php:7-14</code> · <code>WriteGuard.php:7-31</code> · <code>getmilpa-skeleton/src/Console/Application.php:178-274</code>.",
+        es: "<code>getmilpa-devtools/src/Make/GenerationResult.php:8-29</code> · <code>PlannedFile.php:8-28</code> · <code>WriteGuard.php:12-41</code> · <code>getmilpa-skeleton/src/Console/Application.php:238-334</code> (makeController/makeEntity).",
+        en: "<code>getmilpa-devtools/src/Make/GenerationResult.php:8-29</code> · <code>PlannedFile.php:8-28</code> · <code>WriteGuard.php:12-41</code> · <code>getmilpa-skeleton/src/Console/Application.php:238-334</code> (makeController/makeEntity).",
       },
     },
 

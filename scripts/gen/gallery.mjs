@@ -466,23 +466,26 @@ function renderAtlas(a, lang) {
               <span class="wb-boundary-tier__label">${L(a.tiers.adapters, lang)}</span>
               ${node(1, "mui-badge mui-badge--info")}
               ${node(2, "mui-badge mui-badge--info")}
+              ${node(3, "mui-badge mui-badge--info")}
             </div>
             <div class="wb-boundary-arrow" aria-hidden="true">${L(a.arrows.engines, lang)}</div>
             <div class="wb-boundary-tier" data-tier="engines">
               <span class="wb-boundary-tier__label">${L(a.tiers.engines, lang)}</span>
-              ${node(3, "mui-badge mui-badge--secondary")}
               ${node(4, "mui-badge mui-badge--secondary")}
               ${node(5, "mui-badge mui-badge--secondary")}
+              ${node(6, "mui-badge mui-badge--secondary")}
+              ${node(7, "mui-badge mui-badge--secondary")}
             </div>
             <div class="wb-boundary-arrow" aria-hidden="true">${L(a.arrows.contracts, lang)}</div>
             <div class="wb-boundary-tier" data-tier="contracts">
               <span class="wb-boundary-tier__label">${L(a.tiers.contracts, lang)}</span>
-              ${node(6, "mui-badge mui-badge--accent")}
-              ${node(7, "mui-badge mui-badge--accent")}
               ${node(8, "mui-badge mui-badge--accent")}
               ${node(9, "mui-badge mui-badge--accent")}
               ${node(10, "mui-badge mui-badge--accent")}
               ${node(11, "mui-badge mui-badge--accent")}
+              ${node(12, "mui-badge mui-badge--accent")}
+              ${node(13, "mui-badge mui-badge--accent")}
+              ${node(14, "mui-badge mui-badge--accent")}
             </div>
           </div>
 

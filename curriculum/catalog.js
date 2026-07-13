@@ -61,7 +61,7 @@
             { es: "Justifica el orden válido a partir del grafo, no de una lista manual.", en: "Justify the valid order from the graph, not from a manual list." }
           ],
           sources: [
-            { label: { es: "ContractResolver", en: "ContractResolver" }, href: "https://github.com/getmilpa/plugin" },
+            { label: { es: "GraphResolver · loadOrder", en: "GraphResolver · loadOrder" }, href: "https://github.com/getmilpa/resolver" },
             { label: { es: "Plugin metadata", en: "Plugin metadata" }, href: "https://github.com/getmilpa/core" }
           ],
           lastVerified: "2026-07-12"

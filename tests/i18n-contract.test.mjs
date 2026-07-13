@@ -246,19 +246,21 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      Ola Superficies (compuerta-arranque): 372 → 420 (+48 hojas es del Artifact
      11 — chrome del artifact + el navLabel del sidebar + los links {es,en} de
      learn.academy/artifact/llms que viajan DENTRO de los 3 reportes congelados
-     con error: el walk los ve como hojas y eso es correcto, son URLs por idioma). */
-  assert.equal(leaves.length, 420, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     con error: el walk los ve como hojas y eso es correcto, son URLs por idioma).
+     Ola Superficies (corte 2026-07-13): 420 → 429 (+9 hojas es del atlas — 3
+     nodos nuevos resolver/command/ai-gateway × badge/name/desc). */
+  assert.equal(leaves.length, 429, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
      artifacts[9] su <section> se autoró en artifacts/index.html (además de
      emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los
-     otros 9. Ahora los 10 artifacts se verifican sin filtro. */
+     otros 10. Ahora los 11 artifacts se verifican sin filtro. */
   const missing = leaves
     .filter(([, es]) => !normalizedHtml.includes(squashWhitespace(es)))
     .map(([path, es]) => `${path}: ${JSON.stringify(es)}`);
   assert.deepEqual(missing, [], `es strings not found verbatim in index.html:\n${missing.join("\n")}`);
 });
 
-/* Task 5: la galería completa (10 artifacts) + el shell de labs pasaron a SSG
+/* Task 5: la galería completa (11 artifacts) + el shell de labs pasaron a SSG
    bilingüe (site/[en/]artifacts/, site/[en/]labs/). Estas guardas cubren el HTML
    efectivamente emitido: paridad de contenido es contra la galería generada,
    auditoría de hooks DOM que artifacts.js consulta (fundamento del smoke de T6),
@@ -270,7 +272,7 @@ test("gallery es content-parity: every GALLERY es leaf appears in the GENERATED 
   collectEsLeaves(GALLERY, "GALLERY", leaves);
   /* Task 2 (Almácigo) des-scopeó frontera: gen/gallery.mjs ya registra
      renderFrontera, así que sus hojas es se emiten en la galería generada como
-     las de los otros 9. Los 10 artifacts se verifican sin filtro. */
+     las de los otros 10. Los 11 artifacts se verifican sin filtro. */
   const missing = leaves
     .filter(([, es]) => !normalized.includes(squashWhitespace(es)))
     .map(([p, es]) => `${p}: ${JSON.stringify(es)}`);
@@ -294,7 +296,7 @@ test("gallery hook-audit: every id-hook artifacts.js queries exists in the gener
   }
 });
 
-test("gallery pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (10 items) per language", () => {
+test(`gallery pages: lang, canonical, reciprocal hreflang, JSON-LD ItemList (${GALLERY.artifacts.length} items) per language`, () => {
   for (const [html, lang] of [[galleryEs, "es"], [galleryEn, "en"]]) {
     const canon = `https://academy.milpa.lat/${lang === "es" ? "" : "en/"}artifacts/`;
     assert.match(html, new RegExp(`<html lang="${lang === "es" ? "es-MX" : "en"}"`));

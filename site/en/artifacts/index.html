@@ -116,7 +116,7 @@
 
       <div class="mui-sidebar__footer wb-sidebar__footer">
         <span class="mui-badge mui-badge--secondary">@milpa/design 0.9.0</span>
-        <span class="wb-sidebar__date">Technical snapshot · 2026-07-10</span>
+        <span class="wb-sidebar__date">Technical snapshot · 2026-07-13</span>
       </div>
     </nav>
 
@@ -215,7 +215,7 @@
         </div>
         <details class="wb-source">
           <summary>Evidence and scope</summary>
-          <p><code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-runtime/src/Kernel.php:90-127</code> · <code>getmilpa-plugin/src/ContractResolver.php:80-143</code>.</p>
+          <p><code>docs/GUION-WEBINAR-JUNIORS.md</code> · <code>getmilpa-resolver/src/Engine/GraphResolver.php:895-987</code> (computeLoadOrder, the real Kahn pass) · <code>getmilpa-runtime/src/Kernel.php:156-177</code> (the gate and the loadOrder boot).</p>
         </details>
       </section>
 
@@ -378,11 +378,13 @@
               <span class="wb-boundary-tier__label">adapters</span>
               <button class="wb-boundary-node" type="button" data-node="mcp-server"><span class="mui-badge mui-badge--info">adapter</span><strong>mcp-server</strong><small>JSON-RPC array in/out</small></button>
               <button class="wb-boundary-node" type="button" data-node="live-web"><span class="mui-badge mui-badge--info">adapter</span><strong>live-web</strong><small>HTTP + HTML</small></button>
+              <button class="wb-boundary-node" type="button" data-node="ai-gateway"><span class="mui-badge mui-badge--info">adapter</span><strong>ai-gateway</strong><small>LLM + tool loop</small></button>
             </div>
             <div class="wb-boundary-arrow" aria-hidden="true">↓ engines ↓</div>
             <div class="wb-boundary-tier" data-tier="engines">
               <span class="wb-boundary-tier__label">engines</span>
               <button class="wb-boundary-node" type="button" data-node="runtime"><span class="mui-badge mui-badge--secondary">engine</span><strong>runtime</strong><small>kernel and boot</small></button>
+              <button class="wb-boundary-node" type="button" data-node="resolver"><span class="mui-badge mui-badge--secondary">engine</span><strong>resolver</strong><small>gate + loadOrder[]</small></button>
               <button class="wb-boundary-node" type="button" data-node="tool-runtime"><span class="mui-badge mui-badge--secondary">engine</span><strong>tool-runtime</strong><small>actions + policy</small></button>
               <button class="wb-boundary-node" type="button" data-node="orchestrator"><span class="mui-badge mui-badge--secondary">engine</span><strong>orchestrator</strong><small>event-sourced processes</small></button>
             </div>
@@ -390,6 +392,7 @@
             <div class="wb-boundary-tier" data-tier="contracts">
               <span class="wb-boundary-tier__label">contracts</span>
               <button class="wb-boundary-node" type="button" data-node="core"><span class="mui-badge mui-badge--accent">contract</span><strong>core</strong><small>interfaces + results</small></button>
+              <button class="wb-boundary-node" type="button" data-node="command"><span class="mui-badge mui-badge--accent">contract</span><strong>command</strong><small>Operation · N surfaces</small></button>
               <button class="wb-boundary-node" type="button" data-node="plugin"><span class="mui-badge mui-badge--accent">contract</span><strong>plugin</strong><small>provides / requires</small></button>
               <button class="wb-boundary-node" type="button" data-node="workflow"><span class="mui-badge mui-badge--accent">contract</span><strong>workflow</strong><small>states + gates ORM</small></button>
               <button class="wb-boundary-node" type="button" data-node="event-store"><span class="mui-badge mui-badge--accent">contract</span><strong>event-store</strong><small>append + replay</small></button>
@@ -401,10 +404,10 @@
           <aside class="wb-boundary-inspector" aria-labelledby="boundary-inspector-title">
             <span class="wb-zone__kicker" id="boundary-inspector-kind">engine</span>
             <h2 id="boundary-inspector-title">runtime</h2>
-            <p id="boundary-inspector-copy">Composes core, container, events, HTTP, and plugin; verifies contracts before starting modules.</p>
+            <p id="boundary-inspector-copy">Composes core, command, container, events, HTTP, and resolver; the architecture gate runs before booting in loadOrder.</p>
             <dl class="wb-boundary-facts">
               <div><dt>Role</dt><dd id="boundary-role">composition</dd></div>
-              <div><dt>Depends on</dt><dd id="boundary-deps">core · container · events · http · plugin</dd></div>
+              <div><dt>Depends on</dt><dd id="boundary-deps">core · command · container · events · http · resolver</dd></div>
               <div><dt>Source</dt><dd><code id="boundary-source">getmilpa-runtime/composer.json</code></dd></div>
             </dl>
           </aside>
@@ -470,7 +473,7 @@
         </div>
 
         <div class="mui-callout mui-callout--warning wb-lesson" role="note"><span class="mui-callout__icon" aria-hidden="true">!</span><div class="mui-callout__content"><p class="mui-callout__title">The guarantee reads per branch</p><p class="mui-callout__body">“Everything is audited” doesn't describe every early return today. This artifact makes both the implemented guarantees and the gaps visible.</p></div></div>
-        <details class="wb-source"><summary>Evidence and scope</summary><p><code>getmilpa-tool-runtime/src/ToolRegistry.php:353-570</code> · wording in <code>ToolAuditLogger.php:45-57,204-232</code>.</p></details>
+        <details class="wb-source"><summary>Evidence and scope</summary><p><code>getmilpa-tool-runtime/src/ToolRegistry.php:348-570</code> · wording in <code>ToolAuditLogger.php:45-57,204-232</code>.</p></details>
       </section>
 
       <section class="wb-artifact" id="event-log" data-artifact data-kind="Engineering · state" aria-labelledby="event-log-title" hidden>
@@ -604,7 +607,7 @@
         </div>
 
         <div class="mui-callout mui-callout--warning wb-lesson" role="note"><span class="mui-callout__icon" aria-hidden="true">!</span><div class="mui-callout__content"><p class="mui-callout__title">Preview possible, CLI pending</p><p class="mui-callout__body"><code>GenerationResult</code> already makes the plan inspectable, but the current skeleton doesn't expose <code>--dry-run</code>: it runs preflight, writes, and then verifies entities. <code>WriteGuard</code> prevents overwrite; it doesn't promise atomicity or rollback.</p></div></div>
-        <details class="wb-source"><summary>Evidence and scope</summary><p><code>GenerationResult.php:7-28</code> · <code>PlannedFile.php:7-14</code> · <code>WriteGuard.php:7-31</code> · <code>getmilpa-skeleton/src/Console/Application.php:178-274</code>.</p></details>
+        <details class="wb-source"><summary>Evidence and scope</summary><p><code>getmilpa-devtools/src/Make/GenerationResult.php:8-29</code> · <code>PlannedFile.php:8-28</code> · <code>WriteGuard.php:12-41</code> · <code>getmilpa-skeleton/src/Console/Application.php:238-334</code> (makeController/makeEntity).</p></details>
       </section>
 
       <section class="wb-artifact" id="atomo" data-artifact data-kind="Engineering · inspect" aria-labelledby="atomo-title" hidden>
