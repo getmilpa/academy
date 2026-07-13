@@ -80,9 +80,9 @@ export const GALLERY = {
           },
         },
       },
-      /* Labels de los 10 <a data-artifact-link> del sidebar (mismo texto que el
-         <h1> de cada artifact, pero nodo DOM distinto — el h1 de 1-8 y frontera
-         vive en artifacts[].title; el del atomo en ATOMO.title). */
+      /* Labels de los 11 <a data-artifact-link> del sidebar (mismo texto que el
+         <h1> de cada artifact, pero nodo DOM distinto — el h1 de 1-8, frontera y
+         compuerta-arranque vive en artifacts[].title; el del atomo en ATOMO.title). */
       links: {
         siembra: { es: "Siembra tu milpa", en: "Plant your milpa" },
         pipeline: { es: "Una acción, dos puertas", en: "One action, two doors" },
@@ -94,6 +94,7 @@ export const GALLERY = {
         plan: { es: "El plan antes del disco", en: "The plan before disk" },
         atomo: { es: "El átomo y sus puertas", en: "The atom and its doors" },
         frontera: { es: "El mapa en la frontera", en: "The map at the boundary" },
+        "compuerta-arranque": { es: "La compuerta del arranque", en: "The boot gate" },
       },
       footer: {
         versionBadge: { es: "@milpa/design 0.9.0", en: "@milpa/design 0.9.0" },
@@ -775,6 +776,472 @@ export const GALLERY = {
       sources: {
         es: "<code>artifacts/artifacts.js</code> (mapas <code>PROJECTION_*_EN</code>, fix del audit trail) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (acople enum↔mapa) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.",
         en: "<code>artifacts/artifacts.js</code> (<code>PROJECTION_*_EN</code> maps, audit-trail fix) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (enum↔map coupling) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.",
+      },
+    },
+
+    /* ── Artifact 11: compuerta-arranque — el boot path real (Ola Superficies,
+       auditoría 2026-07-13 "Boot path sin artifact"). El ancla NO es #compuerta
+       (ocupada por el Artifact 03, la compuerta humana desde la ola del webinar):
+       #compuerta-arranque. Cuatro escenarios; cada uno rinde un ResolutionReport
+       REAL congelado de milpa/resolver 0.5.0 (ver `reports` abajo, con el snippet
+       PHP exacto de captura como comentario — cero shapes inventados). */
+    {
+      id: "compuerta-arranque",
+      kind: { es: "Ingeniería · arranque", en: "Engineering · boot" },
+      badges: {
+        index: { es: "Artifact 11", en: "Artifact 11" },
+        tag: { es: "reportes reales · resolver 0.5.0", en: "real reports · resolver 0.5.0" },
+      },
+      title: { es: "La compuerta del arranque", en: "The boot gate" },
+      lede: {
+        es: "El boot real no empieza ejecutando: empieza resolviendo. El kernel refleja los manifiestos, resuelve el grafo completo con <code>milpa/resolver</code> y solo entonces decide — un grafo bloqueado lanza <code>ArchitectureBlockedException</code> con el <code>ResolutionReport</code> a bordo; un grafo cerrado arranca en el orden que el propio reporte trae: <code>loadOrder[]</code>.",
+        en: "The real boot doesn't start by executing: it starts by resolving. The kernel reflects the manifests, resolves the whole graph with <code>milpa/resolver</code> and only then decides — a blocked graph throws <code>ArchitectureBlockedException</code> with the <code>ResolutionReport</code> on board; a closed graph boots in the order the report itself carries: <code>loadOrder[]</code>.",
+      },
+
+      intro: {
+        es: "Elige un escenario. Cada panel muestra el reporte REAL que el motor emitió para ese grafo, congelado de <code>milpa/resolver 0.5.0</code>.",
+        en: "Pick a scenario. Each panel shows the REAL report the engine emitted for that graph, frozen from <code>milpa/resolver 0.5.0</code>.",
+      },
+      scenariosAria: { es: "Elegir escenario del resolver", en: "Choose a resolver scenario" },
+      /* Los 4 escenarios: id = clave neutra estable (botón, panel y blob JSON). */
+      scenarios: [
+        {
+          id: "valid",
+          label: { es: "Grafo cerrado", en: "Closed graph" },
+          desc: {
+            es: "Tres paquetes y todo lo requerido tiene proveedor: el grafo cierra y el estado es <code>valid</code>. El reporte trae <code>loadOrder[]</code> — la misma resolución que validó el grafo también lo ordenó, así que el orden de boot no puede divergir de lo validado.",
+            en: "Three packages and everything required has a provider: the graph closes and the status is <code>valid</code>. The report carries <code>loadOrder[]</code> — the same resolution that gated the graph also ordered it, so the boot order cannot diverge from what was validated.",
+          },
+        },
+        {
+          id: "capability",
+          label: { es: "Capability ausente", en: "Missing capability" },
+          desc: {
+            es: "Nadie provee <code>correo.transport</code>. El resolver reporta el hueco como error aprendible y el estado bloquea: existe un orden parcial, pero la compuerta no se abre con el grafo abierto — el kernel lanza <code>ArchitectureBlockedException</code> antes de arrancar nada.",
+            en: "Nobody provides <code>correo.transport</code>. The resolver reports the gap as a learnable error and the status blocks: a partial order exists, but the gate doesn't open while the graph is open — the kernel throws <code>ArchitectureBlockedException</code> before booting anything.",
+          },
+        },
+        {
+          id: "cycle",
+          label: { es: "Ciclo A↔B", en: "A↔B cycle" },
+          desc: {
+            es: "<code>milpa/riego</code> y <code>milpa/siembra</code> se requieren en círculo: para ellos no existe orden de boot. El motor excluye a los miembros del ciclo de <code>loadOrder[]</code> — el independiente <code>milpa/config</code> conserva su lugar — y el estado bloquea el arranque completo.",
+            en: "<code>milpa/riego</code> and <code>milpa/siembra</code> require each other in a circle: for them no boot order exists. The engine excludes the cycle members from <code>loadOrder[]</code> — the independent <code>milpa/config</code> keeps its place — and the status blocks the whole boot.",
+          },
+        },
+        {
+          id: "drift",
+          label: { es: "Manifest drift", en: "Manifest drift" },
+          desc: {
+            es: "El <code>milpa.json</code> declara una arquitectura y el <code>#[PluginMetadata]</code> del código carga otra. El reporte solo NO trae el drift: el motor nunca emite ese código. Lo detecta <code>DriftDetector</code> del lado del caller y <code>coa:inspect architecture</code> lo presenta junto al reporte — exactamente como aquí.",
+            en: "The <code>milpa.json</code> declares one architecture and the code's <code>#[PluginMetadata]</code> carries another. The report alone does NOT carry the drift: the engine never emits that code. <code>DriftDetector</code> detects it caller-side and <code>coa:inspect architecture</code> presents it next to the report — exactly like here.",
+          },
+        },
+      ],
+
+      statusKicker: { es: "ResolutionReport.status", en: "ResolutionReport.status" },
+
+      /* Chrome del error aprendible (labels; el contenido code/message/why/fixes
+         es la salida cruda del motor — inglés de máquina, NO se traduce). */
+      error: {
+        cardAria: { es: "El error aprendible", en: "The learnable error" },
+        originReport: { es: "errors[0] del reporte", en: "errors[0] of the report" },
+        originDrift: { es: "del lado del caller · DriftDetector", en: "caller-side · DriftDetector" },
+        whyLabel: { es: "por qué", en: "why" },
+        fixesLabel: { es: "fixes (del catálogo)", en: "fixes (from the catalog)" },
+        learnLabel: { es: "Aprender →", en: "Learn →" },
+        driftTableAria: { es: "Campos drifteados entre milpa.json y PluginMetadata", en: "Drifted fields between milpa.json and PluginMetadata" },
+        fieldHeader: { es: "campo", en: "field" },
+        declaredHeader: { es: "declarado · milpa.json", en: "declared · milpa.json" },
+        actualHeader: { es: "actual · #[PluginMetadata]", en: "actual · #[PluginMetadata]" },
+      },
+
+      boot: {
+        kicker: { es: "boot en loadOrder[]", en: "boot in loadOrder[]" },
+        orderAria: { es: "Orden de arranque del reporte", en: "The report's boot order" },
+        run: { es: "Arrancar en orden", en: "Boot in order" },
+        gatedNote: {
+          es: "Compuerta cerrada: el kernel lanza ArchitectureBlockedException con este reporte a bordo — nada arranca, aunque exista un orden parcial.",
+          en: "Gate closed: the kernel throws ArchitectureBlockedException with this report on board — nothing boots, even though a partial order exists.",
+        },
+        doneTemplate: {
+          es: "{count} módulos arrancaron en el orden del reporte.",
+          en: "{count} modules booted in the report's order.",
+        },
+        excludedLine: {
+          es: "<code>milpa/riego</code> y <code>milpa/siembra</code> quedan fuera de <code>loadOrder[]</code>: son los miembros del ciclo.",
+          en: "<code>milpa/riego</code> and <code>milpa/siembra</code> stay out of <code>loadOrder[]</code>: they are the cycle members.",
+        },
+      },
+
+      json: {
+        summary: { es: "Ver el reporte completo (JSON congelado del resolver 0.5.0)", en: "See the full report (frozen JSON from resolver 0.5.0)" },
+        regionAria: { es: "Reporte del escenario en JSON", en: "Scenario report as JSON" },
+        provenance: {
+          es: "Salida real de GraphResolver::resolve() y DriftDetector::toLearnableErrors(); el snippet PHP exacto de captura vive como comentario junto a cada blob en la fuente de esta galería.",
+          en: "Real output of GraphResolver::resolve() and DriftDetector::toLearnableErrors(); the exact PHP capture snippet lives as a comment next to each blob in this gallery's source.",
+        },
+      },
+
+      lesson: {
+        title: { es: "La compuerta es el contrato del arranque", en: "The gate is the boot's contract" },
+        body: {
+          es: "El kernel no colecciona checks sueltos: delega el veredicto completo a <code>milpa/resolver</code> y obedece el reporte. Si el grafo no cierra, el error aprendible te dice qué falta, por qué bloquea y dónde aprenderlo; si cierra, <code>loadOrder[]</code> ya es el orden de boot. La misma resolución que validó también ordenó — no hay dos fuentes que puedan divergir.",
+          en: "The kernel doesn't collect loose checks: it delegates the whole verdict to <code>milpa/resolver</code> and obeys the report. If the graph doesn't close, the learnable error tells you what's missing, why it blocks and where to learn it; if it closes, <code>loadOrder[]</code> already is the boot order. The same resolution that validated also ordered — there are no two sources that could diverge.",
+        },
+      },
+      sources: {
+        es: "<code>getmilpa-runtime/src/Kernel.php:156-177</code> (la compuerta y el boot en loadOrder) · <code>getmilpa-resolver/src/Engine/GraphResolver.php</code> · <code>getmilpa-resolver/src/Ingest/DriftDetector.php</code> · reportes congelados de <code>milpa/resolver 0.5.0</code> (los snippets de captura están comentados junto a cada JSON).",
+        en: "<code>getmilpa-runtime/src/Kernel.php:156-177</code> (the gate and the loadOrder boot) · <code>getmilpa-resolver/src/Engine/GraphResolver.php</code> · <code>getmilpa-resolver/src/Ingest/DriftDetector.php</code> · frozen reports from <code>milpa/resolver 0.5.0</code> (the capture snippets are commented next to each JSON).",
+      },
+
+      /* Rutas (relativas al patrón de la galería) de la lección REAL de cada
+         error — strings planos (esqueleto, el walk no los toca). El renderer
+         antepone la profundidad por idioma; el shell dev usa ../learn/. */
+      lessonPath: {
+        capability: "learn/fundamentos/contratos-grafo/",
+        cycle: "learn/fundamentos/contratos-grafo/",
+        drift: "learn/arquitectura/atlas-limites/",
+      },
+
+      /* Los 4 reportes REALES, congelados tal cual los emitió el motor (JSON de
+         PHP pegado como literal de objeto — JSON válido es JS válido). Cada blob
+         lleva arriba el snippet exacto que lo produjo. Un shape inventado = PARAR. */
+      reports: {
+      /* PROVENANCIA (escenario "valid", grafo cerrado) — salida VERBATIM de milpa/resolver 0.5.0.
+         php -r (autoload: teamx/packages/milpa-resolver/vendor/autoload.php):
+         $r = (new Milpa\Resolver\Engine\GraphResolver())->resolve(new Milpa\Resolver\Input\ResolutionInput(
+           hostProfile: new Milpa\Resolver\Manifest\HostProfile('tienda-demo', '2026.07',
+             requiredCapabilities: ['config.provider', 'correo.transport']),
+           versionManifests: [
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/config', '1.0.0', ['implements' => []], ['provides' => ['config.provider']]),
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/correo', '0.3.0', ['implements' => []], ['provides' => ['correo.transport'], 'requires' => ['config.provider']]),
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/notificador', '1.2.0', ['implements' => []], ['requires' => ['correo.transport', 'config.provider']]),
+           ],
+           contractManifests: [], capabilityProvisions: [], capabilityRequirements: [],
+         ));
+         echo json_encode($r->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); */
+        valid: {
+            "status": "valid",
+            "errors": [],
+            "resolved": [
+                {
+                    "kind": "capability",
+                    "id": "config.provider",
+                    "constraint": "*",
+                    "level": "required",
+                    "requiredBy": "hostProfile:tienda-demo@2026.07",
+                    "providedBy": "milpa/config@1.0.0",
+                    "via": "direct"
+                },
+                {
+                    "kind": "capability",
+                    "id": "correo.transport",
+                    "constraint": "*",
+                    "level": "required",
+                    "requiredBy": "hostProfile:tienda-demo@2026.07",
+                    "providedBy": "milpa/correo@0.3.0",
+                    "via": "direct"
+                }
+            ],
+            "loadOrder": [
+                {
+                    "name": "milpa/config",
+                    "version": "1.0.0"
+                },
+                {
+                    "name": "milpa/correo",
+                    "version": "0.3.0"
+                },
+                {
+                    "name": "milpa/notificador",
+                    "version": "1.2.0"
+                }
+            ],
+            "missing": [],
+            "conflicts": [],
+            "warnings": [],
+            "legacy": [],
+            "migrationHints": [],
+            "learnLinks": [],
+            "metadata": {
+                "hostProfile": "tienda-demo@2026.07",
+                "hostMetadata": []
+            }
+        },
+      /* PROVENANCIA (escenario "capability", MILPA_CAPABILITY_MISSING) — salida VERBATIM de milpa/resolver 0.5.0.
+         php -r (autoload: teamx/packages/milpa-resolver/vendor/autoload.php):
+         $r = (new Milpa\Resolver\Engine\GraphResolver())->resolve(new Milpa\Resolver\Input\ResolutionInput(
+           hostProfile: new Milpa\Resolver\Manifest\HostProfile('tienda-demo', '2026.07',
+             requiredCapabilities: ['config.provider', 'correo.transport']),
+           versionManifests: [
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/config', '1.0.0', ['implements' => []], ['provides' => ['config.provider']]),
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/notificador', '1.2.0', ['implements' => []], ['requires' => ['correo.transport']]),
+           ],
+           contractManifests: [], capabilityProvisions: [], capabilityRequirements: [],
+         ));
+         echo json_encode($r->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); */
+        capability: {
+            "status": "blocked",
+            "errors": [
+                {
+                    "code": "MILPA_CAPABILITY_MISSING",
+                    "message": "The host profile tienda-demo@2026.07 requires the capability \"correo.transport\", but no active package or plugin provides it.",
+                    "why": "A required capability closes the architecture graph only when an installed package or plugin declares that it provides it. With no provider, the runtime cannot wire the capability and the graph stays open.",
+                    "context": {
+                        "id": "correo.transport",
+                        "constraint": "*",
+                        "requiredBy": "hostProfile:tienda-demo@2026.07",
+                        "hostProfile": "tienda-demo@2026.07"
+                    },
+                    "fixes": [
+                        "Install a package that provides \"correo.transport\".",
+                        "Enable a plugin that provides \"correo.transport\".",
+                        "Remove \"correo.transport\" from the host profile if the capability is not needed."
+                    ],
+                    "recommendedActions": [
+                        {
+                            "type": "enable-plugin",
+                            "capability": "correo.transport"
+                        },
+                        {
+                            "type": "disable-feature",
+                            "feature": "correo.transport"
+                        }
+                    ],
+                    "learn": {
+                        "academy": {
+                            "es": "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/",
+                            "en": "https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"
+                        },
+                        "artifact": {
+                            "es": "https://academy.milpa.lat/artifacts/#siembra",
+                            "en": "https://academy.milpa.lat/en/artifacts/#siembra"
+                        },
+                        "llms": {
+                            "es": "https://academy.milpa.lat/llms.txt",
+                            "en": "https://academy.milpa.lat/en/llms.txt"
+                        }
+                    }
+                }
+            ],
+            "resolved": [
+                {
+                    "kind": "capability",
+                    "id": "config.provider",
+                    "constraint": "*",
+                    "level": "required",
+                    "requiredBy": "hostProfile:tienda-demo@2026.07",
+                    "providedBy": "milpa/config@1.0.0",
+                    "via": "direct"
+                }
+            ],
+            "loadOrder": [
+                {
+                    "name": "milpa/config",
+                    "version": "1.0.0"
+                },
+                {
+                    "name": "milpa/notificador",
+                    "version": "1.2.0"
+                }
+            ],
+            "missing": [
+                {
+                    "kind": "capability",
+                    "id": "correo.transport",
+                    "constraint": "*",
+                    "level": "required",
+                    "requiredBy": "hostProfile:tienda-demo@2026.07",
+                    "surface": null,
+                    "code": "MILPA_CAPABILITY_MISSING",
+                    "reason": "No active provider offers the capability \"correo.transport\"."
+                }
+            ],
+            "conflicts": [],
+            "warnings": [],
+            "legacy": [],
+            "migrationHints": [],
+            "learnLinks": [],
+            "metadata": {
+                "hostProfile": "tienda-demo@2026.07",
+                "hostMetadata": []
+            }
+        },
+      /* PROVENANCIA (escenario "cycle", MILPA_DEPENDENCY_CYCLE) — salida VERBATIM de milpa/resolver 0.5.0.
+         php -r (autoload: teamx/packages/milpa-resolver/vendor/autoload.php):
+         $r = (new Milpa\Resolver\Engine\GraphResolver())->resolve(new Milpa\Resolver\Input\ResolutionInput(
+           hostProfile: new Milpa\Resolver\Manifest\HostProfile('tienda-demo', '2026.07'),
+           versionManifests: [
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/riego', '0.1.0', ['implements' => []], ['provides' => ['riego.bomba'], 'requires' => ['siembra.semillas']]),
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/siembra', '0.2.0', ['implements' => []], ['provides' => ['siembra.semillas'], 'requires' => ['riego.bomba']]),
+             new Milpa\Resolver\Manifest\VersionManifest('milpa/config', '1.0.0', ['implements' => []], ['provides' => ['config.provider']]),
+           ],
+           contractManifests: [], capabilityProvisions: [], capabilityRequirements: [],
+         ));
+         echo json_encode($r->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); */
+        cycle: {
+            "status": "blocked",
+            "errors": [
+                {
+                    "code": "MILPA_DEPENDENCY_CYCLE",
+                    "message": "The packages milpa/riego <-> milpa/siembra require each other in a cycle; no boot order exists.",
+                    "why": "A dependency cycle has no possible boot order — nobody can go first. Each member requires something another member provides, so whichever package boots first finds its requirement not yet wired. The cycle members are excluded from loadOrder[] and the graph blocks until the cycle is broken.",
+                    "context": {
+                        "id": "milpa/riego <-> milpa/siembra",
+                        "providedBy": [
+                            "milpa/riego@0.1.0",
+                            "milpa/siembra@0.2.0"
+                        ],
+                        "hostProfile": "tienda-demo@2026.07"
+                    },
+                    "fixes": [
+                        "Break the cycle (milpa/riego <-> milpa/siembra) by extracting the shared contract into a third package both sides can require.",
+                        "Invert one direction of the cycle: downgrade the weaker dependency to a suggests so one member can boot first."
+                    ],
+                    "recommendedActions": [],
+                    "learn": {
+                        "academy": {
+                            "es": "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/",
+                            "en": "https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"
+                        },
+                        "artifact": {
+                            "es": "https://academy.milpa.lat/artifacts/#frontera",
+                            "en": "https://academy.milpa.lat/en/artifacts/#frontera"
+                        },
+                        "llms": {
+                            "es": "https://academy.milpa.lat/llms.txt",
+                            "en": "https://academy.milpa.lat/en/llms.txt"
+                        }
+                    }
+                }
+            ],
+            "resolved": [],
+            "loadOrder": [
+                {
+                    "name": "milpa/config",
+                    "version": "1.0.0"
+                }
+            ],
+            "missing": [],
+            "conflicts": [
+                {
+                    "kind": "dependency-cycle",
+                    "id": "milpa/riego <-> milpa/siembra",
+                    "code": "MILPA_DEPENDENCY_CYCLE",
+                    "providedBy": [
+                        "milpa/riego@0.1.0",
+                        "milpa/siembra@0.2.0"
+                    ],
+                    "reason": "The packages milpa/riego, milpa/siembra require each other in a cycle; no boot order exists — nobody can go first."
+                }
+            ],
+            "warnings": [],
+            "legacy": [],
+            "migrationHints": [],
+            "learnLinks": [],
+            "metadata": {
+                "hostProfile": "tienda-demo@2026.07",
+                "hostMetadata": []
+            }
+        },
+      /* PROVENANCIA (escenario "drift", MILPA_MANIFEST_DRIFT) — salida VERBATIM de milpa/resolver 0.5.0.
+         El engine NO emite este código: lo detecta DriftDetector (caller-side) y coa:inspect architecture
+         lo presenta JUNTO al reporte — este blob replica esa composición { report, drift }.
+         php -r (autoload: teamx/packages/milpa-resolver/vendor/autoload.php):
+         $declared = new Milpa\Resolver\Manifest\VersionManifest('milpa/inventario', '1.0.0', ['implements' => []],
+           ['provides' => ['inventario.stock']]);
+         $actual = new Milpa\Resolver\Manifest\VersionManifest('milpa/inventario', '1.1.0', ['implements' => []],
+           ['provides' => ['inventario.stock', 'inventario.precios']]);
+         $detector = new Milpa\Resolver\Ingest\DriftDetector();
+         $errors = $detector->toLearnableErrors($detector->diff($declared, $actual), 'milpa/inventario');
+         $report = (new Milpa\Resolver\Engine\GraphResolver())->resolve(new Milpa\Resolver\Input\ResolutionInput(
+           hostProfile: new Milpa\Resolver\Manifest\HostProfile('tienda-demo', '2026.07', requiredCapabilities: ['inventario.stock']),
+           versionManifests: [$actual], contractManifests: [], capabilityProvisions: [], capabilityRequirements: [],
+         ));
+         echo json_encode(['report' => $report->toArray(), 'drift' => [['package' => 'milpa/inventario',
+           'errors' => array_map(static fn ($e) => $e->toArray(), $errors), 'note' => null]]],
+           JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); */
+        drift: {
+            "report": {
+                "status": "valid",
+                "errors": [],
+                "resolved": [
+                    {
+                        "kind": "capability",
+                        "id": "inventario.stock",
+                        "constraint": "*",
+                        "level": "required",
+                        "requiredBy": "hostProfile:tienda-demo@2026.07",
+                        "providedBy": "milpa/inventario@1.1.0",
+                        "via": "direct"
+                    }
+                ],
+                "loadOrder": [
+                    {
+                        "name": "milpa/inventario",
+                        "version": "1.1.0"
+                    }
+                ],
+                "missing": [],
+                "conflicts": [],
+                "warnings": [],
+                "legacy": [],
+                "migrationHints": [],
+                "learnLinks": [],
+                "metadata": {
+                    "hostProfile": "tienda-demo@2026.07",
+                    "hostMetadata": []
+                }
+            },
+            "drift": [
+                {
+                    "package": "milpa/inventario",
+                    "errors": [
+                        {
+                            "code": "MILPA_MANIFEST_DRIFT",
+                            "message": "The manifest of milpa/inventario declares an architecture its code does not carry; 2 field(s) drifted between milpa.json and #[PluginMetadata].",
+                            "why": "The manifest promises one architecture and the code carries another. The contract that teaches is the one that runs, not the one that is written: a drifted milpa.json teaches humans and agents a shape that no longer exists, so every decision made from it inherits the gap.",
+                            "context": {
+                                "package": "milpa/inventario",
+                                "fields": [
+                                    {
+                                        "field": "provides",
+                                        "declared": null,
+                                        "actual": "inventario.precios"
+                                    },
+                                    {
+                                        "field": "version",
+                                        "declared": "1.0.0",
+                                        "actual": "1.1.0"
+                                    }
+                                ]
+                            },
+                            "fixes": [
+                                "Regenerate the manifest from the code: php coa coa:plugins manifest milpa/inventario.",
+                                "Fix the #[PluginMetadata] attribute instead, if the manifest is right and the code is what drifted."
+                            ],
+                            "recommendedActions": [],
+                            "learn": {
+                                "academy": {
+                                    "es": "https://academy.milpa.lat/learn/arquitectura/atlas-limites/",
+                                    "en": "https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/"
+                                },
+                                "artifact": {
+                                    "es": "https://academy.milpa.lat/artifacts/#frontera",
+                                    "en": "https://academy.milpa.lat/en/artifacts/#frontera"
+                                },
+                                "llms": {
+                                    "es": "https://academy.milpa.lat/llms.txt",
+                                    "en": "https://academy.milpa.lat/en/llms.txt"
+                                }
+                            }
+                        }
+                    ],
+                    "note": null
+                }
+            ]
+        },
       },
     },
   ],

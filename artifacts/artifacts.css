@@ -33,10 +33,17 @@ milpa-artifact, milpa-artifact *, milpa-artifact *::before, milpa-artifact *::af
 
 /* Anchors del contexto artifact — el design system, no el azul/morado UA.
    Cubre la prosa, el warning box y las fuentes, en la galería, el átomo
-   standalone y los embeds. */
-.wb-artifact a,
-.wb-artifact a:visited { color: var(--accent-text); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
-.wb-artifact a:hover { color: var(--accent-hover); }
+   standalone y los embeds. Los anchor-botones (a.mui-btn, p. ej. el
+   "Aprender →" de la compuerta del arranque) quedan FUERA: su color lo pone
+   el DS del botón — pintarlos accent-text sobre el fill accent del primario
+   los volvía invisibles en dark. */
+.wb-artifact a:not(.mui-btn),
+.wb-artifact a:not(.mui-btn):visited { color: var(--accent-text); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+.wb-artifact a:not(.mui-btn):hover { color: var(--accent-hover); }
+/* El UA pinta a:visited (0,1,1) por encima del color del botón (0,1,0):
+   fijarlo igual que el estado normal del DS, por tema. */
+.wb-artifact a.mui-btn--primary:visited { color: var(--text-on-accent); }
+[data-theme="light"] .wb-artifact a.mui-btn--primary:visited { color: var(--accent-text); }
 
 .wb-shell,
 .wb-shell * { letter-spacing: 0; }
@@ -840,4 +847,73 @@ milpa-artifact, milpa-artifact *, milpa-artifact *::before, milpa-artifact *::af
 }
 @media (prefers-reduced-motion: reduce) {
   .wb-frontier-leak { transition: none; }
+}
+
+/* Artifact 11 · la compuerta del arranque (ResolutionReports reales del resolver).
+   Todo scoped a .wb-bootgate-* — cero selectores globales (gate anti-fuga). */
+.wb-bootgate-intro { margin-block: var(--space-4) 0; color: var(--secondary-text); }
+.wb-bootgate-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-4); }
+.wb-bootgate-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  background: var(--surface);
+  padding: var(--space-5);
+  margin-block-end: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.wb-bootgate-panel[hidden] { display: none; }
+.wb-bootgate-status { display: flex; flex-direction: column; gap: var(--space-1); }
+.wb-bootgate-status__value { font-family: var(--font-mono, monospace); font-size: 1.6rem; letter-spacing: 0.02em; }
+.wb-bootgate-status[data-status="valid"] .wb-bootgate-status__value { color: var(--success); }
+.wb-bootgate-status[data-status="blocked"] .wb-bootgate-status__value { color: var(--danger); }
+.wb-bootgate-desc { margin: 0; color: var(--secondary-text); line-height: var(--leading-relaxed); }
+
+.wb-bootgate-error {
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-base);
+  background: var(--danger-bg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.wb-bootgate-error--drift { border-color: var(--warning); background: var(--warning-bg); }
+.wb-bootgate-error__header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.wb-bootgate-error__origin { font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--secondary-text); }
+.wb-bootgate-error__message { margin: 0; font-family: var(--font-mono, monospace); font-size: 0.9rem; line-height: var(--leading-relaxed); }
+.wb-bootgate-error__facts { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.wb-bootgate-error__facts dt { font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--secondary-text); margin-block-end: var(--space-1); }
+.wb-bootgate-error__facts dd { margin: 0; line-height: var(--leading-relaxed); }
+.wb-bootgate-fixes { margin: 0; padding-inline-start: 1.2rem; display: flex; flex-direction: column; gap: var(--space-1); }
+.wb-bootgate-learn { align-self: flex-start; }
+.wb-bootgate-drift { margin-block: 0; }
+.wb-bootgate-dash { color: var(--secondary-text); }
+
+.wb-bootgate-boot { display: flex; flex-direction: column; gap: var(--space-3); border-block-start: 1px solid var(--border-subtle); padding-block-start: var(--space-4); }
+.wb-bootgate-order { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.wb-bootgate-node {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-base);
+  background: var(--bg);
+  padding: var(--space-2) var(--space-3);
+  transition: border-color 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
+}
+.wb-bootgate-node__index { font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--secondary-text); }
+.wb-bootgate-node small { color: var(--secondary-text); }
+.wb-bootgate-node[data-state="on"] { border-color: var(--success); background: var(--success-bg); }
+.wb-bootgate-node[data-state="gated"] { opacity: 0.55; border-style: dashed; }
+.wb-bootgate-excluded { margin: 0; color: var(--secondary-text); font-size: 0.9rem; }
+.wb-bootgate-gated { margin: 0; color: var(--danger); font-size: 0.9rem; }
+.wb-bootgate-boot__status { margin: 0; color: var(--success); font-size: 0.9rem; min-height: 1.2em; }
+
+.wb-bootgate-json pre { overflow-x: auto; }
+.wb-bootgate-provenance { color: var(--secondary-text); font-size: 0.85rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-bootgate-node { transition: none; }
 }

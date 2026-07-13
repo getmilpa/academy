@@ -1173,6 +1173,69 @@ function initFrontier() {
   renderProjection();
 }
 
+/* Artifact 11: la compuerta del arranque. The four panels are STATIC renders of
+   REAL frozen ResolutionReports (milpa/resolver 0.5.0) the SSG emitted from
+   GALLERY — this script never recomputes a report. It only: switches panels,
+   swaps the raw-JSON viewer from the <script type="application/json"> blobs,
+   animates the boot lighting the nodes in loadOrder[] order (delay() already
+   collapses to 1ms under prefers-reduced-motion), and emits GA4 per scenario
+   selected (same pattern as artifact_view / frontier_leak_found). Fully
+   defensive: no-ops if the section or its hooks are absent. */
+function initBootGate() {
+  const root = $("#compuerta-arranque");
+  if (!root) return;
+  const buttons = $$("[data-boot-scenario]", root);
+  const panels = $$("[data-bootgate-panel]", root);
+  const jsonView = $("#bootgate-json", root);
+  if (!buttons.length || !panels.length) return;
+
+  // The frozen blobs, verbatim: the viewer shows the exact engine output.
+  const reports = {};
+  $$("script[data-bootgate-report]", root).forEach((blob) => {
+    reports[blob.dataset.bootgateReport] = blob.textContent;
+  });
+  const doneTemplate = root.dataset.bootDone || "{count}";
+  let bootRunId = 0;
+
+  function selectScenario(id) {
+    bootRunId += 1; // cancels an in-flight boot animation from another panel
+    for (const button of buttons) {
+      const active = button.dataset.bootScenario === id;
+      button.setAttribute("aria-pressed", String(active));
+      button.classList.toggle("mui-btn--primary", active);
+    }
+    for (const panel of panels) panel.hidden = panel.dataset.bootgatePanel !== id;
+    if (jsonView && reports[id]) jsonView.textContent = reports[id];
+  }
+
+  buttons.forEach((button) => button.addEventListener("click", () => {
+    selectScenario(button.dataset.bootScenario);
+    trackEvent("bootgate_scenario", { scenario_id: button.dataset.bootScenario });
+  }));
+
+  async function runPanelBoot(panel, runButton) {
+    const runId = ++bootRunId;
+    const nodes = $$("[data-boot-node]", panel);
+    const status = $(".wb-bootgate-boot__status", panel);
+    nodes.forEach((node) => { node.dataset.state = "idle"; });
+    if (status) status.textContent = "";
+    runButton.setAttribute("aria-busy", "true");
+    for (const node of nodes) {
+      await delay(360);
+      if (runId !== bootRunId) { runButton.removeAttribute("aria-busy"); return; }
+      node.dataset.state = "on";
+    }
+    if (status) status.textContent = doneTemplate.replace("{count}", String(nodes.length));
+    runButton.removeAttribute("aria-busy");
+  }
+
+  panels.forEach((panel) => {
+    const runButton = $(".wb-bootgate-run", panel);
+    // Gated panels (blocked) ship the button disabled: the gate IS the lesson.
+    if (runButton && !runButton.disabled) runButton.addEventListener("click", () => runPanelBoot(panel, runButton));
+  });
+}
+
 /* Initial state */
 renderGraph();
 resetGate();
@@ -1183,6 +1246,7 @@ updateContrastLab();
 $("#force-write").disabled = true;
 resetPlan();
 initFrontier();
+initBootGate();
 syncSidebarState();
 showArtifact(artifactIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : artifactIds[0], { updateHash: true });
 })();

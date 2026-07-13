@@ -242,8 +242,12 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      del módulo bajaría el conteo y pasaría el fidelity test silenciosamente.
      Almácigo (frontera): 324 → 372 (+48 hojas es del Artifact 10 "frontera", la
      graduación de la lección boundary-map). El pin cuenta TODAS las hojas
-     (frontera incluida) para seguir guardando contra borrados. */
-  assert.equal(leaves.length, 372, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     (frontera incluida) para seguir guardando contra borrados.
+     Ola Superficies (compuerta-arranque): 372 → 420 (+48 hojas es del Artifact
+     11 — chrome del artifact + el navLabel del sidebar + los links {es,en} de
+     learn.academy/artifact/llms que viajan DENTRO de los 3 reportes congelados
+     con error: el walk los ve como hojas y eso es correcto, son URLs por idioma). */
+  assert.equal(leaves.length, 420, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
      artifacts[9] su <section> se autoró en artifacts/index.html (además de
      emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los
@@ -284,9 +288,9 @@ test("gallery hook-audit: every id-hook artifacts.js queries exists in the gener
     const missing = idHooks.filter((id) => !html.includes(`id="${id}"`));
     assert.deepEqual(missing, [], `id-hooks missing in generated gallery: ${missing.join(", ")}`);
   }
-  // Los 9 artifacts 2-10 quedan hidden; sólo #siembra visible (no-JS entra por el 01).
+  // Los 10 artifacts 2-11 quedan hidden; sólo #siembra visible (no-JS entra por el 01).
   for (const html of [galleryEs, galleryEn]) {
-    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 9);
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 10);
   }
 });
 

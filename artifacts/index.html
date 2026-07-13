@@ -87,6 +87,10 @@
             <span class="mui-sidebar__item-icon wb-nav-index" aria-hidden="true">10</span>
             <span class="mui-sidebar__item-label">El mapa en la frontera</span>
           </a>
+          <a class="mui-sidebar__item" href="#compuerta-arranque" data-artifact-link="compuerta-arranque">
+            <span class="mui-sidebar__item-icon wb-nav-index" aria-hidden="true">11</span>
+            <span class="mui-sidebar__item-label">La compuerta del arranque</span>
+          </a>
         </div>
 
         <div class="mui-sidebar__section" role="group" aria-labelledby="nav-demos-label">
@@ -119,7 +123,7 @@
 
       <div class="mui-topbar__end wb-topbar__end">
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="previous-artifact" type="button" aria-label="Artifact anterior" data-tip="Anterior">←</button>
-        <output class="wb-progress" id="artifact-progress" aria-label="Artifact actual">01 / 10</output>
+        <output class="wb-progress" id="artifact-progress" aria-label="Artifact actual">01 / 11</output>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="next-artifact" type="button" aria-label="Artifact siguiente" data-tip="Siguiente">→</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="theme-toggle" type="button" aria-label="Cambiar a tema claro" data-tip="Cambiar tema">◐</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip wb-fullscreen" id="fullscreen-toggle" type="button" aria-label="Entrar a pantalla completa" data-tip="Pantalla completa">⛶</button>
@@ -882,6 +886,518 @@
         <details class="wb-source">
           <summary>Evidencia y alcance</summary>
           <p><code>artifacts/artifacts.js</code> (mapas <code>PROJECTION_*_EN</code>, fix del audit trail) · <code>artifacts/artifacts-core.js</code> (<code>frontierProject</code>, <code>coupleCheck</code>) · <code>tests/i18n-contract.test.mjs</code> (acople enum↔mapa) · <code>docs/LESSON-CANDIDATES.md</code> · commit <code>058fdf9</code>.</p>
+        </details>
+      </section>
+
+      <section class="wb-artifact" id="compuerta-arranque" data-artifact data-kind="Ingeniería · arranque" aria-labelledby="compuerta-arranque-title" data-boot-done="{count} módulos arrancaron en el orden del reporte." hidden>
+        <header class="wb-artifact__header">
+          <div class="wb-artifact__meta">
+            <span class="mui-badge mui-badge--accent">Artifact 11</span>
+            <span class="mui-badge mui-badge--info">reportes reales · resolver 0.5.0</span>
+          </div>
+          <h1 id="compuerta-arranque-title">La compuerta del arranque</h1>
+          <p>El boot real no empieza ejecutando: empieza resolviendo. El kernel refleja los manifiestos, resuelve el grafo completo con <code>milpa/resolver</code> y solo entonces decide — un grafo bloqueado lanza <code>ArchitectureBlockedException</code> con el <code>ResolutionReport</code> a bordo; un grafo cerrado arranca en el orden que el propio reporte trae: <code>loadOrder[]</code>.</p>
+        </header>
+
+        <p class="wb-bootgate-intro">Elige un escenario. Cada panel muestra el reporte REAL que el motor emitió para ese grafo, congelado de <code>milpa/resolver 0.5.0</code>.</p>
+
+        <div class="wb-bootgate-controls" role="group" aria-label="Elegir escenario del resolver">
+          <button class="mui-btn mui-btn--primary wb-bootgate-scenario" type="button" data-boot-scenario="valid" aria-pressed="true">Grafo cerrado</button>
+          <button class="mui-btn wb-bootgate-scenario" type="button" data-boot-scenario="capability" aria-pressed="false">Capability ausente</button>
+          <button class="mui-btn wb-bootgate-scenario" type="button" data-boot-scenario="cycle" aria-pressed="false">Ciclo A↔B</button>
+          <button class="mui-btn wb-bootgate-scenario" type="button" data-boot-scenario="drift" aria-pressed="false">Manifest drift</button>
+        </div>
+
+        <div class="wb-bootgate-panel" data-bootgate-panel="valid">
+          <div class="wb-bootgate-status" data-status="valid">
+            <span class="wb-zone__kicker">ResolutionReport.status</span>
+            <strong class="wb-bootgate-status__value">valid</strong>
+          </div>
+          <p class="wb-bootgate-desc">Tres paquetes y todo lo requerido tiene proveedor: el grafo cierra y el estado es <code>valid</code>. El reporte trae <code>loadOrder[]</code> — la misma resolución que validó el grafo también lo ordenó, así que el orden de boot no puede divergir de lo validado.</p>
+          <div class="wb-bootgate-boot">
+            <span class="wb-zone__kicker">boot en loadOrder[]</span>
+            <ol class="wb-bootgate-order" aria-label="Orden de arranque del reporte">
+              <li class="wb-bootgate-node" data-boot-node data-state="idle"><span class="wb-bootgate-node__index" aria-hidden="true">01</span><code>milpa/config</code><small>1.0.0</small></li>
+              <li class="wb-bootgate-node" data-boot-node data-state="idle"><span class="wb-bootgate-node__index" aria-hidden="true">02</span><code>milpa/correo</code><small>0.3.0</small></li>
+              <li class="wb-bootgate-node" data-boot-node data-state="idle"><span class="wb-bootgate-node__index" aria-hidden="true">03</span><code>milpa/notificador</code><small>1.2.0</small></li>
+            </ol>
+            <div class="wb-action-row">
+              <button class="mui-btn mui-btn--primary wb-bootgate-run" type="button">Arrancar en orden</button>
+            </div>
+            <p class="wb-bootgate-boot__status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="wb-bootgate-panel" data-bootgate-panel="capability" hidden>
+          <div class="wb-bootgate-status" data-status="blocked">
+            <span class="wb-zone__kicker">ResolutionReport.status</span>
+            <strong class="wb-bootgate-status__value">blocked</strong>
+          </div>
+          <p class="wb-bootgate-desc">Nadie provee <code>correo.transport</code>. El resolver reporta el hueco como error aprendible y el estado bloquea: existe un orden parcial, pero la compuerta no se abre con el grafo abierto — el kernel lanza <code>ArchitectureBlockedException</code> antes de arrancar nada.</p>
+            <article class="wb-bootgate-error" aria-label="El error aprendible">
+              <header class="wb-bootgate-error__header">
+                <span class="mui-badge mui-badge--danger">MILPA_CAPABILITY_MISSING</span>
+                <span class="wb-bootgate-error__origin">errors[0] del reporte</span>
+              </header>
+              <p class="wb-bootgate-error__message">The host profile tienda-demo@2026.07 requires the capability "correo.transport", but no active package or plugin provides it.</p>
+              <dl class="wb-bootgate-error__facts">
+                <div><dt>por qué</dt><dd>A required capability closes the architecture graph only when an installed package or plugin declares that it provides it. With no provider, the runtime cannot wire the capability and the graph stays open.</dd></div>
+                <div><dt>fixes (del catálogo)</dt><dd><ul class="wb-bootgate-fixes">
+                <li>Install a package that provides "correo.transport".</li>
+                <li>Enable a plugin that provides "correo.transport".</li>
+                <li>Remove "correo.transport" from the host profile if the capability is not needed.</li>
+                </ul></dd></div>
+              </dl>
+              <a class="mui-btn mui-btn--sm mui-btn--primary wb-bootgate-learn" href="../learn/fundamentos/contratos-grafo/">Aprender →</a>
+            </article>
+          <div class="wb-bootgate-boot">
+            <span class="wb-zone__kicker">boot en loadOrder[]</span>
+            <ol class="wb-bootgate-order" aria-label="Orden de arranque del reporte">
+              <li class="wb-bootgate-node" data-boot-node data-state="gated"><span class="wb-bootgate-node__index" aria-hidden="true">01</span><code>milpa/config</code><small>1.0.0</small></li>
+              <li class="wb-bootgate-node" data-boot-node data-state="gated"><span class="wb-bootgate-node__index" aria-hidden="true">02</span><code>milpa/notificador</code><small>1.2.0</small></li>
+            </ol>
+            <div class="wb-action-row">
+              <button class="mui-btn mui-btn--primary wb-bootgate-run" type="button" disabled>Arrancar en orden</button>
+            </div>
+            <p class="wb-bootgate-gated">Compuerta cerrada: el kernel lanza ArchitectureBlockedException con este reporte a bordo — nada arranca, aunque exista un orden parcial.</p>
+          </div>
+        </div>
+
+        <div class="wb-bootgate-panel" data-bootgate-panel="cycle" hidden>
+          <div class="wb-bootgate-status" data-status="blocked">
+            <span class="wb-zone__kicker">ResolutionReport.status</span>
+            <strong class="wb-bootgate-status__value">blocked</strong>
+          </div>
+          <p class="wb-bootgate-desc"><code>milpa/riego</code> y <code>milpa/siembra</code> se requieren en círculo: para ellos no existe orden de boot. El motor excluye a los miembros del ciclo de <code>loadOrder[]</code> — el independiente <code>milpa/config</code> conserva su lugar — y el estado bloquea el arranque completo.</p>
+            <article class="wb-bootgate-error" aria-label="El error aprendible">
+              <header class="wb-bootgate-error__header">
+                <span class="mui-badge mui-badge--danger">MILPA_DEPENDENCY_CYCLE</span>
+                <span class="wb-bootgate-error__origin">errors[0] del reporte</span>
+              </header>
+              <p class="wb-bootgate-error__message">The packages milpa/riego <-> milpa/siembra require each other in a cycle; no boot order exists.</p>
+              <dl class="wb-bootgate-error__facts">
+                <div><dt>por qué</dt><dd>A dependency cycle has no possible boot order — nobody can go first. Each member requires something another member provides, so whichever package boots first finds its requirement not yet wired. The cycle members are excluded from loadOrder[] and the graph blocks until the cycle is broken.</dd></div>
+                <div><dt>fixes (del catálogo)</dt><dd><ul class="wb-bootgate-fixes">
+                <li>Break the cycle (milpa/riego <-> milpa/siembra) by extracting the shared contract into a third package both sides can require.</li>
+                <li>Invert one direction of the cycle: downgrade the weaker dependency to a suggests so one member can boot first.</li>
+                </ul></dd></div>
+              </dl>
+              <a class="mui-btn mui-btn--sm mui-btn--primary wb-bootgate-learn" href="../learn/fundamentos/contratos-grafo/">Aprender →</a>
+            </article>
+          <div class="wb-bootgate-boot">
+            <span class="wb-zone__kicker">boot en loadOrder[]</span>
+            <ol class="wb-bootgate-order" aria-label="Orden de arranque del reporte">
+              <li class="wb-bootgate-node" data-boot-node data-state="gated"><span class="wb-bootgate-node__index" aria-hidden="true">01</span><code>milpa/config</code><small>1.0.0</small></li>
+            </ol>
+            <p class="wb-bootgate-excluded"><code>milpa/riego</code> y <code>milpa/siembra</code> quedan fuera de <code>loadOrder[]</code>: son los miembros del ciclo.</p>
+            <div class="wb-action-row">
+              <button class="mui-btn mui-btn--primary wb-bootgate-run" type="button" disabled>Arrancar en orden</button>
+            </div>
+            <p class="wb-bootgate-gated">Compuerta cerrada: el kernel lanza ArchitectureBlockedException con este reporte a bordo — nada arranca, aunque exista un orden parcial.</p>
+          </div>
+        </div>
+
+        <div class="wb-bootgate-panel" data-bootgate-panel="drift" hidden>
+          <div class="wb-bootgate-status" data-status="valid">
+            <span class="wb-zone__kicker">ResolutionReport.status</span>
+            <strong class="wb-bootgate-status__value">valid</strong>
+          </div>
+          <p class="wb-bootgate-desc">El <code>milpa.json</code> declara una arquitectura y el <code>#[PluginMetadata]</code> del código carga otra. El reporte solo NO trae el drift: el motor nunca emite ese código. Lo detecta <code>DriftDetector</code> del lado del caller y <code>coa:inspect architecture</code> lo presenta junto al reporte — exactamente como aquí.</p>
+            <article class="wb-bootgate-error wb-bootgate-error--drift" aria-label="El error aprendible">
+              <header class="wb-bootgate-error__header">
+                <span class="mui-badge mui-badge--warning">MILPA_MANIFEST_DRIFT</span>
+                <span class="wb-bootgate-error__origin">del lado del caller · DriftDetector</span>
+              </header>
+              <p class="wb-bootgate-error__message">The manifest of milpa/inventario declares an architecture its code does not carry; 2 field(s) drifted between milpa.json and #[PluginMetadata].</p>
+              <div class="mui-table-wrap wb-bootgate-drift" role="region" aria-label="Campos drifteados entre milpa.json y PluginMetadata" tabindex="0">
+                <table class="mui-table mui-table--compact">
+                  <thead><tr><th>campo</th><th>declarado · milpa.json</th><th>actual · #[PluginMetadata]</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>provides</code></td><td><span class="wb-bootgate-dash" aria-hidden="true">—</span></td><td><code>inventario.precios</code></td></tr>
+                    <tr><td><code>version</code></td><td><code>1.0.0</code></td><td><code>1.1.0</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <dl class="wb-bootgate-error__facts">
+                <div><dt>por qué</dt><dd>The manifest promises one architecture and the code carries another. The contract that teaches is the one that runs, not the one that is written: a drifted milpa.json teaches humans and agents a shape that no longer exists, so every decision made from it inherits the gap.</dd></div>
+                <div><dt>fixes (del catálogo)</dt><dd><ul class="wb-bootgate-fixes">
+                <li>Regenerate the manifest from the code: php coa coa:plugins manifest milpa/inventario.</li>
+                <li>Fix the #[PluginMetadata] attribute instead, if the manifest is right and the code is what drifted.</li>
+                </ul></dd></div>
+              </dl>
+              <a class="mui-btn mui-btn--sm mui-btn--primary wb-bootgate-learn" href="../learn/arquitectura/atlas-limites/">Aprender →</a>
+            </article>
+          <div class="wb-bootgate-boot">
+            <span class="wb-zone__kicker">boot en loadOrder[]</span>
+            <ol class="wb-bootgate-order" aria-label="Orden de arranque del reporte">
+              <li class="wb-bootgate-node" data-boot-node data-state="idle"><span class="wb-bootgate-node__index" aria-hidden="true">01</span><code>milpa/inventario</code><small>1.1.0</small></li>
+            </ol>
+            <div class="wb-action-row">
+              <button class="mui-btn mui-btn--primary wb-bootgate-run" type="button">Arrancar en orden</button>
+            </div>
+            <p class="wb-bootgate-boot__status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <details class="wb-source wb-bootgate-json">
+          <summary>Ver el reporte completo (JSON congelado del resolver 0.5.0)</summary>
+          <p class="wb-bootgate-provenance">Salida real de GraphResolver::resolve() y DriftDetector::toLearnableErrors(); el snippet PHP exacto de captura vive como comentario junto a cada blob en la fuente de esta galería.</p>
+          <div class="mui-code">
+            <div class="mui-code__header"><span class="mui-code__file">ResolutionReport</span><span class="mui-code__lang">json</span></div>
+            <div class="mui-code__body" role="region" aria-label="Reporte del escenario en JSON" tabindex="0"><pre><code id="bootgate-json">{
+    "status": "valid",
+    "errors": [],
+    "resolved": [
+        {
+            "kind": "capability",
+            "id": "config.provider",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "providedBy": "milpa/config@1.0.0",
+            "via": "direct"
+        },
+        {
+            "kind": "capability",
+            "id": "correo.transport",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "providedBy": "milpa/correo@0.3.0",
+            "via": "direct"
+        }
+    ],
+    "loadOrder": [
+        {
+            "name": "milpa/config",
+            "version": "1.0.0"
+        },
+        {
+            "name": "milpa/correo",
+            "version": "0.3.0"
+        },
+        {
+            "name": "milpa/notificador",
+            "version": "1.2.0"
+        }
+    ],
+    "missing": [],
+    "conflicts": [],
+    "warnings": [],
+    "legacy": [],
+    "migrationHints": [],
+    "learnLinks": [],
+    "metadata": {
+        "hostProfile": "tienda-demo@2026.07",
+        "hostMetadata": []
+    }
+}</code></pre></div>
+          </div>
+        </details>
+
+        <!-- reporte REAL congelado de milpa/resolver 0.5.0 (escenario "valid").
+             Snippet PHP exacto de captura: comentario PROVENANCIA junto a
+             GALLERY reports.valid en artifacts/content/gallery.content.mjs. -->
+        <script type="application/json" data-bootgate-report="valid">{
+    "status": "valid",
+    "errors": [],
+    "resolved": [
+        {
+            "kind": "capability",
+            "id": "config.provider",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "providedBy": "milpa/config@1.0.0",
+            "via": "direct"
+        },
+        {
+            "kind": "capability",
+            "id": "correo.transport",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "providedBy": "milpa/correo@0.3.0",
+            "via": "direct"
+        }
+    ],
+    "loadOrder": [
+        {
+            "name": "milpa/config",
+            "version": "1.0.0"
+        },
+        {
+            "name": "milpa/correo",
+            "version": "0.3.0"
+        },
+        {
+            "name": "milpa/notificador",
+            "version": "1.2.0"
+        }
+    ],
+    "missing": [],
+    "conflicts": [],
+    "warnings": [],
+    "legacy": [],
+    "migrationHints": [],
+    "learnLinks": [],
+    "metadata": {
+        "hostProfile": "tienda-demo@2026.07",
+        "hostMetadata": []
+    }
+}</script>
+        <!-- reporte REAL congelado de milpa/resolver 0.5.0 (escenario "capability").
+             Snippet PHP exacto de captura: comentario PROVENANCIA junto a
+             GALLERY reports.capability en artifacts/content/gallery.content.mjs. -->
+        <script type="application/json" data-bootgate-report="capability">{
+    "status": "blocked",
+    "errors": [
+        {
+            "code": "MILPA_CAPABILITY_MISSING",
+            "message": "The host profile tienda-demo@2026.07 requires the capability \"correo.transport\", but no active package or plugin provides it.",
+            "why": "A required capability closes the architecture graph only when an installed package or plugin declares that it provides it. With no provider, the runtime cannot wire the capability and the graph stays open.",
+            "context": {
+                "id": "correo.transport",
+                "constraint": "*",
+                "requiredBy": "hostProfile:tienda-demo@2026.07",
+                "hostProfile": "tienda-demo@2026.07"
+            },
+            "fixes": [
+                "Install a package that provides \"correo.transport\".",
+                "Enable a plugin that provides \"correo.transport\".",
+                "Remove \"correo.transport\" from the host profile if the capability is not needed."
+            ],
+            "recommendedActions": [
+                {
+                    "type": "enable-plugin",
+                    "capability": "correo.transport"
+                },
+                {
+                    "type": "disable-feature",
+                    "feature": "correo.transport"
+                }
+            ],
+            "learn": {
+                "academy": {
+                    "es": "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/",
+                    "en": "https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"
+                },
+                "artifact": {
+                    "es": "https://academy.milpa.lat/artifacts/#siembra",
+                    "en": "https://academy.milpa.lat/en/artifacts/#siembra"
+                },
+                "llms": {
+                    "es": "https://academy.milpa.lat/llms.txt",
+                    "en": "https://academy.milpa.lat/en/llms.txt"
+                }
+            }
+        }
+    ],
+    "resolved": [
+        {
+            "kind": "capability",
+            "id": "config.provider",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "providedBy": "milpa/config@1.0.0",
+            "via": "direct"
+        }
+    ],
+    "loadOrder": [
+        {
+            "name": "milpa/config",
+            "version": "1.0.0"
+        },
+        {
+            "name": "milpa/notificador",
+            "version": "1.2.0"
+        }
+    ],
+    "missing": [
+        {
+            "kind": "capability",
+            "id": "correo.transport",
+            "constraint": "*",
+            "level": "required",
+            "requiredBy": "hostProfile:tienda-demo@2026.07",
+            "surface": null,
+            "code": "MILPA_CAPABILITY_MISSING",
+            "reason": "No active provider offers the capability \"correo.transport\"."
+        }
+    ],
+    "conflicts": [],
+    "warnings": [],
+    "legacy": [],
+    "migrationHints": [],
+    "learnLinks": [],
+    "metadata": {
+        "hostProfile": "tienda-demo@2026.07",
+        "hostMetadata": []
+    }
+}</script>
+        <!-- reporte REAL congelado de milpa/resolver 0.5.0 (escenario "cycle").
+             Snippet PHP exacto de captura: comentario PROVENANCIA junto a
+             GALLERY reports.cycle en artifacts/content/gallery.content.mjs. -->
+        <script type="application/json" data-bootgate-report="cycle">{
+    "status": "blocked",
+    "errors": [
+        {
+            "code": "MILPA_DEPENDENCY_CYCLE",
+            "message": "The packages milpa/riego <-> milpa/siembra require each other in a cycle; no boot order exists.",
+            "why": "A dependency cycle has no possible boot order — nobody can go first. Each member requires something another member provides, so whichever package boots first finds its requirement not yet wired. The cycle members are excluded from loadOrder[] and the graph blocks until the cycle is broken.",
+            "context": {
+                "id": "milpa/riego <-> milpa/siembra",
+                "providedBy": [
+                    "milpa/riego@0.1.0",
+                    "milpa/siembra@0.2.0"
+                ],
+                "hostProfile": "tienda-demo@2026.07"
+            },
+            "fixes": [
+                "Break the cycle (milpa/riego <-> milpa/siembra) by extracting the shared contract into a third package both sides can require.",
+                "Invert one direction of the cycle: downgrade the weaker dependency to a suggests so one member can boot first."
+            ],
+            "recommendedActions": [],
+            "learn": {
+                "academy": {
+                    "es": "https://academy.milpa.lat/learn/fundamentos/contratos-grafo/",
+                    "en": "https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"
+                },
+                "artifact": {
+                    "es": "https://academy.milpa.lat/artifacts/#frontera",
+                    "en": "https://academy.milpa.lat/en/artifacts/#frontera"
+                },
+                "llms": {
+                    "es": "https://academy.milpa.lat/llms.txt",
+                    "en": "https://academy.milpa.lat/en/llms.txt"
+                }
+            }
+        }
+    ],
+    "resolved": [],
+    "loadOrder": [
+        {
+            "name": "milpa/config",
+            "version": "1.0.0"
+        }
+    ],
+    "missing": [],
+    "conflicts": [
+        {
+            "kind": "dependency-cycle",
+            "id": "milpa/riego <-> milpa/siembra",
+            "code": "MILPA_DEPENDENCY_CYCLE",
+            "providedBy": [
+                "milpa/riego@0.1.0",
+                "milpa/siembra@0.2.0"
+            ],
+            "reason": "The packages milpa/riego, milpa/siembra require each other in a cycle; no boot order exists — nobody can go first."
+        }
+    ],
+    "warnings": [],
+    "legacy": [],
+    "migrationHints": [],
+    "learnLinks": [],
+    "metadata": {
+        "hostProfile": "tienda-demo@2026.07",
+        "hostMetadata": []
+    }
+}</script>
+        <!-- reporte REAL congelado de milpa/resolver 0.5.0 (escenario "drift").
+             Snippet PHP exacto de captura: comentario PROVENANCIA junto a
+             GALLERY reports.drift en artifacts/content/gallery.content.mjs. -->
+        <script type="application/json" data-bootgate-report="drift">{
+    "report": {
+        "status": "valid",
+        "errors": [],
+        "resolved": [
+            {
+                "kind": "capability",
+                "id": "inventario.stock",
+                "constraint": "*",
+                "level": "required",
+                "requiredBy": "hostProfile:tienda-demo@2026.07",
+                "providedBy": "milpa/inventario@1.1.0",
+                "via": "direct"
+            }
+        ],
+        "loadOrder": [
+            {
+                "name": "milpa/inventario",
+                "version": "1.1.0"
+            }
+        ],
+        "missing": [],
+        "conflicts": [],
+        "warnings": [],
+        "legacy": [],
+        "migrationHints": [],
+        "learnLinks": [],
+        "metadata": {
+            "hostProfile": "tienda-demo@2026.07",
+            "hostMetadata": []
+        }
+    },
+    "drift": [
+        {
+            "package": "milpa/inventario",
+            "errors": [
+                {
+                    "code": "MILPA_MANIFEST_DRIFT",
+                    "message": "The manifest of milpa/inventario declares an architecture its code does not carry; 2 field(s) drifted between milpa.json and #[PluginMetadata].",
+                    "why": "The manifest promises one architecture and the code carries another. The contract that teaches is the one that runs, not the one that is written: a drifted milpa.json teaches humans and agents a shape that no longer exists, so every decision made from it inherits the gap.",
+                    "context": {
+                        "package": "milpa/inventario",
+                        "fields": [
+                            {
+                                "field": "provides",
+                                "declared": null,
+                                "actual": "inventario.precios"
+                            },
+                            {
+                                "field": "version",
+                                "declared": "1.0.0",
+                                "actual": "1.1.0"
+                            }
+                        ]
+                    },
+                    "fixes": [
+                        "Regenerate the manifest from the code: php coa coa:plugins manifest milpa/inventario.",
+                        "Fix the #[PluginMetadata] attribute instead, if the manifest is right and the code is what drifted."
+                    ],
+                    "recommendedActions": [],
+                    "learn": {
+                        "academy": {
+                            "es": "https://academy.milpa.lat/learn/arquitectura/atlas-limites/",
+                            "en": "https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/"
+                        },
+                        "artifact": {
+                            "es": "https://academy.milpa.lat/artifacts/#frontera",
+                            "en": "https://academy.milpa.lat/en/artifacts/#frontera"
+                        },
+                        "llms": {
+                            "es": "https://academy.milpa.lat/llms.txt",
+                            "en": "https://academy.milpa.lat/en/llms.txt"
+                        }
+                    }
+                }
+            ],
+            "note": null
+        }
+    ]
+}</script>
+
+        <div class="mui-callout mui-callout--tip wb-lesson" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content">
+            <p class="mui-callout__title">La compuerta es el contrato del arranque</p>
+            <p class="mui-callout__body">El kernel no colecciona checks sueltos: delega el veredicto completo a <code>milpa/resolver</code> y obedece el reporte. Si el grafo no cierra, el error aprendible te dice qué falta, por qué bloquea y dónde aprenderlo; si cierra, <code>loadOrder[]</code> ya es el orden de boot. La misma resolución que validó también ordenó — no hay dos fuentes que puedan divergir.</p>
+          </div>
+        </div>
+        <details class="wb-source">
+          <summary>Evidencia y alcance</summary>
+          <p><code>getmilpa-runtime/src/Kernel.php:156-177</code> (la compuerta y el boot en loadOrder) · <code>getmilpa-resolver/src/Engine/GraphResolver.php</code> · <code>getmilpa-resolver/src/Ingest/DriftDetector.php</code> · reportes congelados de <code>milpa/resolver 0.5.0</code> (los snippets de captura están comentados junto a cada JSON).</p>
         </details>
       </section>
     </main>

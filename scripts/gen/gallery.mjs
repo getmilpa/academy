@@ -2,12 +2,12 @@
      - site/artifacts/index.html        (es, 2 niveles: ../../)
      - site/en/artifacts/index.html     (en, 3 niveles: ../../../)
 
-   Reproduce el DOM EXACTO de artifacts/index.html (chrome del shell + los 10
+   Reproduce el DOM EXACTO de artifacts/index.html (chrome del shell + los 11
    artifacts con su markup interactivo estático) sustituyendo cada string
    visible por su valor { es, en } desde GALLERY (artifacts/content/
    gallery.content.mjs). El átomo (#atomo, Artifact 09) renderiza su fallback
    estático desde ATOMO vía renderAtomoFallback() — fuente única compartida con
-   site/atomo/. La galería completa (10 artifacts) es visible sin JS en ambos
+   site/atomo/. La galería completa (11 artifacts) es visible sin JS en ambos
    idiomas; artifacts.js sólo hidrata sobre este DOM (T4).
 
    Determinismo: data pura, sin Date/Math.random, orden estable → byte-idéntico
@@ -132,7 +132,7 @@ function renderSidebar(lang, rootPrefix) {
   const s = GALLERY.chrome.sidebar;
   const a = GALLERY.artifacts;
   const webinarPlay = [0, 1, 2].map((i) => navLink(a[i], i, lang, i === 0)).join("\n");
-  const engineering = [3, 4, 5, 6, 7, 8, 9].map((i) => navLink(a[i], i, lang, false)).join("\n");
+  const engineering = [3, 4, 5, 6, 7, 8, 9, 10].map((i) => navLink(a[i], i, lang, false)).join("\n");
   return `    <nav class="mui-sidebar wb-sidebar" id="artifact-nav" aria-label="${L(s.navAriaLabel, lang)}">
       <a class="mui-sidebar__brand wb-sidebar__brand" href="${portalHome(lang, rootPrefix)}">
         <img src="${rootPrefix}assets/milpa-symbol-color.svg" alt="" width="24" height="24">
@@ -196,7 +196,7 @@ function renderTopbar(lang) {
 
       <div class="mui-topbar__end wb-topbar__end">
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="previous-artifact" type="button" aria-label="${L(t.previousAria, lang)}" data-tip="${L(t.previousTip, lang)}">←</button>
-        <output class="wb-progress" id="artifact-progress" aria-label="${L(t.progressAria, lang)}">01 / 10</output>
+        <output class="wb-progress" id="artifact-progress" aria-label="${L(t.progressAria, lang)}">01 / 11</output>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="next-artifact" type="button" aria-label="${L(t.nextAria, lang)}" data-tip="${L(t.nextTip, lang)}">→</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip" id="theme-toggle" type="button" aria-label="${L(t.themeAria, lang)}" data-tip="${L(t.themeTip, lang)}">◐</button>
         <button class="mui-btn mui-btn--ghost mui-btn--icon mui-tooltip wb-fullscreen" id="fullscreen-toggle" type="button" aria-label="${L(t.fullscreenAria, lang)}" data-tip="${L(t.fullscreenTip, lang)}">⛶</button>
@@ -900,6 +900,171 @@ ${sourcesDetails(a.sources, lang)}
       </section>`;
 }
 
+/* ---- Artifact 11 · compuerta-arranque (el boot path real: gate → error
+   aprendible → boot en loadOrder[]) ---------------------------------------- */
+
+/* El snippet PHP exacto que produjo cada blob vive como comentario junto a los
+   `reports` en gallery.content.mjs (la fuente única); acá el comentario HTML
+   apunta ahí para que la página también declare su procedencia. */
+function bootgateProvenanceComment(id) {
+  return `        <!-- reporte REAL congelado de milpa/resolver 0.5.0 (escenario "${id}").
+             Snippet PHP exacto de captura: comentario PROVENANCIA junto a
+             GALLERY reports.${id} en artifacts/content/gallery.content.mjs. -->`;
+}
+
+/* La tarjeta del error aprendible: code/message/why/fixes son la salida CRUDA
+   del motor (inglés de máquina, no se traduce); los labels sí son {es,en}. */
+function bootgateErrorCard(a, lang, error, { drift = false, learnKey }) {
+  const e = a.error;
+  const rootPrefix = rootPrefixFor(lang);
+  const learnHref = rootPrefix + (lang === "en" ? "en/" : "") + a.lessonPath[learnKey];
+  const fixes = error.fixes
+    .map((fix) => `                <li>${fix}</li>`)
+    .join("\n");
+  const driftRows = drift
+    ? error.context.fields
+        .map((row) => `                    <tr><td><code>${row.field}</code></td><td>${row.declared === null ? '<span class="wb-bootgate-dash" aria-hidden="true">—</span>' : `<code>${row.declared}</code>`}</td><td>${row.actual === null ? '<span class="wb-bootgate-dash" aria-hidden="true">—</span>' : `<code>${row.actual}</code>`}</td></tr>`)
+        .join("\n")
+    : "";
+  const driftTable = drift
+    ? `
+              <div class="mui-table-wrap wb-bootgate-drift" role="region" aria-label="${L(e.driftTableAria, lang)}" tabindex="0">
+                <table class="mui-table mui-table--compact">
+                  <thead><tr><th>${L(e.fieldHeader, lang)}</th><th>${L(e.declaredHeader, lang)}</th><th>${L(e.actualHeader, lang)}</th></tr></thead>
+                  <tbody>
+${driftRows}
+                  </tbody>
+                </table>
+              </div>`
+    : "";
+  return `            <article class="wb-bootgate-error${drift ? " wb-bootgate-error--drift" : ""}" aria-label="${L(e.cardAria, lang)}">
+              <header class="wb-bootgate-error__header">
+                <span class="mui-badge ${drift ? "mui-badge--warning" : "mui-badge--danger"}">${error.code}</span>
+                <span class="wb-bootgate-error__origin">${L(drift ? e.originDrift : e.originReport, lang)}</span>
+              </header>
+              <p class="wb-bootgate-error__message">${error.message}</p>${driftTable}
+              <dl class="wb-bootgate-error__facts">
+                <div><dt>${L(e.whyLabel, lang)}</dt><dd>${error.why}</dd></div>
+                <div><dt>${L(e.fixesLabel, lang)}</dt><dd><ul class="wb-bootgate-fixes">
+${fixes}
+                </ul></dd></div>
+              </dl>
+              <a class="mui-btn mui-btn--sm mui-btn--primary wb-bootgate-learn" href="${learnHref}">${L(e.learnLabel, lang)}</a>
+            </article>`;
+}
+
+/* La zona de boot: los nodos REALES de loadOrder[] (name@version del reporte).
+   gated=true = compuerta cerrada (botón deshabilitado, nodos atenuados). */
+function bootgateBootZone(a, lang, loadOrder, { gated = false, extraLine = null } = {}) {
+  const b = a.boot;
+  const nodes = loadOrder
+    .map((entry, i) => `              <li class="wb-bootgate-node" data-boot-node data-state="${gated ? "gated" : "idle"}"><span class="wb-bootgate-node__index" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span><code>${entry.name}</code><small>${entry.version}</small></li>`)
+    .join("\n");
+  return `          <div class="wb-bootgate-boot">
+            <span class="wb-zone__kicker">${L(b.kicker, lang)}</span>
+            <ol class="wb-bootgate-order" aria-label="${L(b.orderAria, lang)}">
+${nodes}
+            </ol>${extraLine ? `\n            <p class="wb-bootgate-excluded">${L(extraLine, lang)}</p>` : ""}
+            <div class="wb-action-row">
+              <button class="mui-btn mui-btn--primary wb-bootgate-run" type="button"${gated ? " disabled" : ""}>${L(b.run, lang)}</button>
+            </div>
+            ${gated ? `<p class="wb-bootgate-gated">${L(b.gatedNote, lang)}</p>` : `<p class="wb-bootgate-boot__status" role="status" aria-live="polite"></p>`}
+          </div>`;
+}
+
+function bootgateStatusHero(a, lang, status, desc) {
+  return `          <div class="wb-bootgate-status" data-status="${status}">
+            <span class="wb-zone__kicker">${L(a.statusKicker, lang)}</span>
+            <strong class="wb-bootgate-status__value">${status}</strong>
+          </div>
+          <p class="wb-bootgate-desc">${L(desc, lang)}</p>`;
+}
+
+function renderCompuertaArranque(a, lang) {
+  const R = a.reports;
+  const scenarioButtons = a.scenarios
+    .map((sc, i) => `          <button class="mui-btn${i === 0 ? " mui-btn--primary" : ""} wb-bootgate-scenario" type="button" data-boot-scenario="${sc.id}" aria-pressed="${i === 0 ? "true" : "false"}">${L(sc.label, lang)}</button>`)
+    .join("\n");
+  const jsonBlobs = a.scenarios
+    .map((sc) => `${bootgateProvenanceComment(sc.id)}
+        <script type="application/json" data-bootgate-report="${sc.id}">${JSON.stringify(R[sc.id], null, 4)}</script>`)
+    .join("\n");
+  const descOf = (id) => a.scenarios.find((sc) => sc.id === id).desc;
+
+  const panelValid = `        <div class="wb-bootgate-panel" data-bootgate-panel="valid">
+${bootgateStatusHero(a, lang, R.valid.status, descOf("valid"))}
+${bootgateBootZone(a, lang, R.valid.loadOrder)}
+        </div>`;
+
+  const panelCapability = `        <div class="wb-bootgate-panel" data-bootgate-panel="capability" hidden>
+${bootgateStatusHero(a, lang, R.capability.status, descOf("capability"))}
+${bootgateErrorCard(a, lang, R.capability.errors[0], { learnKey: "capability" })}
+${bootgateBootZone(a, lang, R.capability.loadOrder, { gated: true })}
+        </div>`;
+
+  const panelCycle = `        <div class="wb-bootgate-panel" data-bootgate-panel="cycle" hidden>
+${bootgateStatusHero(a, lang, R.cycle.status, descOf("cycle"))}
+${bootgateErrorCard(a, lang, R.cycle.errors[0], { learnKey: "cycle" })}
+${bootgateBootZone(a, lang, R.cycle.loadOrder, { gated: true, extraLine: a.boot.excludedLine })}
+        </div>`;
+
+  const panelDrift = `        <div class="wb-bootgate-panel" data-bootgate-panel="drift" hidden>
+${bootgateStatusHero(a, lang, R.drift.report.status, descOf("drift"))}
+${bootgateErrorCard(a, lang, R.drift.drift[0].errors[0], { drift: true, learnKey: "drift" })}
+${bootgateBootZone(a, lang, R.drift.report.loadOrder)}
+        </div>`;
+
+  return `${sectionOpen(a, lang, "compuerta-arranque-title", true).replace(" hidden>", ` data-boot-done="${esc(L(a.boot.doneTemplate, lang))}" hidden>`)}
+        <header class="wb-artifact__header">
+          <div class="wb-artifact__meta">
+            <span class="mui-badge mui-badge--accent">${L(a.badges.index, lang)}</span>
+            <span class="mui-badge mui-badge--info">${L(a.badges.tag, lang)}</span>
+          </div>
+          <h1 id="compuerta-arranque-title">${L(a.title, lang)}</h1>
+          <p>${L(a.lede, lang)}</p>
+        </header>
+
+        <p class="wb-bootgate-intro">${L(a.intro, lang)}</p>
+
+        <div class="wb-bootgate-controls" role="group" aria-label="${L(a.scenariosAria, lang)}">
+${scenarioButtons}
+        </div>
+
+${panelValid}
+
+${panelCapability}
+
+${panelCycle}
+
+${panelDrift}
+
+        <details class="wb-source wb-bootgate-json">
+          <summary>${L(a.json.summary, lang)}</summary>
+          <p class="wb-bootgate-provenance">${L(a.json.provenance, lang)}</p>
+          <div class="mui-code">
+            <div class="mui-code__header"><span class="mui-code__file">ResolutionReport</span><span class="mui-code__lang">json</span></div>
+            <div class="mui-code__body" role="region" aria-label="${L(a.json.regionAria, lang)}" tabindex="0"><pre><code id="bootgate-json">${JSON.stringify(R.valid, null, 4)}</code></pre></div>
+          </div>
+        </details>
+
+${jsonBlobs}
+
+        <div class="mui-callout mui-callout--tip wb-lesson" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">✓</span>
+          <div class="mui-callout__content">
+            <p class="mui-callout__title">${L(a.lesson.title, lang)}</p>
+            <p class="mui-callout__body">${L(a.lesson.body, lang)}</p>
+          </div>
+        </div>
+${sourcesDetails(a.sources, lang)}
+      </section>`;
+}
+
+/* esc para valores de atributo (mismo criterio que renderFrontera). */
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
 const RENDERERS = {
   siembra: renderSiembra,
   pipeline: renderPipeline,
@@ -911,6 +1076,7 @@ const RENDERERS = {
   plan: renderPlan,
   atomo: renderAtomoSection,
   frontera: renderFrontera,
+  "compuerta-arranque": renderCompuertaArranque,
 };
 
 /* ---- document ----------------------------------------------------------- */
@@ -957,8 +1123,8 @@ export function buildGalleryPages({ BASE, gtagBootstrap }) {
   const pages = LANGS.map((lang) => ({ path: outPath(lang), html: galleryPage(lang, gtagBootstrap) }));
   const sitemapPages = [{ es: urlFor("es"), en: urlFor("en") }];
   const note = {
-    es: "La galería completa: los 10 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.",
-    en: "The full gallery: the 10 interactive architecture artifacts, from the webinar to engineering inspection.",
+    es: "La galería completa: los 11 artifacts de arquitectura interactivos, del webinar a la inspección de ingeniería.",
+    en: "The full gallery: the 11 interactive architecture artifacts, from the webinar to engineering inspection.",
   };
   const llms = {
     es: [{ label: L(GALLERY.chrome.pageTitle, "es"), url: urlFor("es"), note: note.es }],

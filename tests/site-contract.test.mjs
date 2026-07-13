@@ -248,15 +248,16 @@ test("las páginas learn-index SSG muestran las 4 tarjetas de track y #globalPro
   }
 });
 
-/* Task 5 + Almácigo T2 — PE de la galería: los 10 artifacts (chrome + 9 hidden +
+/* Task 5 + Almácigo T2 — PE de la galería: los 11 artifacts (chrome + 10 hidden +
    el átomo) renderizan como HTML real sin JS, ambos idiomas. artifacts.js sólo
-   hidrata. frontera (Artifact 10) se sumó como sección hidden 2-10. */
-test("la galería SSG muestra los 10 artifacts sin JS (chrome + 9 hidden + átomo), es/en", () => {
-  const ids = ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo", "frontera"];
+   hidrata. frontera (Artifact 10) se sumó como sección hidden 2-10; Ola
+   Superficies sumó compuerta-arranque (Artifact 11, el boot path real). */
+test("la galería SSG muestra los 11 artifacts sin JS (chrome + 10 hidden + átomo), es/en", () => {
+  const ids = ["siembra", "pipeline", "compuerta", "atlas", "runtime", "event-log", "design-contract", "plan", "atomo", "frontera", "compuerta-arranque"];
   for (const rel of ["site/artifacts/index.html", "site/en/artifacts/index.html"]) {
     const html = fs.readFileSync(path.join(root, rel), "utf8");
     for (const id of ids) assert.match(html, new RegExp(`id="${id}"`), rel + ": falta la sección " + id);
-    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 9, rel + ": deben quedar 9 artifacts hidden (2-10)");
+    assert.equal((html.match(/class="wb-artifact"[^>]*\bhidden\b/g) || []).length, 10, rel + ": deben quedar 10 artifacts hidden (2-11)");
     assert.match(html, /<milpa-artifact id="atomo-artifact" lang="(?:es|en)">/, rel + ": falta el wrapper del átomo");
     assert.match(html, /id="app-shell"/, rel + ": falta el shell");
     assert.match(html, /id="artifact-nav"/, rel + ": falta el sidebar");
@@ -324,7 +325,11 @@ test("artifacts.css no tiene selectores globales sin scope (anti-fuga de embed)"
 
 test("artifacts.css estila los anchors del contexto wb-artifact (no azul UA)", () => {
   const css = fs.readFileSync(path.join(root, "artifacts/artifacts.css"), "utf8");
-  assert.match(css, /\.wb-artifact a[\s,{]/, "falta el estilo de <a> scoped a .wb-artifact — los links caen al azul/morado del navegador");
+  /* Ola Superficies (artifact 11): la regla de links excluye a los
+     anchor-botones (a:not(.mui-btn)) — pintarlos accent-text sobre el fill
+     accent del mui-btn--primary los volvía invisibles en dark. El gate acepta
+     ambas formas pero sigue exigiendo el estilo de anchors del contexto. */
+  assert.match(css, /\.wb-artifact a(?::not\(\.mui-btn\))?[\s,{]/, "falta el estilo de <a> scoped a .wb-artifact — los links caen al azul/morado del navegador");
 });
 
 test("las páginas llevan su clase de contexto de scroll: galería wb-app, átomo wb-doc", () => {
