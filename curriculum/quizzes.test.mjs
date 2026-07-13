@@ -18,6 +18,11 @@ function isBilingual(unitKey) {
   return BILINGUAL_PREFIXES.some((prefix) => unitKey.indexOf(prefix) === 0);
 }
 
+// Ola Superficies: las ampliaciones de la auditoría suman una pregunta a estas
+// unidades (exclusividad/priority y drift de manifiesto); el resto conserva
+// las tres preguntas base.
+const EXPANDED_QUIZZES = new Set(["fundamentos/contratos-grafo", "arquitectura/atlas-limites"]);
+
 test("cada unidad pública tiene exactamente un cuestionario válido", () => {
   const unitKeys = catalog.allUnits().map((unit) => unit.trackId + "/" + unit.id).sort();
   assert.deepEqual(bank.keys().sort(), unitKeys);
@@ -25,12 +30,12 @@ test("cada unidad pública tiene exactamente un cuestionario válido", () => {
   for (const unitKey of unitKeys) {
     const quiz = bank.get(unitKey);
     assert.equal(validateQuiz(quiz), true, unitKey);
-    assert.equal(quiz.questions.length, 3, unitKey);
+    assert.equal(quiz.questions.length, EXPANDED_QUIZZES.has(unitKey) ? 4 : 3, unitKey);
     assert.equal(quiz.passScore, quiz.questions.length, unitKey);
   }
 });
 
-test("las 57 preguntas tienen IDs globales, escenarios y distractores únicos", () => {
+test("las 59 preguntas tienen IDs globales, escenarios y distractores únicos", () => {
   const questionIds = new Set();
   let count = 0;
 
@@ -47,7 +52,7 @@ test("las 57 preguntas tienen IDs globales, escenarios y distractores únicos", 
     }
   }
 
-  assert.equal(count, 57);
+  assert.equal(count, 59);
 });
 
 // Walk de translation-completeness: ninguna hoja de contenido sin es y en,

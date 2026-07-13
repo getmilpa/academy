@@ -25,11 +25,12 @@ vacío.
 Cada unidad pública tiene un cuestionario registrado por su clave
 trackId/unitId. La rúbrica actual exige:
 
-1. Tres preguntas de opción única por unidad.
+1. Tres preguntas de opción única por unidad (cuatro cuando una ampliación
+   de auditoría suma la suya, como contratos-grafo y atlas-limites).
 2. Escenarios o decisiones, no confirmaciones de “sí entendí”.
 3. Al menos dos distractores plausibles y una respuesta inequívoca.
 4. Explicación pedagógica después de calificar.
-5. Tres respuestas correctas de tres para aprobar.
+5. Puntaje perfecto para aprobar: passScore igual al total de preguntas.
 
 **progress.js** versión 2 deriva el estado completado únicamente de una
 evaluación aprobada. El progreso v1 basado en autoevaluación no se migra.

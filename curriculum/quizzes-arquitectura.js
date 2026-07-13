@@ -3,7 +3,7 @@
 
   globalThis.MilpaQuizBank.register({
     "arquitectura/atlas-limites": {
-      passScore: 3,
+      passScore: 4,
       questions: [
         {
           id: "arquitectura-atlas-limites-01",
@@ -54,6 +54,23 @@
           explanation: {
             es: "El atlas orienta la auditoría, no sustituye evidencia. Una afirmación importante solo se marca verificada cuando puede seguirse hasta un contrato o implementación primaria fechada.",
             en: "The atlas guides the audit; it doesn't replace evidence. An important claim is only marked verified when it can be traced to a dated primary contract or implementation."
+          }
+        },
+        {
+          id: "arquitectura-atlas-limites-04",
+          prompt: {
+            es: "El milpa.json de ReportsPlugin declara que provee `exports`, pero el #[PluginMetadata] del código ya no la declara. Un tutorial cita ese manifiesto como evidencia de la capacidad. ¿Cuál es la lectura correcta?",
+            en: "ReportsPlugin's milpa.json declares that it provides `exports`, but the code's #[PluginMetadata] no longer declares it. A tutorial cites that manifest as evidence of the capability. What is the correct reading?"
+          },
+          options: [
+            { id: "a", text: { es: "El manifiesto manda: si milpa.json declara `exports`, la capacidad existe y el mapa puede citarla como hecho verificado.", en: "The manifest rules: if milpa.json declares `exports`, the capability exists and the map can cite it as a verified fact." } },
+            { id: "b", text: { es: "Es MILPA_MANIFEST_DRIFT: el contrato que enseña es el que corre, no el que se escribe — toda decisión tomada desde ese manifiesto hereda la brecha, y el arreglo es regenerarlo desde el código con php coa coa:plugins manifest ReportsPlugin (comando del host).", en: "It is MILPA_MANIFEST_DRIFT: the contract that teaches is the one that runs, not the one that is written — every decision made from that manifest inherits the gap, and the fix is to regenerate it from the code with php coa coa:plugins manifest ReportsPlugin (a host command)." } },
+            { id: "c", text: { es: "Basta con editar milpa.json a mano para quitar `exports`; mantener sincronizados manifiesto y código es disciplina del editor.", en: "Hand-editing milpa.json to drop `exports` is enough; keeping manifest and code in sync is the editor's discipline." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "El DriftDetector compara lo que milpa.json declara contra lo que el código trae en #[PluginMetadata]; cuando divergen, la fuente de verdad es el código, porque ese es el contrato que corre. Un manifiesto con drift enseña una forma que ya no existe a humanos y agentes por igual. Por eso el arreglo es regenerativo — reescribir el manifiesto desde el código — y no una edición manual que puede volver a divergir en silencio.",
+            en: "The DriftDetector compares what milpa.json declares against what the code carries in #[PluginMetadata]; when they diverge, the source of truth is the code, because that is the contract that runs. A drifted manifest teaches humans and agents alike a shape that no longer exists. That is why the fix is regenerative — rewrite the manifest from the code — not a hand edit that can silently diverge again."
           }
         }
       ]

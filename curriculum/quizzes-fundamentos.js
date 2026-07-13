@@ -62,7 +62,7 @@
       ]
     },
     "fundamentos/contratos-grafo": {
-      passScore: 3,
+      passScore: 4,
       questions: [
         {
           id: "contratos-grafo-01",
@@ -116,6 +116,24 @@
           explanation: {
             es: "El ciclo impide colocar a cada proveedor antes de su consumidor. El runtime debe rechazar la composición antes de atender tráfico, en lugar de ocultar el problema con orden incidental o resolución tardía.",
             en: "The cycle makes it impossible to place each provider before its consumer. The runtime must reject the composition before serving traffic, instead of hiding the problem behind incidental order or late resolution."
+          }
+        },
+        {
+          id: "contratos-grafo-04",
+          prompt: {
+            es: "CachePlugin y RedisPlugin proveen la capacidad `cache`, que está marcada como exclusiva. RedisPlugin declara priority 10; CachePlugin no declara priority. ¿Qué debe reportar el resolver?",
+            en: "CachePlugin and RedisPlugin both provide the `cache` capability, which is marked exclusive. RedisPlugin declares priority 10; CachePlugin declares no priority. What should the resolver report?"
+          },
+          options: [
+            { id: "a", text: { es: "RedisPlugin gana: priority decide entre proveedores múltiples, incluidos los exclusivos", en: "RedisPlugin wins: priority decides among multiple providers, exclusive ones included" } },
+            { id: "b", text: { es: "MILPA_CAPABILITY_CONFLICT y el grafo bloquea: un id exclusivo con dos proveedores no se elige en silencio, y priority no rescata un conflicto exclusivo", en: "MILPA_CAPABILITY_CONFLICT and the graph blocks: an exclusive id with two providers is not picked silently, and priority does not rescue an exclusive conflict" } },
+            { id: "c", text: { es: "CachePlugin gana por orden alfabético y el conflicto queda anotado como advertencia", en: "CachePlugin wins alphabetically and the conflict is recorded as a warning" } },
+            { id: "d", text: { es: "El resolver vuelve la capacidad no exclusiva porque la demanda demuestra que se quieren múltiples proveedores", en: "The resolver turns the capability non-exclusive because the demand proves multiple providers are wanted" } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "La exclusividad es una promesa del contrato: un id exclusivo reclamado por dos o más proveedores bloquea el grafo sin importar sus priorities — elegir en silencio sería exactamente la arquitectura invisible que el resolver existe para prevenir. priority decide de forma determinista entre proveedores NO exclusivos: gana la más alta (ausente = 0). Los arreglos son retirar a uno de los proveedores o marcar el id como no exclusivo si múltiples proveedores son la intención.",
+            en: "Exclusivity is a promise of the contract: an exclusive id claimed by two or more providers blocks the graph regardless of their priorities — picking silently would be exactly the invisible architecture the resolver exists to prevent. priority decides deterministically among NON-exclusive providers: the highest wins (absent = 0). The fixes are to remove one of the providers or to mark the id non-exclusive if multiple providers are intended."
           }
         }
       ]

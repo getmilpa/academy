@@ -16,7 +16,7 @@ cero build, cero dependencias de runtime.
 index.html            Tablero de rutas y continuidad de aprendizaje
 academy.css/js        Composición y comportamiento de la portada
 ARCHITECTURE.md        Mapa de límites, flujos, ownership y extensión privada
-curriculum/           Catálogo, 57 preguntas, calificación y progreso validado
+curriculum/           Catálogo, 59 preguntas, calificación y progreso validado
 learn/                Lector curricular sobre el layout mui-docs
 labs/                 4 prácticas con validadores de salida testeables
 artifacts/            Galería interactiva: 8 artifacts + lógica testeable

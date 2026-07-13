@@ -51,7 +51,8 @@
           ],
           understand: [
             { es: "Un plugin declara lo que provee y lo que requiere. El resolver puede validar el conjunto antes de arrancar porque trabaja con un grafo explícito, no con efectos laterales escondidos.", en: "A plugin declares what it provides and what it requires. The resolver can validate the whole set before boot because it works with an explicit graph, not with hidden side effects." },
-            { es: "El orden de boot es una consecuencia del grafo. Si falta una capacidad o existe un ciclo, el sistema debe fallar con evidencia y antes de atender tráfico.", en: "Boot order is a consequence of the graph. If a capability is missing or a cycle exists, the system must fail with evidence and before it serves traffic." }
+            { es: "El orden de boot es una consecuencia del grafo. Si falta una capacidad o existe un ciclo, el sistema debe fallar con evidencia y antes de atender tráfico. El reporte del resolver nombra el ciclo con su propio vocabulario: en un ciclo nadie puede ir primero, así que los miembros del ciclo quedan excluidos de loadOrder[] y el grafo bloquea (MILPA_DEPENDENCY_CYCLE) hasta que el ciclo se rompe.", en: "Boot order is a consequence of the graph. If a capability is missing or a cycle exists, the system must fail with evidence and before it serves traffic. The resolver's report names the cycle in its own vocabulary: in a cycle nobody can go first, so the cycle members are excluded from loadOrder[] and the graph blocks (MILPA_DEPENDENCY_CYCLE) until the cycle is broken." },
+            { es: "Cuando varios proveedores reclaman el mismo id, el resolver separa dos casos. Un id exclusivo reclamado por dos o más proveedores bloquea el grafo (MILPA_CAPABILITY_CONFLICT): el resolver se niega a elegir en silencio, porque una elección oculta es exactamente la arquitectura invisible que existe para prevenir. Entre múltiples proveedores NO exclusivos la elección sí es legítima, y priority la vuelve determinista: gana la priority más alta (ausente = 0). priority ordena una elección permitida; no rescata un conflicto exclusivo.", en: "When several providers claim the same id, the resolver separates two cases. An exclusive id claimed by two or more providers blocks the graph (MILPA_CAPABILITY_CONFLICT): the resolver refuses to pick silently, because a hidden choice is exactly the invisible architecture it exists to prevent. Among multiple NON-exclusive providers the choice is legitimate, and priority makes it deterministic: the highest priority wins (absent = 0). priority orders a permitted choice; it does not rescue an exclusive conflict." }
           ],
           see: { label: { es: "Romper y reparar la siembra", en: "Break and repair the planting" }, href: "../artifacts/#siembra", note: { es: "Activa un ciclo, inspecciona el bloqueo y vuelve a un orden válido.", en: "Trigger a cycle, inspect the block and return to a valid order." } },
           do: { label: { es: "Practicar validate", en: "Practice validate" }, href: "../labs/#capabilities", commands: ["php bin/coa validate"] },
@@ -63,7 +64,7 @@
             { label: { es: "ContractResolver", en: "ContractResolver" }, href: "https://github.com/getmilpa/plugin" },
             { label: { es: "Plugin metadata", en: "Plugin metadata" }, href: "https://github.com/getmilpa/core" }
           ],
-          lastVerified: verifiedAt
+          lastVerified: "2026-07-12"
         },
         {
           id: "version-contrato",
@@ -138,7 +139,8 @@
           ],
           understand: [
             { es: "El skeleton es un host mínimo. Su trabajo es ensamblar paquetes, configuración y rutas sin introducir una segunda arquitectura.", en: "The skeleton is a minimal host. Its job is to assemble packages, configuration and routes without introducing a second architecture." },
-            { es: "Doctor no es una pantalla de bienvenida: comprueba que el kernel arrancó, enumera plugins y rutas y hace visible el estado del contenedor.", en: "Doctor is not a welcome screen: it checks that the kernel booted, lists plugins and routes, and makes the container's state visible." }
+            { es: "Doctor no es una pantalla de bienvenida: comprueba que el kernel arrancó, enumera plugins y rutas y hace visible el estado del contenedor.", en: "Doctor is not a welcome screen: it checks that the kernel booted, lists plugins and routes, and makes the container's state visible." },
+            { es: "El host declara además su perfil: la forma arquitectónica que espera de los paquetes instalados. Ese perfil puede quedarse viejo y pedir un mundo que ya no existe; el reporte lo nombra (MILPA_HOST_PROFILE_OUTDATED) y deja claro qué lado envejeció: el perfil, no el código.", en: "The host also declares its profile: the architectural shape it expects from the installed packages. That profile can go stale and ask for a world that no longer exists; the report names it (MILPA_HOST_PROFILE_OUTDATED) and makes clear which side went stale: the profile, not the code." }
           ],
           see: { label: { es: "Inspeccionar el runtime", en: "Inspect the runtime" }, href: "../artifacts/#runtime", note: { es: "Usa la radiografía para relacionar boot, contenedor, dispatcher y registry.", en: "Use the x-ray to relate boot, container, dispatcher and registry." } },
           do: { label: { es: "Ejecutar el laboratorio de boot", en: "Run the boot lab" }, href: "../labs/#doctor", commands: ["composer create-project milpa/skeleton myapp", "cd myapp", "php bin/coa doctor"] },
@@ -150,7 +152,7 @@
             { label: { es: "Skeleton", en: "Skeleton" }, href: "https://github.com/getmilpa/skeleton" },
             { label: { es: "Runtime Kernel", en: "Runtime Kernel" }, href: "https://github.com/getmilpa/runtime" }
           ],
-          lastVerified: verifiedAt
+          lastVerified: "2026-07-12"
         },
         {
           id: "plugin-request",
@@ -245,7 +247,8 @@
             { es: "Diferenciar contrato público de detalle interno", en: "Tell a public contract apart from an internal detail" }
           ],
           understand: [
-            { es: "Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar.", en: "An auditable architecture lets you trace a responsibility from the interface to the package that implements it. The map doesn't replace the code: it tells you where to start verifying." }
+            { es: "Una arquitectura auditable permite seguir una responsabilidad desde la interfaz hasta el paquete que la implementa. El mapa no sustituye al código: indica dónde empezar a verificar.", en: "An auditable architecture lets you trace a responsibility from the interface to the package that implements it. The map doesn't replace the code: it tells you where to start verifying." },
+            { es: "El mapa también puede mentir desde el manifiesto: el DriftDetector compara lo que milpa.json declara contra lo que el código trae en #[PluginMetadata]. Cuando divergen, el reporte lo nombra (MILPA_MANIFEST_DRIFT), porque el contrato que enseña es el que corre, no el que se escribe: un milpa.json con drift enseña a humanos y agentes una forma que ya no existe, y toda decisión tomada desde ese manifiesto hereda la brecha. El arreglo es regenerativo, no manual: php coa coa:plugins manifest <Plugin> (comando del host) reescribe el manifiesto desde el código, que es la fuente de verdad.", en: "The map can also lie from the manifest: the DriftDetector compares what milpa.json declares against what the code carries in #[PluginMetadata]. When they diverge, the report names it (MILPA_MANIFEST_DRIFT), because the contract that teaches is the one that runs, not the one that is written: a drifted milpa.json teaches humans and agents a shape that no longer exists, and every decision made from that manifest inherits the gap. The fix is regenerative, not manual: php coa coa:plugins manifest <Plugin> (a host command) rewrites the manifest from the code, which is the source of truth." }
           ],
           see: { label: { es: "Abrir Atlas de límites", en: "Open Atlas of boundaries" }, href: "../artifacts/#atlas", note: { es: "Selecciona un paquete y sigue sus relaciones y fuentes primarias.", en: "Select a package and follow its relationships and primary sources." } },
           do: { label: { es: "Consultar la referencia senior (paquetes fuente)", en: "Browse the senior reference (source packages)" }, href: "https://github.com/getmilpa", commands: [] },
@@ -254,7 +257,7 @@
             { es: "Sustenta cada afirmación importante con una fuente primaria.", en: "Back every important claim with a primary source." }
           ],
           sources: [{ label: { es: "Organización getmilpa", en: "getmilpa organization" }, href: "https://github.com/getmilpa" }],
-          lastVerified: verifiedAt
+          lastVerified: "2026-07-12"
         },
         {
           id: "runtime-boot",
@@ -265,7 +268,8 @@
             { es: "Identificar los registries derivados", en: "Identify the derived registries" }
           ],
           understand: [
-            { es: "El kernel carga manifiestos, resuelve el grafo, registra servicios y expone rutas. La secuencia importa porque cada fase valida una condición para la siguiente.", en: "The kernel loads manifests, resolves the graph, registers services and exposes routes. The sequence matters because each phase validates a condition for the next one." }
+            { es: "El boot real empieza con una compuerta: el kernel refleja los manifiestos y resuelve el grafo completo a través de milpa/resolver ANTES de que cualquier plugin arranque. Un grafo bloqueado lanza ArchitectureBlockedException con el ResolutionReport completo a bordo — cada error aprendible, cada conflicto, cada ausencia — no solo un mensaje de una línea.", en: "The real boot starts with a gate: the kernel reflects the manifests and resolves the whole graph through milpa/resolver BEFORE any plugin boots. A blocked graph throws ArchitectureBlockedException with the full ResolutionReport on board — every learnable error, every conflict, every miss — not just a one-line message." },
+            { es: "Un grafo booteable arranca en el orden que el propio reporte trae: loadOrder[]. La misma resolución que validó el grafo también lo ordenó, así que el orden de boot no es una lista aparte que pueda divergir; los registries y las rutas se derivan después, de un conjunto que ya demostró cerrar.", en: "A bootable graph boots in the order the report itself carries: loadOrder[]. The same resolution that gated the graph also ordered it, so the boot order is not a separate list that could diverge; the registries and routes are derived afterwards, from a set that has already proven to close." }
           ],
           see: { label: { es: "Abrir radiografía del runtime", en: "Open the runtime x-ray" }, href: "../artifacts/#runtime", note: { es: "Avanza fase por fase y contrasta modelo didáctico con implementación auditada.", en: "Advance phase by phase and contrast the teaching model with the audited implementation." } },
           do: { label: { es: "Comprobar doctor", en: "Check doctor" }, href: "../labs/#doctor", commands: ["php bin/coa doctor", "php bin/coa inspect:plugins", "php bin/coa inspect:services"] },
@@ -274,7 +278,7 @@
             { es: "Relaciona doctor e inspect como vistas complementarias.", en: "Relate doctor and inspect as complementary views." }
           ],
           sources: [{ label: { es: "Runtime", en: "Runtime" }, href: "https://github.com/getmilpa/runtime" }],
-          lastVerified: verifiedAt
+          lastVerified: "2026-07-12"
         },
         {
           id: "superficies-puertas",
@@ -315,7 +319,7 @@
             { es: "La salida tiene plan: coa:migrate:plan no cambia nada — solo produce plan. Por paquete lista Detected, Recommended, Steps (con la re-inspección siempre al final), Compatibility y Academy. La línea de compatibilidad es honesta y va verbatim: el plan nunca inventa una fecha límite que el código no declara.", en: "The way out has a plan: coa:migrate:plan changes nothing — it only produces a plan. Per package it lists Detected, Recommended, Steps (with the re-inspect always last), Compatibility and Academy. The compatibility line is honest and goes verbatim: the plan never invents a deadline the code doesn't declare." }
           ],
           see: { label: { es: "Abrir la frontera", en: "Open the frontier" }, href: "../artifacts/#frontera", note: { es: "La misma disciplina: cuando dos representaciones divergen, la divergencia se nombra y se repara desde la fuente de verdad, nunca se deja decaer en silencio.", en: "The same discipline: when two representations diverge, the divergence is named and repaired from the source of truth, never left to decay in silence." } },
-          do: { label: { es: "Leer el contrato del plan", en: "Read the plan's contract" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:migrate:plan"] },
+          do: { label: { es: "Leer el contrato del plan (comando del host)", en: "Read the plan's contract (host command)" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:migrate:plan"] },
           verify: [
             { es: "Distingue el status legacy_compatible del bloqueo por allowedLegacyContracts.", en: "Tell the legacy_compatible status apart from the block enforced by allowedLegacyContracts." },
             { es: "Explica por qué el plan de migración es de solo lectura y su compatibilidad no inventa fechas.", en: "Explain why the migration plan is read-only and its compatibility invents no dates." }
@@ -337,7 +341,7 @@
             { es: "Sugerido significa opcional: una capacidad sugerida sin proveedor no bloquea el grafo (MILPA_SUGGESTED_CAPABILITY_MISSING); aplica la ruta de fallback y el mensaje nombra a dónde degrada el runtime, para que la conducta ausente sea visible en lugar de desaparecer.", en: "Suggested means optional: a suggested capability with no provider doesn't block the graph (MILPA_SUGGESTED_CAPABILITY_MISSING); the fallback path applies and the message names where the runtime degrades to, so the absent behaviour stays visible instead of vanishing." }
           ],
           see: { label: { es: "Operar la compuerta", en: "Operate the gate" }, href: "../artifacts/#compuerta", note: { es: "Aceptar un riesgo es una decisión con actor, razón y contexto: la compuerta muestra cómo una decisión así queda auditable en lugar de volverse un atajo invisible.", en: "Accepting a risk is a decision with an actor, a reason and context: the gate shows how such a decision stays auditable instead of becoming an invisible shortcut." } },
-          do: { label: { es: "Inspeccionar la arquitectura", en: "Inspect the architecture" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:inspect architecture"] },
+          do: { label: { es: "Inspeccionar la arquitectura (comando del host)", en: "Inspect the architecture (host command)" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:inspect architecture"] },
           verify: [
             { es: "Distingue la advertencia revisable del riesgo aceptado con razón.", en: "Tell a reviewable warning apart from a risk accepted with a reason." },
             { es: "Explica por qué un expiry sin evaluatedAt no está acotando nada.", en: "Explain why an expiry without evaluatedAt isn't bounding anything." }

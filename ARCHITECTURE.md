@@ -14,7 +14,7 @@ flowchart LR
   subgraph public[Academy pública]
     home[Tablero]
     catalog[Catálogo curricular]
-    questions[Banco de 57 preguntas]
+    questions[Banco de 59 preguntas]
     grader[Motor de calificación]
     learn[Lector de unidades]
     labs[Labs + verificadores]
@@ -122,7 +122,7 @@ La suite ejecutada por **npm test** cubre:
 
 - lógica de los ocho artifacts;
 - esquema curricular, unicidad y grafo de prerrequisitos;
-- 57 preguntas, cobertura total y calificación positiva/negativa;
+- 59 preguntas, cobertura total y calificación positiva/negativa;
 - persistencia de intentos y progreso derivado de evaluaciones;
 - validadores positivos y negativos de los cuatro labs;
 - existencia de enlaces, hashes, IDs y orden de bundles.
