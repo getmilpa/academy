@@ -71,6 +71,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/learn/fundamentos/version-contrato/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/version-contrato/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/version-contrato/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/fundamentos/version-contrato/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/version-contrato/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/version-contrato/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/learn/fundamentos/pipeline-gates/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/fundamentos/pipeline-gates/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/fundamentos/pipeline-gates/"/>
@@ -139,6 +149,36 @@
     <loc>https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/runtime-boot/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/superficies-puertas/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/superficies-puertas/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/superficies-puertas/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/superficies-puertas/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/superficies-puertas/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/superficies-puertas/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/legacy-y-migracion/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/legacy-y-migracion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/legacy-y-migracion/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/legacy-y-migracion/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/legacy-y-migracion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/legacy-y-migracion/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/riesgos-aceptados/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/riesgos-aceptados/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/riesgos-aceptados/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/riesgos-aceptados/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/riesgos-aceptados/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/riesgos-aceptados/"/>
   </url>
   <url>
     <loc>https://academy.milpa.lat/learn/arquitectura/estado-log/</loc>

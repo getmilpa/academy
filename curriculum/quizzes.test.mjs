@@ -30,7 +30,7 @@ test("cada unidad pública tiene exactamente un cuestionario válido", () => {
   }
 });
 
-test("las 45 preguntas tienen IDs globales, escenarios y distractores únicos", () => {
+test("las 57 preguntas tienen IDs globales, escenarios y distractores únicos", () => {
   const questionIds = new Set();
   let count = 0;
 
@@ -47,7 +47,7 @@ test("las 45 preguntas tienen IDs globales, escenarios y distractores únicos", 
     }
   }
 
-  assert.equal(count, 45);
+  assert.equal(count, 57);
 });
 
 // Walk de translation-completeness: ninguna hoja de contenido sin es y en,

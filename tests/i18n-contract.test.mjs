@@ -413,7 +413,7 @@ test("unit page (representative en twin): lang, English content, reciprocal href
   assert.ok(html.includes('id="lessonQuiz" data-unit-key="fundamentos/contratos-grafo"'));
 });
 
-test("every unit page (15 × es/en) has lang, canonical, {es,en,x-default} hreflang and JSON-LD LearningResource", () => {
+test("every unit page (19 × es/en) has lang, canonical, {es,en,x-default} hreflang and JSON-LD LearningResource", () => {
   for (const { track, unit } of unitEntries) {
     for (const lang of ["es", "en"]) {
       const label = `${lang} ${track.id}/${unit.id}`;
@@ -445,7 +445,7 @@ test("learn index (es/en): lang, canonical, reciprocal hreflang, JSON-LD ItemLis
     assert.equal(ld.inLanguage, lang);
     assert.equal(ld.itemListElement.length, catalog.tracks.length);
     assert.ok((html.match(/ac-track-card/g) || []).length >= catalog.tracks.length);
-    assert.match(html, /id="globalProgress">0\/15</);
+    assert.match(html, /id="globalProgress">0\/19</);
     assert.match(html, /id="tracksTitle"/);
   }
   assert.match(learnIndexEs, /Rutas públicas/);
@@ -642,10 +642,11 @@ test("sitemap.xml lists the portal (home) as well as the atom, per language", ()
 
 /* Task 5: la galería + el shell de labs suman 2 páginas nuevas × 2 idiomas al
    sitemap (36 → 40 URLs) y una entrada por idioma a cada llms.txt, sin cruzar
-   idiomas (es → /artifacts/ + /labs/; en → /en/artifacts/ + /en/labs/). */
-test("sitemap: exactly 40 URLs, incl. gallery + labs per language", () => {
+   idiomas (es → /artifacts/ + /labs/; en → /en/artifacts/ + /en/labs/).
+   Ola Superficies: 4 lecciones nuevas × 2 idiomas (40 → 48 URLs). */
+test("sitemap: exactly 48 URLs, incl. gallery + labs per language", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
-  assert.equal((sm.match(/<loc>/g) || []).length, 40, "sitemap must list exactly 40 URLs (portal+atom+gallery+labs+16 learn, ×2 langs)");
+  assert.equal((sm.match(/<loc>/g) || []).length, 48, "sitemap must list exactly 48 URLs (portal+atom+gallery+labs+20 learn, ×2 langs)");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/labs\/<\/loc>/);

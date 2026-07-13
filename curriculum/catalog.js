@@ -13,7 +13,7 @@
       eyebrow: { es: "Empieza aquí", en: "Start here" },
       level: { es: "Inicial", en: "Beginner" },
       audience: { es: "Devs y agentes", en: "Devs and agents" },
-      durationMinutes: 60,
+      durationMinutes: 80,
       summary: { es: "Lee la arquitectura como un sistema de contratos, dependencias y decisiones verificables.", en: "Read the architecture as a system of contracts, dependencies and verifiable decisions." },
       prerequisites: [],
       units: [
@@ -64,6 +64,31 @@
             { label: { es: "Plugin metadata", en: "Plugin metadata" }, href: "https://github.com/getmilpa/core" }
           ],
           lastVerified: verifiedAt
+        },
+        {
+          id: "version-contrato",
+          title: { es: "Una versión es un contrato", en: "A version is a contract" },
+          durationMinutes: 20,
+          objectives: [
+            { es: "Distinguir la versión concreta del proveedor del rango del consumidor", en: "Tell the provider's concrete version apart from the consumer's range" },
+            { es: "Elegir entre subir al proveedor y relajar el constraint", en: "Choose between upgrading the provider and relaxing the constraint" }
+          ],
+          understand: [
+            { es: "Una versión es un contrato, no una etiqueta. El proveedor declara la versión concreta que implementa (su contractVersion); el consumidor declara el rango que puede aceptar (su constraint). La asimetría es deliberada: quien implementa afirma un hecho, quien consume expresa tolerancia, y el resolver compara el hecho contra el rango.", en: "A version is a contract, not a label. The provider declares the concrete version it implements (its contractVersion); the consumer declares the range it can accept (its constraint). The asymmetry is deliberate: the implementer states a fact, the consumer expresses tolerance, and the resolver compares the fact against the range." },
+            { es: "Cuando el proveedor existe pero su contractVersion cae fuera del rango pedido, el requisito sigue abierto: una implementación fuera de rango no puede sostener la forma esperada. El resolver separa el lado del contrato (MILPA_CONTRACT_VERSION_UNSUPPORTED) del lado de la capacidad (MILPA_CAPABILITY_VERSION_UNSUPPORTED) para que cada uno enseñe su propio camino de actualización.", en: "When the provider exists but its contractVersion falls outside the requested range, the requirement stays open: an out-of-range implementation cannot be trusted to honour the expected shape. The resolver splits the contract side (MILPA_CONTRACT_VERSION_UNSUPPORTED) from the capability side (MILPA_CAPABILITY_VERSION_UNSUPPORTED) so each one teaches its own upgrade path." },
+            { es: "Los dos arreglos legítimos son simétricos al contrato: subir el proveedor a una versión que satisfaga el constraint, o relajar el constraint del requirente si la versión instalada es aceptable. Borrar el requisito no cierra el contrato: lo esconde.", en: "The two legitimate fixes mirror the contract: upgrade the provider to a version that satisfies the constraint, or relax the requirer's constraint if the installed version is acceptable. Deleting the requirement doesn't close the contract: it hides it." }
+          ],
+          see: { label: { es: "Abrir Siembra tu milpa", en: "Open Plant your milpa" }, href: "../artifacts/#siembra", note: { es: "Un requisito abierto bloquea la germinación; un proveedor fuera de rango deja el requisito tan abierto como uno ausente.", en: "An open requirement blocks germination; an out-of-range provider leaves the requirement as open as a missing one." } },
+          do: { label: { es: "Practicar validate", en: "Practice validate" }, href: "../labs/#capabilities", commands: ["php bin/coa validate"] },
+          verify: [
+            { es: "Explica por qué el proveedor declara una versión concreta y el consumidor un rango.", en: "Explain why the provider declares a concrete version and the consumer a range." },
+            { es: "Nombra los dos arreglos de un requisito fuera de rango sin silenciar el contrato.", en: "Name the two fixes for an out-of-range requirement without silencing the contract." }
+          ],
+          sources: [
+            { label: { es: "Milpa Resolver", en: "Milpa Resolver" }, href: "https://github.com/getmilpa/resolver" },
+            { label: { es: "Milpa Core", en: "Milpa Core" }, href: "https://github.com/getmilpa/core" }
+          ],
+          lastVerified: "2026-07-12"
         },
         {
           id: "pipeline-gates",
@@ -207,7 +232,7 @@
       eyebrow: { es: "Para profundizar", en: "Go deeper" },
       level: { es: "Intermedio a senior", en: "Intermediate to senior" },
       audience: { es: "Arquitectos y maintainers", en: "Architects and maintainers" },
-      durationMinutes: 180,
+      durationMinutes: 275,
       summary: { es: "Sigue límites, estado y decisiones desde el mapa conceptual hasta la evidencia ejecutable.", en: "Trace boundaries, state and decisions from the conceptual map to executable evidence." },
       prerequisites: ["fundamentos"],
       units: [
@@ -250,6 +275,75 @@
           ],
           sources: [{ label: { es: "Runtime", en: "Runtime" }, href: "https://github.com/getmilpa/runtime" }],
           lastVerified: verifiedAt
+        },
+        {
+          id: "superficies-puertas",
+          title: { es: "Superficies y sus puertas", en: "Surfaces and their doors" },
+          durationMinutes: 30,
+          objectives: [
+            { es: "Distinguir la superficie habilitada que exige de la no habilitada que no exige nada", en: "Tell the enabled surface that demands apart from the not-enabled one that demands nothing" },
+            { es: "Ubicar el adapter como el puente que proyecta un contrato hacia una puerta", en: "Locate the adapter as the bridge that projects a contract to a door" }
+          ],
+          understand: [
+            { es: "Una superficie habilitada proyecta operaciones a través de un conjunto de capacidades. Si una de esas capacidades no tiene proveedor, la superficie tiene una puerta abierta y el runtime la expondría a medio cablear: eso es MILPA_SURFACE_REQUIREMENT_UNMET. Los arreglos son instalar al proveedor o deshabilitar la superficie hasta que exista.", en: "An enabled surface projects operations through a set of capabilities. If one of those capabilities has no provider, the surface has an open door and the runtime would expose it half-wired: that is MILPA_SURFACE_REQUIREMENT_UNMET. The fixes are to install the provider or to disable the surface until one exists." },
+            { es: "Una superficie que el host no habilitó no exige nada. Cuando un contrato quiere proyectarse por ella, nada está roto — la proyección simplemente no ocurrirá — pero el desajuste se reporta (MILPA_SURFACE_NOT_ENABLED) para que sea una elección, no un accidente: habilita la superficie si quieres la proyección, o ignora el aviso si la dejaste apagada a propósito.", en: "A surface the host has not enabled demands nothing. When a contract wants to project through it, nothing is broken — the projection simply will not happen — but the mismatch is surfaced (MILPA_SURFACE_NOT_ENABLED) so it is a choice, not an accident: enable the surface if the projection is wanted, or ignore the notice if you left it off on purpose." },
+            { es: "Entre el contrato y la puerta hay un adapter: coa, MCP y HTTP son adaptadores del mismo handler. Si el adapter que un contrato espera no está instalado (MILPA_ADAPTER_MISSING), el contrato no puede proyectarse donde el host lo quiere; reimplementar el dominio dentro de la puerta es exactamente lo que el modelo de adapters evita.", en: "Between the contract and the door sits an adapter: coa, MCP and HTTP are adapters of the same handler. If the adapter a contract expects is not installed (MILPA_ADAPTER_MISSING), the contract cannot be projected where the host wants it; reimplementing the domain inside the door is exactly what the adapter model avoids." }
+          ],
+          see: { label: { es: "Abrir El átomo y sus puertas", en: "Open The atom and its doors" }, href: "../artifacts/#atomo", note: { es: "Una Operación declarada una vez se proyecta a coa, MCP y HTTP mediante adaptadores; el artifact hace visibles las puertas y lo que cada una garantiza.", en: "An Operation declared once is projected to coa, MCP and HTTP through adapters; the artifact makes the doors visible along with what each one guarantees." } },
+          do: { label: { es: "Recorrer las tres puertas", en: "Walk the three doors" }, href: "../artifacts/#atomo", commands: [] },
+          verify: [
+            { es: "Explica por qué una superficie habilitada exige sus capacidades y una no habilitada no exige nada.", en: "Explain why an enabled surface demands its capabilities while a not-enabled one demands nothing." },
+            { es: "Ubica el adapter ausente como falla de proyección, no del dominio.", en: "Place the missing adapter as a projection failure, not a domain failure." }
+          ],
+          sources: [
+            { label: { es: "Milpa Resolver", en: "Milpa Resolver" }, href: "https://github.com/getmilpa/resolver" },
+            { label: { es: "Ver también: El átomo y sus puertas (milpa/command)", en: "See also: The atom and its doors (milpa/command)" }, href: "../artifacts/index.html#atomo" }
+          ],
+          lastVerified: "2026-07-12"
+        },
+        {
+          id: "legacy-y-migracion",
+          title: { es: "Legacy visible y el plan de migración", en: "Visible legacy and the migration plan" },
+          durationMinutes: 35,
+          objectives: [
+            { es: "Distinguir el legacy tolerado del legacy no permitido", en: "Tell tolerated legacy apart from legacy that is not allowed" },
+            { es: "Leer el MigrationPlan como propuesta de solo lectura", en: "Read the MigrationPlan as a read-only proposal" }
+          ],
+          understand: [
+            { es: "Una dependencia puede cerrar a través de un manifiesto con forma legacy. Está permitido, pero jamás es silencioso: el reporte lo nombra (MILPA_LEGACY_CONTRACT_ACTIVE) y el status degrada a legacy_compatible. La compatibilidad legacy se nombra para que siga visible en lugar de decaer en arqueología invisible.", en: "A dependency may close through a legacy-shaped manifest. This is allowed, but never silent: the report names it (MILPA_LEGACY_CONTRACT_ACTIVE) and the status degrades to legacy_compatible. Legacy compatibility is named so it stays visible instead of decaying into invisible archaeology." },
+            { es: "allowedLegacyContracts en el perfil del host es una puerta, no una nota: un camino legacy que la allowlist no permite bloquea con MILPA_LEGACY_NOT_ALLOWED en lugar de degradar. Y lo deprecado avisa antes de romper: MILPA_DEPRECATED_CONTRACT_USED funciona hoy, pero la metadata anuncia que esa forma está programada para irse, y migrar antes de la remoción es más barato que después.", en: "allowedLegacyContracts in the host profile is a gate, not a note: a legacy path the allowlist does not permit blocks with MILPA_LEGACY_NOT_ALLOWED instead of degrading. And deprecation warns before it breaks: MILPA_DEPRECATED_CONTRACT_USED works today, but the metadata announces that shape is scheduled to leave, and migrating before removal is cheaper than after." },
+            { es: "La salida tiene plan: coa:migrate:plan no cambia nada — solo produce plan. Por paquete lista Detected, Recommended, Steps (con la re-inspección siempre al final), Compatibility y Academy. La línea de compatibilidad es honesta y va verbatim: el plan nunca inventa una fecha límite que el código no declara.", en: "The way out has a plan: coa:migrate:plan changes nothing — it only produces a plan. Per package it lists Detected, Recommended, Steps (with the re-inspect always last), Compatibility and Academy. The compatibility line is honest and goes verbatim: the plan never invents a deadline the code doesn't declare." }
+          ],
+          see: { label: { es: "Abrir la frontera", en: "Open the frontier" }, href: "../artifacts/#frontera", note: { es: "La misma disciplina: cuando dos representaciones divergen, la divergencia se nombra y se repara desde la fuente de verdad, nunca se deja decaer en silencio.", en: "The same discipline: when two representations diverge, the divergence is named and repaired from the source of truth, never left to decay in silence." } },
+          do: { label: { es: "Leer el contrato del plan", en: "Read the plan's contract" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:migrate:plan"] },
+          verify: [
+            { es: "Distingue el status legacy_compatible del bloqueo por allowedLegacyContracts.", en: "Tell the legacy_compatible status apart from the block enforced by allowedLegacyContracts." },
+            { es: "Explica por qué el plan de migración es de solo lectura y su compatibilidad no inventa fechas.", en: "Explain why the migration plan is read-only and its compatibility invents no dates." }
+          ],
+          sources: [{ label: { es: "Milpa Resolver", en: "Milpa Resolver" }, href: "https://github.com/getmilpa/resolver" }],
+          lastVerified: "2026-07-12"
+        },
+        {
+          id: "riesgos-aceptados",
+          title: { es: "Bootear con advertencias: riesgos aceptados", en: "Booting with warnings: accepted risks" },
+          durationMinutes: 30,
+          objectives: [
+            { es: "Leer bootable_with_warnings como estado deliberado del semáforo", en: "Read bootable_with_warnings as a deliberate state of the traffic light" },
+            { es: "Aceptar un riesgo con razón, expiración y reloj", en: "Accept a risk with a reason, an expiry and a clock" }
+          ],
+          understand: [
+            { es: "bootable_with_warnings existe a propósito: todas las dependencias requeridas cierran, pero el grafo carga advertencias — capacidades sugeridas sin proveedor o superficies con salvedades declaradas. El host puede bootear con los trade-offs explícitos (MILPA_BOOTABLE_WITH_WARNINGS): cada advertencia se revisa o se registra como riesgo aceptado; ninguna se borra.", en: "bootable_with_warnings exists on purpose: every required dependency closes, but the graph carries warnings — suggested capabilities without providers, or surfaces with declared caveats. The host can boot with the trade-offs made explicit (MILPA_BOOTABLE_WITH_WARNINGS): each warning is reviewed or recorded as an accepted risk; none is erased." },
+            { es: "Aceptar un riesgo exige una razón — aceptar sin decir por qué lo silencia, y una advertencia silenciada es exactamente lo que acceptedRisks existe para prevenir — y puede llevar una expiración. Pero el resolver es puro y nunca lee el reloj de pared: quien llama aporta evaluatedAt. Un expiry que corre sin reloj es MILPA_RISK_EXPIRY_UNEVALUATED: un riesgo que crees acotado pero que nadie está haciendo cumplir.", en: "Accepting a risk demands a reason — accepting without saying why silences it, and a silenced warning is exactly what acceptedRisks exists to prevent — and it may carry an expiry. But the resolver is pure and never reads the wall clock: the caller supplies evaluatedAt. An expiry that runs without a clock is MILPA_RISK_EXPIRY_UNEVALUATED: a risk you think is bounded but nobody is enforcing." },
+            { es: "Sugerido significa opcional: una capacidad sugerida sin proveedor no bloquea el grafo (MILPA_SUGGESTED_CAPABILITY_MISSING); aplica la ruta de fallback y el mensaje nombra a dónde degrada el runtime, para que la conducta ausente sea visible en lugar de desaparecer.", en: "Suggested means optional: a suggested capability with no provider doesn't block the graph (MILPA_SUGGESTED_CAPABILITY_MISSING); the fallback path applies and the message names where the runtime degrades to, so the absent behaviour stays visible instead of vanishing." }
+          ],
+          see: { label: { es: "Operar la compuerta", en: "Operate the gate" }, href: "../artifacts/#compuerta", note: { es: "Aceptar un riesgo es una decisión con actor, razón y contexto: la compuerta muestra cómo una decisión así queda auditable en lugar de volverse un atajo invisible.", en: "Accepting a risk is a decision with an actor, a reason and context: the gate shows how such a decision stays auditable instead of becoming an invisible shortcut." } },
+          do: { label: { es: "Inspeccionar la arquitectura", en: "Inspect the architecture" }, href: "https://github.com/getmilpa/resolver", commands: ["php coa coa:inspect architecture"] },
+          verify: [
+            { es: "Distingue la advertencia revisable del riesgo aceptado con razón.", en: "Tell a reviewable warning apart from a risk accepted with a reason." },
+            { es: "Explica por qué un expiry sin evaluatedAt no está acotando nada.", en: "Explain why an expiry without evaluatedAt isn't bounding anything." }
+          ],
+          sources: [{ label: { es: "Milpa Resolver", en: "Milpa Resolver" }, href: "https://github.com/getmilpa/resolver" }],
+          lastVerified: "2026-07-12"
         },
         {
           id: "estado-log",

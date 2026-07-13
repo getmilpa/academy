@@ -16,6 +16,7 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 - [Aprender](https://academy.milpa.lat/learn/): Elige una ruta. Cada unidad conecta una explicación breve, un artifact, una práctica y una evaluación calificable con la fuente primaria.
 - [La metáfora es el diseño](https://academy.milpa.lat/learn/fundamentos/sistema-vivo/): Fundamentos
 - [Contratos antes que acoplamiento](https://academy.milpa.lat/learn/fundamentos/contratos-grafo/): Fundamentos
+- [Una versión es un contrato](https://academy.milpa.lat/learn/fundamentos/version-contrato/): Fundamentos
 - [Una acción, políticas explícitas](https://academy.milpa.lat/learn/fundamentos/pipeline-gates/): Fundamentos
 - [Arranca un host verificable](https://academy.milpa.lat/learn/construye/skeleton-boot/): Construye con Milpa
 - [Crea una capacidad y una ruta](https://academy.milpa.lat/learn/construye/plugin-request/): Construye con Milpa
@@ -23,6 +24,9 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 - [Compón con @milpa/design](https://academy.milpa.lat/learn/construye/consume-design/): Construye con Milpa
 - [Atlas de límites](https://academy.milpa.lat/learn/arquitectura/atlas-limites/): Arquitectura auditable
 - [Radiografía del runtime](https://academy.milpa.lat/learn/arquitectura/runtime-boot/): Arquitectura auditable
+- [Superficies y sus puertas](https://academy.milpa.lat/learn/arquitectura/superficies-puertas/): Arquitectura auditable
+- [Legacy visible y el plan de migración](https://academy.milpa.lat/learn/arquitectura/legacy-y-migracion/): Arquitectura auditable
+- [Bootear con advertencias: riesgos aceptados](https://academy.milpa.lat/learn/arquitectura/riesgos-aceptados/): Arquitectura auditable
 - [El proceso es el log](https://academy.milpa.lat/learn/arquitectura/estado-log/): Arquitectura auditable
 - [El contrato visual se ejecuta](https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/): Arquitectura auditable
 - [El plan antes del disco](https://academy.milpa.lat/learn/arquitectura/plan-disco/): Arquitectura auditable

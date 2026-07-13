@@ -120,6 +120,65 @@
         }
       ]
     },
+    "fundamentos/version-contrato": {
+      passScore: 3,
+      questions: [
+        {
+          id: "version-contrato-01",
+          prompt: {
+            es: "PaymentsPlugin requiere la capacidad `payments` con el constraint `^2.0`. StripePlugin la provee, pero su contractVersion es `1.4`. ¿Qué debe reportar el resolver?",
+            en: "PaymentsPlugin requires the `payments` capability with the constraint `^2.0`. StripePlugin provides it, but its contractVersion is `1.4`. What should the resolver report?"
+          },
+          options: [
+            { id: "a", text: { es: "Capacidad ausente: para el resolver no existe ningún proveedor de `payments`", en: "Missing capability: for the resolver there is no `payments` provider at all" } },
+            { id: "b", text: { es: "El requisito cierra: el proveedor existe y la versión es una etiqueta informativa", en: "The requirement closes: the provider exists and the version is an informative label" } },
+            { id: "c", text: { es: "MILPA_CAPABILITY_VERSION_UNSUPPORTED: el proveedor existe, su contractVersion no satisface el rango y el requisito sigue abierto", en: "MILPA_CAPABILITY_VERSION_UNSUPPORTED: the provider exists, its contractVersion doesn't satisfy the range and the requirement stays open" } },
+            { id: "d", text: { es: "El resolver elige en silencio la versión instalada más cercana al rango pedido", en: "The resolver silently picks the installed version closest to the requested range" } }
+          ],
+          answer: "c",
+          explanation: {
+            es: "Una versión es un contrato, no una etiqueta: una implementación fuera de rango no puede sostener la forma esperada. El requisito queda tan abierto como si no hubiera proveedor, pero el código distingue el caso para enseñar su propio camino de arreglo.",
+            en: "A version is a contract, not a label: an out-of-range implementation cannot be trusted to honour the expected shape. The requirement stays as open as if there were no provider, but the code singles the case out to teach its own fix path."
+          }
+        },
+        {
+          id: "version-contrato-02",
+          prompt: {
+            es: "En los manifiestos de Milpa, el proveedor declara una versión concreta y el consumidor declara un rango. ¿Por qué esa asimetría es deliberada?",
+            en: "In Milpa manifests, the provider declares a concrete version and the consumer declares a range. Why is that asymmetry deliberate?"
+          },
+          options: [
+            { id: "a", text: { es: "Porque quien implementa afirma un hecho — esta versión concreta del contrato — y quien consume expresa tolerancia: el rango de formas que acepta", en: "Because the implementer states a fact — this concrete version of the contract — and the consumer expresses tolerance: the range of shapes it accepts" } },
+            { id: "b", text: { es: "Es una limitación del parser de manifiestos que se corregirá para permitir rangos en ambos lados", en: "It's a limitation of the manifest parser that will be fixed to allow ranges on both sides" } },
+            { id: "c", text: { es: "Es al revés: el proveedor debería declarar el rango y el consumidor la versión exacta", en: "It's the other way around: the provider should declare the range and the consumer the exact version" } },
+            { id: "d", text: { es: "Ambos lados deberían declarar rangos para maximizar la compatibilidad automática", en: "Both sides should declare ranges to maximize automatic compatibility" } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "El proveedor sabe exactamente qué forma implementa; el consumidor sabe qué formas puede aceptar. El resolver compara el hecho contra el rango: si la contractVersion cae dentro del constraint, el requisito cierra; si cae fuera, sigue abierto.",
+            en: "The provider knows exactly which shape it implements; the consumer knows which shapes it can accept. The resolver compares the fact against the range: if the contractVersion falls inside the constraint, the requirement closes; outside, it stays open."
+          }
+        },
+        {
+          id: "version-contrato-03",
+          prompt: {
+            es: "El reporte muestra MILPA_CONTRACT_VERSION_UNSUPPORTED: el contrato está implementado, pero ninguna implementación satisface el constraint. ¿Cuáles son los dos arreglos legítimos?",
+            en: "The report shows MILPA_CONTRACT_VERSION_UNSUPPORTED: the contract is implemented, but no implementation satisfies the constraint. What are the two legitimate fixes?"
+          },
+          options: [
+            { id: "a", text: { es: "Subir el proveedor a una versión que satisfaga el constraint, o relajar el constraint si la implementación instalada es aceptable", en: "Upgrade the provider to a version that satisfies the constraint, or relax the constraint if the installed implementation is acceptable" } },
+            { id: "b", text: { es: "Eliminar el requisito del perfil para que el resolver deje de revisarlo", en: "Delete the requirement from the profile so the resolver stops checking it" } },
+            { id: "c", text: { es: "Forzar el boot: las diferencias de versión se negocian en runtime con la primera petición", en: "Force the boot: version differences get negotiated at runtime with the first request" } },
+            { id: "d", text: { es: "Editar a mano el número de versión del manifiesto instalado hasta que entre en el rango", en: "Hand-edit the installed manifest's version number until it fits the range" } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "El catálogo nombra los dos lados del desajuste: actualizar al proveedor para que su implementación satisfaga el rango, o relajar el constraint del requirente cuando lo instalado es aceptable. Borrar el requisito o editar números a mano no cierra el contrato: lo esconde.",
+            en: "The catalog names both sides of the mismatch: upgrade the provider so its implementation satisfies the range, or relax the requirer's constraint when what's installed is acceptable. Deleting the requirement or hand-editing numbers doesn't close the contract: it hides it."
+          }
+        }
+      ]
+    },
     "fundamentos/pipeline-gates": {
       passScore: 3,
       questions: [

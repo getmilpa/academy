@@ -177,7 +177,7 @@ test("build-deploy: el chrome-nav (topbar + móvil) de una página learn EN apun
 });
 
 /* Las páginas de unidad SSG (no colisionan con el app-dir) deben existir en
-   ambos idiomas para las 15 unidades del catálogo. */
+   ambos idiomas para las 19 unidades del catálogo. */
 test("build-deploy: existen las páginas de unidad SSG en _deploy (es + en)", () => {
   const missing = [];
   for (const track of catalog.tracks) {

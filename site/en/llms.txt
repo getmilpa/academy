@@ -16,6 +16,7 @@ Milpa is a PHP framework whose distinguishing trait is that it opens pluggable p
 - [Learn](https://academy.milpa.lat/en/learn/): Choose a track. Each unit connects a short explanation, an artifact, a hands-on practice, and a graded assessment with the primary source.
 - [The metaphor is the design](https://academy.milpa.lat/en/learn/fundamentos/sistema-vivo/): Fundamentals
 - [Contracts before coupling](https://academy.milpa.lat/en/learn/fundamentos/contratos-grafo/): Fundamentals
+- [A version is a contract](https://academy.milpa.lat/en/learn/fundamentos/version-contrato/): Fundamentals
 - [One action, explicit policies](https://academy.milpa.lat/en/learn/fundamentos/pipeline-gates/): Fundamentals
 - [Boot a verifiable host](https://academy.milpa.lat/en/learn/construye/skeleton-boot/): Build with Milpa
 - [Create a capability and a route](https://academy.milpa.lat/en/learn/construye/plugin-request/): Build with Milpa
@@ -23,6 +24,9 @@ Milpa is a PHP framework whose distinguishing trait is that it opens pluggable p
 - [Compose with @milpa/design](https://academy.milpa.lat/en/learn/construye/consume-design/): Build with Milpa
 - [Atlas of boundaries](https://academy.milpa.lat/en/learn/arquitectura/atlas-limites/): Auditable architecture
 - [X-ray of the runtime](https://academy.milpa.lat/en/learn/arquitectura/runtime-boot/): Auditable architecture
+- [Surfaces and their doors](https://academy.milpa.lat/en/learn/arquitectura/superficies-puertas/): Auditable architecture
+- [Visible legacy and the migration plan](https://academy.milpa.lat/en/learn/arquitectura/legacy-y-migracion/): Auditable architecture
+- [Booting with warnings: accepted risks](https://academy.milpa.lat/en/learn/arquitectura/riesgos-aceptados/): Auditable architecture
 - [The process is the log](https://academy.milpa.lat/en/learn/arquitectura/estado-log/): Auditable architecture
 - [The visual contract is executable](https://academy.milpa.lat/en/learn/arquitectura/contrato-ejecutable/): Auditable architecture
 - [The plan before the disk](https://academy.milpa.lat/en/learn/arquitectura/plan-disco/): Auditable architecture

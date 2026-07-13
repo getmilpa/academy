@@ -114,6 +114,174 @@
         }
       ]
     },
+    "arquitectura/superficies-puertas": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-superficies-puertas-01",
+          prompt: {
+            es: "El host habilita la superficie `mcp`, que proyecta operaciones a través de la capacidad `tool-registry` — y ningún proveedor la ofrece. ¿Qué debe hacer el resolver?",
+            en: "The host enables the `mcp` surface, which projects operations through the `tool-registry` capability — and no provider offers it. What should the resolver do?"
+          },
+          options: [
+            { id: "a", text: { es: "Reportar MILPA_SURFACE_REQUIREMENT_UNMET: la superficie tiene una puerta abierta y el runtime la expondría a medio cablear.", en: "Report MILPA_SURFACE_REQUIREMENT_UNMET: the surface has an open door and the runtime would expose it half-wired." } },
+            { id: "b", text: { es: "Ignorar la ausencia: las superficies solo agregan capacidades, nunca las exigen.", en: "Ignore the absence: surfaces only add capabilities, they never demand them." } },
+            { id: "c", text: { es: "Deshabilitar la superficie en silencio y continuar el boot como si nunca hubiera estado habilitada.", en: "Silently disable the surface and continue booting as if it had never been enabled." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Una superficie habilitada exige sus capacidades: exponerla sin proveedor sería publicarla medio cableada. Los arreglos del catálogo son instalar un paquete que provea la capacidad o deshabilitar la superficie hasta que exista; apagarla en silencio escondería la decisión.",
+            en: "An enabled surface demands its capabilities: exposing it without a provider would publish it half-wired. The catalog's fixes are to install a package that provides the capability or to disable the surface until one exists; silently turning it off would hide the decision."
+          }
+        },
+        {
+          id: "arquitectura-superficies-puertas-02",
+          prompt: {
+            es: "Un contrato quiere proyectarse por la superficie `http`, que el host NO habilitó. ¿Cuál es la lectura correcta del reporte?",
+            en: "A contract wants to project through the `http` surface, which the host did NOT enable. What is the correct reading of the report?"
+          },
+          options: [
+            { id: "a", text: { es: "Es un bloqueo equivalente al de una capacidad requerida sin proveedor.", en: "It's a block equivalent to a required capability with no provider." } },
+            { id: "b", text: { es: "MILPA_SURFACE_NOT_ENABLED: nada está roto — la proyección simplemente no ocurrirá — pero el desajuste se hace visible para que sea una elección, no un accidente.", en: "MILPA_SURFACE_NOT_ENABLED: nothing is broken — the projection simply will not happen — but the mismatch is surfaced so it is a choice, not an accident." } },
+            { id: "c", text: { es: "El resolver habilita la superficie automáticamente, porque un contrato la está pidiendo.", en: "The resolver enables the surface automatically, because a contract is asking for it." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "Una superficie no habilitada no exige nada. El código existe para que el host confirme su intención: habilitar la superficie en el perfil si quiere la proyección, o ignorar el aviso si la dejó apagada a propósito. Habilitarla sola sería una decisión invisible.",
+            en: "A not-enabled surface demands nothing. The code exists so the host confirms its intent: enable the surface in the profile if the projection is wanted, or ignore the notice if it was left off on purpose. Enabling it by itself would be an invisible decision."
+          }
+        },
+        {
+          id: "arquitectura-superficies-puertas-03",
+          prompt: {
+            es: "Un contrato espera el adapter que lo puentea hacia una superficie y ese adapter no está instalado (MILPA_ADAPTER_MISSING). Alguien propone reimplementar el handler dentro de la puerta. ¿Cuál es la evaluación correcta?",
+            en: "A contract expects the adapter that bridges it to a surface and that adapter is not installed (MILPA_ADAPTER_MISSING). Someone proposes reimplementing the handler inside the door. What is the correct assessment?"
+          },
+          options: [
+            { id: "a", text: { es: "Aceptable: cada superficie debería tener su propia implementación del dominio para no depender de adapters.", en: "Acceptable: each surface should carry its own implementation of the domain so it doesn't depend on adapters." } },
+            { id: "b", text: { es: "Innecesario: si falta el adapter, la proyección ocurre directa contra el handler.", en: "Unnecessary: if the adapter is missing, the projection happens directly against the handler." } },
+            { id: "c", text: { es: "Incorrecto: sin el adapter el contrato no puede proyectarse donde el host lo quiere, y el arreglo es instalar el paquete o plugin que lo aporta — no duplicar el dominio en la puerta.", en: "Incorrect: without the adapter the contract cannot be projected where the host wants it, and the fix is to install the package or plugin that supplies it — not to duplicate the domain at the door." } }
+          ],
+          answer: "c",
+          explanation: {
+            es: "El átomo se declara una vez y cada puerta lo proyecta mediante un adapter: coa, MCP y HTTP son adaptadores del mismo handler. Si falta el puente, la proyección no puede ocurrir; reimplementar el dominio en la entrada es exactamente la segunda implementación que el modelo evita.",
+            en: "The atom is declared once and each door projects it through an adapter: coa, MCP and HTTP are adapters of the same handler. If the bridge is missing, the projection cannot happen; reimplementing the domain at the entry is exactly the second implementation the model avoids."
+          }
+        }
+      ]
+    },
+    "arquitectura/legacy-y-migracion": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-legacy-y-migracion-01",
+          prompt: {
+            es: "Un contrato cierra a través de un manifiesto con forma legacy y el perfil del host lo permite. ¿Qué debe reflejar el reporte de resolución?",
+            en: "A contract closes through a legacy-shaped manifest and the host profile permits it. What should the resolution report reflect?"
+          },
+          options: [
+            { id: "a", text: { es: "Status `valid` sin menciones: si el camino está permitido, no hay nada que reportar.", en: "Status `valid` with no mentions: if the path is permitted, there is nothing to report." } },
+            { id: "b", text: { es: "MILPA_LEGACY_CONTRACT_ACTIVE y status `legacy_compatible`: permitido, pero jamás silencioso.", en: "MILPA_LEGACY_CONTRACT_ACTIVE and status `legacy_compatible`: allowed, but never silent." } },
+            { id: "c", text: { es: "Status `blocked`: cualquier forma legacy impide el boot hasta migrar.", en: "Status `blocked`: any legacy shape prevents boot until it's migrated." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "El legacy tolerado degrada el status a legacy_compatible y queda nombrado en el reporte. La compatibilidad se nombra para que siga visible en lugar de decaer en arqueología invisible: silenciarla convertiría el permiso en deuda oculta, y bloquearla negaría un camino que el host sí permitió.",
+            en: "Tolerated legacy degrades the status to legacy_compatible and is named in the report. The compatibility is named so it stays visible instead of decaying into invisible archaeology: silencing it would turn the permission into hidden debt, and blocking it would deny a path the host did allow."
+          }
+        },
+        {
+          id: "arquitectura-legacy-y-migracion-02",
+          prompt: {
+            es: "El perfil del host declara `allowedLegacyContracts: [\"billing\"]` y el contrato `reports` solo puede resolver a través de una forma legacy. ¿Qué resultado corresponde?",
+            en: "The host profile declares `allowedLegacyContracts: [\"billing\"]` and the `reports` contract can only resolve through a legacy shape. Which outcome is correct?"
+          },
+          options: [
+            { id: "a", text: { es: "Degrada a `legacy_compatible`: basta con que la allowlist permita al menos un contrato legacy.", en: "It degrades to `legacy_compatible`: it's enough that the allowlist permits at least one legacy contract." } },
+            { id: "b", text: { es: "MILPA_LEGACY_NOT_ALLOWED y el grafo bloquea: la allowlist es una puerta, no una nota, y una lista selectiva es una frontera deliberada que el resolver hace cumplir.", en: "MILPA_LEGACY_NOT_ALLOWED and the graph blocks: the allowlist is a gate, not a note, and a selective list is a deliberate boundary the resolver enforces." } },
+            { id: "c", text: { es: "El resolver agrega `reports` a la allowlist y anota la ampliación como advertencia.", en: "The resolver adds `reports` to the allowlist and records the expansion as a warning." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "A diferencia del legacy tolerado — que degrada a legacy_compatible — un camino legacy que la allowlist no permite bloquea. Los arreglos son explícitos: agregar el contrato a allowedLegacyContracts de forma consciente, permitir todo con [\"*\"], o migrarlo a la forma canónica para que no necesite permiso legacy.",
+            en: "Unlike tolerated legacy — which degrades to legacy_compatible — a legacy path the allowlist does not permit blocks. The fixes are explicit: consciously add the contract to allowedLegacyContracts, permit everything with [\"*\"], or migrate it to the canonical shape so it no longer needs a legacy allowance."
+          }
+        },
+        {
+          id: "arquitectura-legacy-y-migracion-03",
+          prompt: {
+            es: "Un equipo corre `php coa coa:migrate:plan` sobre un host con contratos legacy y deprecados. ¿Qué garantiza ese comando?",
+            en: "A team runs `php coa coa:migrate:plan` on a host with legacy and deprecated contracts. What does that command guarantee?"
+          },
+          options: [
+            { id: "a", text: { es: "Ejecuta la migración paso a paso y actualiza los manifiestos afectados.", en: "It executes the migration step by step and updates the affected manifests." } },
+            { id: "b", text: { es: "Calcula una fecha límite para cada contrato deprecado a partir de su antigüedad.", en: "It computes a deadline for each deprecated contract based on its age." } },
+            { id: "c", text: { es: "No cambia nada — solo produce plan: por paquete lista Detected, Recommended, Steps, Compatibility y Academy, con una compatibilidad honesta que no inventa fechas.", en: "It changes nothing — it only produces a plan: per package it lists Detected, Recommended, Steps, Compatibility and Academy, with an honest compatibility line that invents no dates." } }
+          ],
+          answer: "c",
+          explanation: {
+            es: "El plan es lectura pura: el resolver detecta, el advisor propone y nada escribe ni toca la base de datos. Los Steps van numerados con la re-inspección siempre al final, y Compatibility reproduce la cadena honesta del advisor verbatim — un plan que inventara deadlines enseñaría urgencias que el código no declara.",
+            en: "The plan is pure reading: the resolver detects, the advisor proposes and nothing writes or touches the database. The Steps are numbered with the re-inspect always last, and Compatibility reproduces the advisor's honest string verbatim — a plan that invented deadlines would teach urgencies the code doesn't declare."
+          }
+        }
+      ]
+    },
+    "arquitectura/riesgos-aceptados": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-riesgos-aceptados-01",
+          prompt: {
+            es: "Todas las dependencias requeridas cierran, pero dos capacidades sugeridas no tienen proveedor. ¿Qué status corresponde y qué implica?",
+            en: "Every required dependency closes, but two suggested capabilities have no provider. Which status applies and what does it imply?"
+          },
+          options: [
+            { id: "a", text: { es: "`blocked`: cualquier advertencia impide el boot hasta resolverla.", en: "`blocked`: any warning prevents boot until it's resolved." } },
+            { id: "b", text: { es: "`valid`: las sugerencias ausentes no aparecen en el reporte para no hacer ruido.", en: "`valid`: missing suggestions don't show up in the report to avoid noise." } },
+            { id: "c", text: { es: "`bootable_with_warnings`: el host puede bootear con los trade-offs explícitos, después de revisar cada advertencia o registrarla como riesgo aceptado.", en: "`bootable_with_warnings`: the host can boot with the trade-offs made explicit, after reviewing each warning or recording it as an accepted risk." } }
+          ],
+          answer: "c",
+          explanation: {
+            es: "El tercer estado del semáforo existe a propósito: distingue el grafo que cierra con salvedades del grafo bloqueado y del limpio. Las advertencias se revisan — proveyendo las capacidades sugeridas que sí quieres — o se registran como riesgos aceptados en el perfil del host; ninguna se borra.",
+            en: "The third state of the traffic light exists on purpose: it tells the graph that closes with caveats apart from the blocked one and the clean one. Warnings are reviewed — providing the suggested capabilities you do want — or recorded as accepted risks in the host profile; none is erased."
+          }
+        },
+        {
+          id: "arquitectura-riesgos-aceptados-02",
+          prompt: {
+            es: "El perfil acepta un riesgo con su razón y `expires: \"2026-09-01\"`, pero la resolución corre sin `evaluatedAt`. ¿Qué debe hacer el resolver?",
+            en: "The profile accepts a risk with its reason and `expires: \"2026-09-01\"`, but the resolution runs without `evaluatedAt`. What should the resolver do?"
+          },
+          options: [
+            { id: "a", text: { es: "Confiar en el expiry: la aceptación se da por válida hasta esa fecha.", en: "Trust the expiry: the acceptance is assumed valid until that date." } },
+            { id: "b", text: { es: "Señalar MILPA_RISK_EXPIRY_UNEVALUATED: el resolver es puro y nunca lee el reloj de pared, así que sin evaluatedAt no puede saber si la aceptación sigue vigente.", en: "Flag MILPA_RISK_EXPIRY_UNEVALUATED: the resolver is pure and never reads the wall clock, so without evaluatedAt it cannot tell whether the acceptance still holds." } },
+            { id: "c", text: { es: "Leer la hora del sistema por única vez para decidir si el riesgo expiró.", en: "Read the system time just this once to decide whether the risk expired." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "Quien llama aporta el reloj (evaluatedAt) y la expiración se evalúa determinísticamente, nunca contra un reloj ambiente. Antes que confiar en un límite que jamás verificó, el resolver señala el descuido: un expiry sin evaluar es un riesgo que crees acotado pero que no se está haciendo cumplir.",
+            en: "The caller supplies the clock (evaluatedAt) and the expiry is evaluated deterministically, never against an ambient clock. Rather than trusting a bound it never checked, the resolver flags the oversight: an unevaluated expiry is a risk you think is bounded but is not being enforced."
+          }
+        },
+        {
+          id: "arquitectura-riesgos-aceptados-03",
+          prompt: {
+            es: "La capacidad sugerida `cache` no tiene proveedor y su registro declara un fallback. ¿Qué comportamiento corresponde?",
+            en: "The suggested `cache` capability has no provider and its record declares a fallback. Which behavior is correct?"
+          },
+          options: [
+            { id: "a", text: { es: "El grafo bloquea: toda capacidad declarada, sugerida o no, exige proveedor.", en: "The graph blocks: every declared capability, suggested or not, demands a provider." } },
+            { id: "b", text: { es: "MILPA_SUGGESTED_CAPABILITY_MISSING: sugerido significa opcional — el grafo cierra, aplica la ruta de fallback y el mensaje nombra a dónde degrada, para que la conducta ausente sea visible.", en: "MILPA_SUGGESTED_CAPABILITY_MISSING: suggested means optional — the graph still closes, the fallback path applies and the message names where it degrades to, so the absent behaviour stays visible." } },
+            { id: "c", text: { es: "El resolver convierte el suggests en requires para el siguiente boot y exige el proveedor.", en: "The resolver converts the suggests into a requires for the next boot and demands the provider." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "Un suggests ausente degrada, no bloquea: la degradación declarada se nombra en el mensaje para que la pérdida sea visible en lugar de desaparecer. Los arreglos del catálogo son instalar el proveedor que habilita la sugerencia o aceptar la ausencia como riesgo conocido en el perfil del host.",
+            en: "A missing suggests degrades, it doesn't block: the declared degradation is named in the message so the loss stays visible instead of vanishing. The catalog's fixes are to install the provider that enables the suggestion or to accept the absence as a known risk in the host profile."
+          }
+        }
+      ]
+    },
     "arquitectura/estado-log": {
       passScore: 3,
       questions: [
