@@ -307,7 +307,7 @@ function renderPortalFooter(lang) {
       <div class="mui-footer__brand"><strong>${PORTAL.meta.title[lang]}</strong><p class="mui-footer__mantra">${f.mantra[lang]}</p></div>
       <nav aria-labelledby="footerEcosystem"><p class="mui-footer__heading" id="footerEcosystem">${f.ecosystem[lang]}</p><ul class="mui-footer__links">${links}</ul></nav>
     </div>
-    <div class="mui-footer__legal"><p>© 2026 Milpa · Apache-2.0</p></div>
+    <div class="mui-footer__legal"><p>© 2026 Milpa · created by Rodrigo Vicente · with <a href="https://teamx.agency" target="_blank" rel="noopener">TeamX Agency</a> · Apache-2.0</p></div>
   </footer>`;
 }
 
