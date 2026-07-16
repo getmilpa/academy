@@ -20,7 +20,7 @@ test("milpa-artifact#atomo-artifact ships full static content, not a JS shell", 
   const inner = m[1];
   assert.match(inner, /crear:tarea/, "the atom card is in the served HTML");
   assert.match(inner, /mui-pipeline/, "the pipelines are in the served HTML");
-  assert.match(inner, /radiograf[íi]a de la implementaci[óo]n/i, "the auth-hole warning is in the served HTML");
+  assert.match(inner, /Cobertura por superficie/i, "the coverage-by-surface callout is in the served HTML");
   assert.match(inner, /Fuentes auditadas/i, "the sources block is in the served HTML");
   assert.ok(inner.length > 800, "the element is not an empty shell");
 });
