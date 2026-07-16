@@ -130,27 +130,41 @@ function projectOperation(op, surface, { scopeGranted = true } = {}) {
   };
 }
 
-/* label/note son prosa bilingüe {es,en}; id es el código de etapa (neutro).
-   runtimeTrace hace spread de ...stage pero sólo depende de stage.id, así que
-   la lógica no cambia. renderRuntimeRail (artifacts.js) resuelve con pick(). */
+/* label/note son prosa bilingüe {es,en}; id es el código de etapa (neutro); role
+   es un código neutro que espeja InvocationStepRole de ADR#13 (guard/transform/
+   branch/hook/execution/boundary/outcome) — ver InvocationPlanBuilder.php. wraps
+   (solo contain-exception) espeja InvocationStep::wraps → "execute". El orden y
+   los 11 ids espejan InvocationStepKind::inspectionOrder() (ADR#13 P13.1): la
+   tabla se PARTIÓ (plan-confirm → plan-mode + confirm; intercept → emit-executing)
+   y se agregó contain-exception antes de audit — ANTES eran 9 pasos, ahora 11.
+   runtimeTrace hace spread de ...stage pero sólo depende de stage.id, así que la
+   lógica no cambia — role/wraps viajan sin que runtimeTrace los toque.
+   renderRuntimeRail (artifacts.js) resuelve label/note con pick(). */
 const RUNTIME_STAGES = Object.freeze([
-  { id: "resolve", label: { es: "Resolver", en: "Resolve" }, note: { es: "Busca la tool declarada.", en: "Looks up the declared tool." } },
-  { id: "validate", label: { es: "Validar", en: "Validate" }, note: { es: "Valida el schema de entrada.", en: "Validates the input schema." } },
-  { id: "clamp", label: { es: "Acotar", en: "Clamp" }, note: { es: "Aplica límites declarados a los argumentos.", en: "Applies declared limits to the arguments." } },
-  { id: "authorize", label: { es: "Autorizar", en: "Authorize" }, note: { es: "Evalúa scopes y PolicyGate.", en: "Evaluates scopes and PolicyGate." } },
-  { id: "rate-limit", label: { es: "Rate limit", en: "Rate limit" }, note: { es: "Consume presupuesto por caller y tool.", en: "Consumes budget per caller and tool." } },
-  { id: "plan-confirm", label: { es: "Plan / confirmar", en: "Plan / confirm" }, note: { es: "Previsualiza o solicita confirmación.", en: "Previews or requests confirmation." } },
-  { id: "intercept", label: { es: "Interceptar", en: "Intercept" }, note: { es: "Permite cache, reemplazo o veto después de auth.", en: "Allows cache, replacement or veto after auth." } },
-  { id: "execute", label: { es: "Ejecutar", en: "Execute" }, note: { es: "Invoca el callback y mide el tiempo.", en: "Invokes the callback and measures the time." } },
-  { id: "audit", label: { es: "Auditar", en: "Audit" }, note: { es: "Emite tool.executed o tool.failed.", en: "Emits tool.executed or tool.failed." } },
+  { id: "resolve", role: "guard", label: { es: "Resolver", en: "Resolve" }, note: { es: "Busca la tool declarada.", en: "Looks up the declared tool." } },
+  { id: "validate", role: "guard", label: { es: "Validar", en: "Validate" }, note: { es: "Valida el schema de entrada.", en: "Validates the input schema." } },
+  { id: "clamp", role: "transform", label: { es: "Acotar", en: "Clamp" }, note: { es: "Aplica límites declarados a los argumentos.", en: "Applies declared limits to the arguments." } },
+  { id: "authorize", role: "guard", label: { es: "Autorizar", en: "Authorize" }, note: { es: "Evalúa scopes y PolicyGate.", en: "Evaluates scopes and PolicyGate." } },
+  { id: "rate-limit", role: "guard", label: { es: "Rate limit", en: "Rate limit" }, note: { es: "Consume presupuesto por caller y tool.", en: "Consumes budget per caller and tool." } },
+  { id: "plan-mode", role: "branch", label: { es: "Modo plan", en: "Plan mode" }, note: { es: "Si ctx.mode es 'plan', retorna una vista previa sin ejecutar.", en: "If ctx.mode is 'plan', returns a preview without executing." } },
+  { id: "confirm", role: "branch", label: { es: "Confirmar", en: "Confirm" }, note: { es: "Solicita un token de confirmación para operaciones mutantes o marcadas.", en: "Requests a confirmation token for mutating or flagged operations." } },
+  { id: "emit-executing", role: "hook", label: { es: "Emitir executing", en: "Emit executing" }, note: { es: "Despacha tool.executing; habilita cache, reemplazo o veto.", en: "Dispatches tool.executing; enables cache, replacement or veto." } },
+  { id: "execute", role: "execution", label: { es: "Ejecutar", en: "Execute" }, note: { es: "Invoca el callback y mide el tiempo.", en: "Invokes the callback and measures the time." } },
+  { id: "contain-exception", role: "boundary", wraps: "execute", label: { es: "Contener excepción", en: "Contain exception" }, note: { es: "Envuelve la ejecución; captura errores no controlados.", en: "Wraps execution; catches uncontrolled errors." } },
+  { id: "audit", role: "outcome", label: { es: "Auditar", en: "Audit" }, note: { es: "Emite tool.executed o tool.failed.", en: "Emits tool.executed or tool.failed." } },
 ]);
 
+/* Las llaves de FAILURE_STAGE son los NOMBRES DE ESCENARIO (failure) que ya
+   consumían los tests — no cambiaron. Los VALORES apuntan al id de RUNTIME_STAGES
+   donde ese escenario detiene el rail; se actualizaron para los ids partidos:
+   confirmation ahora apunta a "confirm" (antes "plan-confirm") y veto a
+   "emit-executing" (antes "intercept", el hook-anchor donde el veto ocurre). */
 const FAILURE_STAGE = Object.freeze({
   validation: "validate",
   authorization: "authorize",
   "rate-limit": "rate-limit",
-  confirmation: "plan-confirm",
-  veto: "intercept",
+  confirmation: "confirm",
+  veto: "emit-executing",
   execution: "execute",
 });
 
@@ -359,6 +373,132 @@ function runtimeTrace(failure = "none") {
   };
 }
 
+/* invocationPlan: espejo puro de ADR#13 InvocationPlanBuilder::build() (P13.1,
+   ver InvocationStep::toArray() y el criterio de aceptación "settings_update
+   --channel=web" en el spec). Modela un tool ESCANEADO fijo tipo settings_update:
+   mutating:false, sin scopes declarados, sin clamps, sin tool.requiresConfirmation
+   ni policy.require_confirmation_for_mutating aplicable — así el resultado
+   demuestra honestidad de presencia (Active/Conditional/Dormant/Skipped) sin
+   necesitar un catálogo de tools completo. `channel` usa las llaves reales de
+   PolicyGate ('web'|'cli'|'mcp'; un canal desconocido cae al fallback
+   "untrusted" de PolicyGate::UNKNOWN_CHANNEL_POLICY: require_auth=true) — el eje
+   SURFACES cli/mcp/http del resto de la galería llama 'http' al mismo canal que
+   PolicyGate llama 'web'. `wiring` espeja RegistryWiring: { rateLimiter,
+   dispatcher, ruleProvider } booleans (ausencia de wiring → Skipped, NUNCA
+   Conditional — Enmienda 3). `steps[].kind` usa el kebab-case propio de esta
+   galería (alineado 1:1 con los ids de RUNTIME_STAGES, para que una UI futura
+   pueda unir plan↔rail por id); el enum PHP real serializa snake_case
+   (rate_limit, plan_mode, emit_executing, contain_exception) — mismo concepto,
+   codificación JS-neutra distinta, ver comentario de MODULE_CATALOG arriba sobre
+   por qué los ids se preservan neutros. role/presence SÍ son idénticos byte a
+   byte a InvocationStepRole::value / StepPresence::value (guard/transform/
+   branch/hook/execution/boundary/outcome; active/conditional/dormant/skipped). */
+const CHANNEL_POLICY = Object.freeze({
+  // cli: PolicyGate solo declara allow_all:true; require_auth cae a su default false.
+  cli: { requireAuth: false, allowAll: true },
+  mcp: { requireAuth: true, allowAll: false },
+  web: { requireAuth: true, allowAll: false },
+});
+
+function authorizeSource(channel) {
+  const policy = CHANNEL_POLICY[channel] ?? { requireAuth: true, allowAll: false };
+  const es = [
+    `canal '${channel}': require_auth=${policy.requireAuth}, allow_all=${policy.allowAll}`,
+    ...(policy.allowAll ? ["allow_all: god-mode — nunca bloquea"] : []),
+    "tool sin scopes declarados",
+  ].join("; ");
+  const en = [
+    `channel '${channel}': require_auth=${policy.requireAuth}, allow_all=${policy.allowAll}`,
+    ...(policy.allowAll ? ["allow_all: god-mode — never blocks"] : []),
+    "tool declares no scopes",
+  ].join("; ");
+  return { es, en };
+}
+
+function rateLimitSource(hasRateLimiter) {
+  return {
+    es: `wiring del host: rateLimiter ${hasRateLimiter ? "presente" : "ausente"}; costo mutating?5:1 (mutating=false → costo 1)`,
+    en: `host wiring: rateLimiter ${hasRateLimiter ? "present" : "absent"}; cost mutating?5:1 (mutating=false → cost 1)`,
+  };
+}
+
+function emitExecutingSource(hasDispatcher) {
+  return {
+    es: `wiring del host: dispatcher ${hasDispatcher ? "presente" : "ausente"} (ancla + cache/veto)`,
+    en: `host wiring: dispatcher ${hasDispatcher ? "present" : "absent"} (anchor + cache/veto)`,
+  };
+}
+
+/* Cobertura REAL de auditoría (Enmienda 2 — honestidad, no aspiración): el
+   scout de ADR#13 confirmó que ToolRegistry::call() NO audita todos los
+   terminal paths. Byte-idéntico en intención a InvocationPlanBuilder::AUDIT_SOURCE. */
+const AUDIT_SOURCE = Object.freeze({
+  es: "audita: validate-fail, authz-fail, rate-limit, cache-hit, execute-éxito, execute-fallo; "
+    + "NO audita: resolve-miss, plan-mode, confirm, veto",
+  en: "audits: validate-fail, authz-fail, rate-limit, cache-hit, execute-success, execute-failure; "
+    + "does NOT audit: resolve-miss, plan-mode, confirm, veto",
+});
+
+function invocationPlan(channel, wiring = {}) {
+  const hasRateLimiter = !!wiring.rateLimiter;
+  const hasDispatcher = !!wiring.dispatcher;
+
+  const steps = [
+    {
+      kind: "resolve", role: "guard", presence: "active", blocking: true, mutates: false, wraps: null,
+      source: { es: "búsqueda en el registry", en: "registry lookup" },
+    },
+    {
+      kind: "validate", role: "guard", presence: "active", blocking: true, mutates: false, wraps: null,
+      source: { es: "el tool declara inputSchema", en: "tool declares inputSchema" },
+    },
+    {
+      kind: "clamp", role: "transform", presence: "skipped", blocking: false, mutates: false, wraps: null,
+      source: { es: "el tool no declara clamps", en: "tool declares no clamps" },
+    },
+    {
+      kind: "authorize", role: "guard", presence: "active", blocking: true, mutates: false, wraps: null,
+      source: authorizeSource(channel),
+    },
+    {
+      kind: "rate-limit", role: "guard", presence: hasRateLimiter ? "active" : "skipped", blocking: true, mutates: false, wraps: null,
+      source: rateLimitSource(hasRateLimiter),
+    },
+    {
+      kind: "plan-mode", role: "branch", presence: "conditional", blocking: false, mutates: false, wraps: null,
+      source: {
+        es: "dispara si ctx.mode es 'plan'; valor actual: execute",
+        en: "fires if ctx.mode is 'plan'; current value: execute",
+      },
+    },
+    {
+      kind: "confirm", role: "branch", presence: "dormant", blocking: false, mutates: false, wraps: null,
+      source: {
+        es: "ni tool.requiresConfirmation ni la política del canal exigen confirmación para este tool",
+        en: "neither tool.requiresConfirmation nor the channel policy require confirmation for this tool",
+      },
+    },
+    {
+      kind: "emit-executing", role: "hook", presence: hasDispatcher ? "active" : "skipped", blocking: true, mutates: false, wraps: null,
+      source: emitExecutingSource(hasDispatcher),
+    },
+    {
+      kind: "execute", role: "execution", presence: "active", blocking: true, mutates: false, wraps: null,
+      source: { es: "callback; se inyecta _ctx", en: "callback; _ctx injected" },
+    },
+    {
+      kind: "contain-exception", role: "boundary", presence: "active", blocking: false, mutates: false, wraps: "execute",
+      source: { es: "envuelve execute; \\Throwable → INTERNAL_ERROR", en: "wraps execute; \\Throwable → INTERNAL_ERROR" },
+    },
+    {
+      kind: "audit", role: "outcome", presence: "active", blocking: false, mutates: false, wraps: null,
+      source: AUDIT_SOURCE,
+    },
+  ];
+
+  return { channel, steps };
+}
+
 function decideVerification({ requester, decider, decision }) {
   if (!requester || !decider) {
     throw new TypeError("requester and decider are required");
@@ -557,6 +697,7 @@ globalThis.AcademyCore = Object.freeze({
   conceptualPipelineResult,
   projectOperation,
   runtimeTrace,
+  invocationPlan,
   decideVerification,
   projectProcess,
   hexToRgb,

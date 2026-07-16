@@ -7,6 +7,7 @@ await import("./artifacts-core.js");
 const {
   CHAOS_MODULES,
   MODULE_CATALOG,
+  RUNTIME_STAGES,
   conceptualPipelineResult,
   coupleCheck,
   createGenerationPlan,
@@ -14,6 +15,7 @@ const {
   evaluatePlanting,
   evaluateThemePair,
   frontierProject,
+  invocationPlan,
   projectOperation,
   projectProcess,
   resolveModuleOrder,
@@ -58,6 +60,72 @@ test("denied conceptual calls skip execution but still audit", () => {
 test("runtime trace distinguishes explicitly audited and uncovered exits", () => {
   assert.match(runtimeTrace("authorization").auditCoverage, /auditada/);
   assert.match(runtimeTrace("veto").auditCoverage, /sin auditoría explícita/);
+});
+
+/* invocationPlan (ADR#13 P13.1 mirror): un tool escaneado tipo settings_update
+   (mutating:false, sin scopes, sin clamps, sin requiresConfirmation) contra un
+   canal + wiring dados. Los asserts espejan el criterio de aceptación del spec
+   para "settings_update --channel=web" (sin actor): Confirm Dormant, RateLimit
+   y EmitExecuting Skipped sin wiring, ContainException wraps execute, Audit
+   enumera su cobertura real (los paths NO auditados también). */
+test("RUNTIME_STAGES carries the 11-step inspectionOrder with role passed through", () => {
+  const ids = RUNTIME_STAGES.map((stage) => stage.id);
+  assert.deepEqual(ids, [
+    "resolve", "validate", "clamp", "authorize", "rate-limit",
+    "plan-mode", "confirm", "emit-executing", "execute", "contain-exception", "audit",
+  ]);
+  assert.equal(RUNTIME_STAGES.length, 11);
+  for (const stage of RUNTIME_STAGES) {
+    assert.equal(typeof stage.role, "string");
+  }
+  const containException = RUNTIME_STAGES.find((stage) => stage.id === "contain-exception");
+  assert.equal(containException.wraps, "execute");
+});
+
+test("invocationPlan on unwired web channel marks Confirm dormant and RateLimit/EmitExecuting skipped", () => {
+  const plan = invocationPlan("web", { rateLimiter: false, dispatcher: false, ruleProvider: false });
+  const byKind = Object.fromEntries(plan.steps.map((step) => [step.kind, step]));
+
+  assert.equal(plan.channel, "web");
+  assert.equal(plan.steps.length, 11);
+  assert.deepEqual(plan.steps.map((step) => step.kind), [
+    "resolve", "validate", "clamp", "authorize", "rate-limit",
+    "plan-mode", "confirm", "emit-executing", "execute", "contain-exception", "audit",
+  ]);
+
+  assert.equal(byKind.confirm.presence, "dormant");
+  assert.equal(byKind["rate-limit"].presence, "skipped");
+  assert.equal(byKind["emit-executing"].presence, "skipped");
+
+  assert.equal(byKind["contain-exception"].role, "boundary");
+  assert.equal(byKind["contain-exception"].wraps, "execute");
+
+  assert.match(byKind.audit.source.es, /NO audita/);
+  assert.match(byKind.audit.source.es, /resolve-miss/);
+  assert.match(byKind.audit.source.es, /plan-mode/);
+  assert.match(byKind.audit.source.es, /confirm/);
+  assert.match(byKind.audit.source.es, /veto/);
+  assert.match(byKind.audit.source.en, /does NOT audit/);
+});
+
+test("invocationPlan on a wired channel flips RateLimit and EmitExecuting to active", () => {
+  const plan = invocationPlan("web", { rateLimiter: true, dispatcher: true, ruleProvider: false });
+  const byKind = Object.fromEntries(plan.steps.map((step) => [step.kind, step]));
+
+  assert.equal(byKind["rate-limit"].presence, "active");
+  assert.equal(byKind["emit-executing"].presence, "active");
+  // Wiring doesn't manufacture a confirm requirement — still dormant.
+  assert.equal(byKind.confirm.presence, "dormant");
+});
+
+test("invocationPlan authorize source reflects channel policy (cli god-mode vs web/mcp require_auth)", () => {
+  const cli = invocationPlan("cli", {}).steps.find((step) => step.kind === "authorize");
+  const web = invocationPlan("web", {}).steps.find((step) => step.kind === "authorize");
+  const mcp = invocationPlan("mcp", {}).steps.find((step) => step.kind === "authorize");
+
+  assert.match(cli.source.en, /god-mode/);
+  assert.match(web.source.en, /require_auth=true/);
+  assert.match(mcp.source.en, /require_auth=true/);
 });
 
 test("verification rejects self-decision by construction", () => {
