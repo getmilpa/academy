@@ -83,22 +83,30 @@ export const ATOMO = {
     },
   },
 
-  /* Aviso del hueco de auth — sostenido, sin suavizar ninguna de las dos
-     versiones. */
+  /* Cobertura por superficie — hasta 2026-07-14 esto era un hueco real
+     (HTTP no leía scopes); se cerró cuando HttpProjector empezó a exigirlos
+     vía milpa/auth. El modelo se actualiza junto con el runtime: sostenido,
+     sin suavizar ninguna de las dos versiones. */
   warning: {
-    lead: { es: "Hueco de cobertura honesto:", en: "Honest coverage gap:" },
-    es: "Esto no es una garantía deseable de HTTP. Es una radiografía de la "
-      + "implementación actual. MCP aplica scopes hoy; HTTP todavía no lee "
-      + "scopes de <code>Operation</code>. Este hueco debe cerrarse en "
-      + "runtime/policy antes de producción. Ver "
-      + '<a href="{runtimeHref}">Radiografía del runtime</a>. Fuente: '
-      + "<code>Operation.php</code>.",
-    en: "This is not a desirable HTTP guarantee. It is a radiography of the "
-      + "current implementation. MCP enforces scopes today; HTTP does not yet "
-      + "read scopes from <code>Operation</code>. This gap must be closed in "
-      + "runtime/policy before production. See "
-      + '<a href="{runtimeHref}">Runtime x-ray</a>. Source: '
-      + "<code>Operation.php</code>.",
+    lead: { es: "Cobertura por superficie:", en: "Coverage by surface:" },
+    es: "MCP y HTTP aplican hoy los mismos scopes: HTTP corre "
+      + "<code>RequireScopeMiddleware</code> y después el mismo "
+      + "<code>PolicyGate</code> que usa MCP. <code>coa</code> no aplica "
+      + "scopes — es la superficie local/confiable, por diseño. Esto fue un "
+      + "hueco de cobertura real; se cerró cuando <code>HttpProjector</code> "
+      + "empezó a exigir scopes. La "
+      + '<a href="{runtimeHref}">Radiografía del runtime</a> muestra el '
+      + "pipeline completo ya gobernado. Fuente: <code>Operation.php</code>, "
+      + "<code>HttpProjector.php</code>.",
+    en: "MCP and HTTP now enforce the same scopes: HTTP runs "
+      + "<code>RequireScopeMiddleware</code> and then the same "
+      + "<code>PolicyGate</code> MCP uses. <code>coa</code> does not enforce "
+      + "scopes — it's the local/trusted surface, by design. This was a real "
+      + "coverage gap; it closed when <code>HttpProjector</code> started "
+      + "requiring scopes. The "
+      + '<a href="{runtimeHref}">Runtime x-ray</a> shows the full, '
+      + "now-governed pipeline. Source: <code>Operation.php</code>, "
+      + "<code>HttpProjector.php</code>.",
   },
 
   /* 5 etapas del pipeline. `id` = data-stage, identificador de máquina estable
@@ -168,7 +176,10 @@ export const ATOMO = {
       {
         surface: "POST",
         confirm: { es: "token <code>428→201</code>", en: "token <code>428→201</code>" },
-        scopes: { es: "no (pendiente · middleware)", en: "no (pending · middleware)" },
+        scopes: {
+          es: "<strong>sí</strong> (RequireScopeMiddleware + PolicyGate)",
+          en: "<strong>yes</strong> (RequireScopeMiddleware + PolicyGate)",
+        },
       },
     ],
   },
@@ -186,11 +197,14 @@ export const ATOMO = {
     summary: { es: "Evidencia y alcance", en: "Evidence and scope" },
     scope: {
       es: "Modelo <strong>didáctico</strong> sobre implementación "
-        + "<strong>auditada</strong>. Este artifact no afirma que HTTP aplique "
-        + "scopes ni que el token store in-memory sea de producción.",
+        + "<strong>auditada</strong>. Este artifact sí afirma que HTTP aplica "
+        + "scopes (vía <code>HttpProjector</code> + <code>PolicyGate</code>) "
+        + "— no afirma que el token store in-memory sea de producción.",
       en: "<strong>Didactic</strong> model over an <strong>audited</strong> "
-        + "implementation. This artifact does not claim that HTTP applies "
-        + "scopes, nor that the in-memory token store is production-grade.",
+        + "implementation. This artifact does claim that HTTP applies scopes "
+        + "(via <code>HttpProjector</code> + <code>PolicyGate</code>) — it "
+        + "does not claim that the in-memory token store is "
+        + "production-grade.",
     },
     heading: { es: "Fuentes auditadas", en: "Audited sources" },
     items: [
@@ -203,12 +217,20 @@ export const ATOMO = {
           + "<code>CommandProvider.php</code>, <code>SurfaceProjector.php</code>.",
       },
       {
-        es: "Proyectores de referencia (<code>skeleton</code>, ns "
+        es: "Proyectores de referencia (<code>skeleton</code> ≥0.7.0, ns "
           + "<code>App\\Command</code>, no parte del paquete): "
           + "<code>getmilpa-skeleton/src/Command/{CliProjector,McpProjector,HttpProjector}.php</code>.",
-        en: "Reference projectors (<code>skeleton</code>, ns "
+        en: "Reference projectors (<code>skeleton</code> ≥0.7.0, ns "
           + "<code>App\\Command</code>, not part of the package): "
           + "<code>getmilpa-skeleton/src/Command/{CliProjector,McpProjector,HttpProjector}.php</code>.",
+      },
+      {
+        es: "Enforcement de scopes en HTTP: <code>milpa/auth</code> ≥0.1, "
+          + "<code>RequireScopeMiddleware.php</code> + el mismo "
+          + "<code>PolicyGate</code> que usa MCP.",
+        en: "HTTP scope enforcement: <code>milpa/auth</code> ≥0.1, "
+          + "<code>RequireScopeMiddleware.php</code> + the same "
+          + "<code>PolicyGate</code> MCP uses.",
       },
       {
         es: "Stand-ins didácticos: <code>ConfirmTokenStore.php</code> "
