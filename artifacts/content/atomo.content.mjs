@@ -25,18 +25,19 @@ export const ATOMO = {
   intro: {
     es: "Imagina que le pides lo mismo a tres mensajeros distintos — una línea de "
       + "comandos, un asistente de IA, un formulario web — y cada uno lo resuelve "
-      + "un poco distinto: uno te pide confirmar antes de actuar, otro revisa "
-      + "primero si tienes permiso, el tercero todavía no revisa nada. Es la misma "
-      + "orden, dicha de tres formas, con tres niveles de cuidado distintos. Eso es "
-      + "lo que vas a ver acá, ya con su nombre técnico: una Operación, proyectada "
-      + "a tres puertas.",
+      + "con un cuidado distinto: uno te pide confirmar antes de actuar porque es "
+      + "local y confía en quien lo usa; los otros dos revisan primero si tienes "
+      + "permiso, con la misma regla. Es la misma orden, dicha de tres formas, con "
+      + "dos niveles de cuidado bien definidos. Eso es lo que vas a ver acá, ya con "
+      + "su nombre técnico: una Operación, proyectada a tres puertas.",
     en: "Imagine giving the same instruction to three different messengers — a "
-      + "command line, an AI assistant, a web form — and each one handles it a "
-      + "little differently: one asks you to confirm before acting, another "
-      + "checks your permission first, the third doesn't check at all yet. It's "
-      + "the same order, said three ways, with three different levels of care. "
-      + "That's what you're about to see, now with its technical name: one "
-      + "Operation, projected through three doors.",
+      + "command line, an AI assistant, a web form — and each one handles it with "
+      + "a different level of care: one asks you to confirm before acting, "
+      + "because it's local and trusts whoever's using it; the other two check "
+      + "your permission first, with the same rule. It's the same order, said "
+      + "three ways, with two clearly defined levels of care. That's what you're "
+      + "about to see, now with its technical name: one Operation, projected "
+      + "through three doors.",
   },
 
   title: { es: "El átomo y sus puertas", en: "The atom and its doors" },
