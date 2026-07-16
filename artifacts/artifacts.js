@@ -6,9 +6,7 @@
 const {
   CHAOS_MODULES,
   MODULE_CATALOG,
-  RUNTIME_STAGES,
   SURFACES,
-  DEFAULT_WIRING,
   availableCapabilities,
   conceptualPipelineResult,
   coupleCheck,
@@ -17,11 +15,9 @@ const {
   evaluatePlanting,
   evaluateThemePair,
   frontierProject,
-  invocationPlan,
   projectOperation,
   projectProcess,
   resolveModuleOrder,
-  runtimeTrace,
 } = globalThis.AcademyCore;
 
 // Idioma real (Task 4, mismo patrón que labs/labs.js): artifacts.js es un
@@ -32,9 +28,9 @@ const {
 const lang = (document.documentElement.lang || "es").slice(0, 2) === "en" ? "en" : "es";
 
 // pick() resuelve un nodo {es,en} (prosa de artifacts-core.js: MODULE_CATALOG,
-// CHAOS_MODULES, RUNTIME_STAGES, y boundaryNodes de este archivo) al idioma
-// activo, y deja pasar strings planos sin tocar. Si un shell futuro carga
-// i18n.js antes que artifacts.js, prefiere MilpaI18n.pick (fuente única).
+// CHAOS_MODULES, y boundaryNodes de este archivo) al idioma activo, y deja
+// pasar strings planos sin tocar. Si un shell futuro carga i18n.js antes que
+// artifacts.js, prefiere MilpaI18n.pick (fuente única).
 function pick(node) {
   if (globalThis.MilpaI18n && typeof globalThis.MilpaI18n.pick === "function") return globalThis.MilpaI18n.pick(node, lang);
   if (node && typeof node === "object" && ("es" in node || "en" in node)) return node[lang];
@@ -54,16 +50,10 @@ function trackEvent(name, params) {
   try { window.MilpaAnalytics.track(name, params); } catch { /* telemetry must never break UX */ }
 }
 
-// Códigos de etapa del runtime auditados explícitamente en ToolRegistry::call()
-// (espejo UI del set de artifacts-core.js: runtimeTrace()). Se usa sólo para
-// elegir la variante del alert y el texto de cobertura localizado, sin leer la
-// prosa que devuelve el core — la lógica del core queda intacta.
-const AUDITED_FAILURES = new Set(["validation", "authorization", "rate-limit", "execution"]);
-
 // Chrome runtime de la galería + traducción de la prosa neutra que devuelven
 // las funciones puras del core (conceptualPipelineResult.reason,
-// projectProcess.state/verification, runtimeTrace.auditCoverage,
-// decideVerification.reason). El core NO cambia: sigue devolviendo su prosa es;
+// projectProcess.state/verification, decideVerification.reason). El core NO
+// cambia: sigue devolviendo su prosa es;
 // acá se mapea por código (outcome/decision/failure) o por valor con `es`
 // idéntico (identidad) y fallback en `en`. es byte-idéntico al literal previo.
 const STRINGS = {
@@ -110,11 +100,6 @@ const STRINGS = {
     gateOutcomeTitle: (decision) => (decision === "approved" ? "Aprobado" : decision === "rejected" ? "Rechazado" : "Waived"),
     gateResult: (title, detail) => `${title}: ${detail}.`,
     auditCount: (count) => `${count} ${count === 1 ? "evento" : "eventos"}`,
-    runtimeResultTitle: (outcome) => (outcome === "success" ? "Callback completado" : "Retorno anticipado"),
-    runtimeCoverage: (failure) => (failure === "none" ? "tool.executed" : AUDITED_FAILURES.has(failure) ? "ruta auditada explícitamente" : "retorno sin auditoría explícita en ToolRegistry::call()"),
-    runtimeResultDesc: (failure, coverage) => `${failure === "none" ? "tool.executed" : failure} · ${coverage}.`,
-    runtimeResetTitle: "Selecciona una ruta",
-    runtimeResetDesc: "La cobertura de auditoría cambia según el punto de retorno.",
     eventCount: (count) => `${count} eventos`,
     projectionState: (state) => state,
     projectionVerification: (verification) => verification,
@@ -177,11 +162,6 @@ const STRINGS = {
     gateOutcomeTitle: (decision) => (decision === "approved" ? "Approved" : decision === "rejected" ? "Rejected" : "Waived"),
     gateResult: (title, detail) => `${title}: ${detail}.`,
     auditCount: (count) => `${count} ${count === 1 ? "event" : "events"}`,
-    runtimeResultTitle: (outcome) => (outcome === "success" ? "Callback completed" : "Early return"),
-    runtimeCoverage: (failure) => (failure === "none" ? "tool.executed" : AUDITED_FAILURES.has(failure) ? "explicitly audited route" : "return without explicit audit in ToolRegistry::call()"),
-    runtimeResultDesc: (failure, coverage) => `${failure === "none" ? "tool.executed" : failure} · ${coverage}.`,
-    runtimeResetTitle: "Select a path",
-    runtimeResetDesc: "Audit coverage changes depending on the return point.",
     eventCount: (count) => `${count} events`,
     projectionState: (state) => PROJECTION_STATE_EN[state] ?? state,
     projectionVerification: (verification) => PROJECTION_VERIFICATION_EN[verification] ?? verification,
@@ -295,10 +275,11 @@ function showArtifact(id, { updateHash = true, focus = false } = {}) {
   const nextIndex = artifactIds.indexOf(id);
   if (nextIndex < 0) return;
 
-  // GA4 (Task 4): un artifact_view por artifact mostrado. Se OMITE el slug
-  // "atomo": su <milpa-artifact> ya emite artifact_view {artifact_id:"atomo"}
-  // al hidratar (milpa-artifact.js), así que emitirlo acá lo duplicaría.
-  if (id !== "atomo") trackEvent("artifact_view", { artifact_id: id });
+  // GA4 (Task 4): un artifact_view por artifact mostrado. Se OMITEN los slugs
+  // "atomo" y "runtime" (P2c): sus <milpa-artifact> ya emiten artifact_view
+  // {artifact_id:"atomo"|"runtime"} al hidratar (milpa-artifact.js), así que
+  // emitirlo acá los duplicaría.
+  if (id !== "atomo" && id !== "runtime") trackEvent("artifact_view", { artifact_id: id });
 
   currentArtifactIndex = nextIndex;
   artifacts.forEach((section, index) => { section.hidden = index !== nextIndex; });
@@ -765,140 +746,10 @@ atlasTabs.forEach((tab, index) => {
 });
 $$('.wb-boundary-node').forEach((node) => node.addEventListener("click", () => inspectBoundary(node.dataset.node)));
 
-/* Artifact 05: real ToolRegistry pipeline */
-let runtimeRunId = 0;
-const runtimeTrack = $(".mui-pipeline__track", $("#runtime-rail"));
-
-function renderRuntimeRail() {
-  const marker = createElement("span", "mui-pipeline__marker");
-  marker.setAttribute("aria-hidden", "true");
-  runtimeTrack.replaceChildren(marker);
-  runtimeTrack.style.setProperty("--_pipeline-progress", "0");
-  RUNTIME_STAGES.forEach((stage) => {
-    const item = createElement("div", "mui-pipeline__stage");
-    item.dataset.stage = stage.id;
-    item.append(
-      createElement("span", "mui-pipeline__label", pick(stage.label)),
-      createElement("p", "mui-pipeline__note", pick(stage.note)),
-    );
-    runtimeTrack.append(item);
-  });
-}
-
-async function runRuntimeTrace() {
-  const runId = ++runtimeRunId;
-  const failure = $("#runtime-scenario").value;
-  const trace = runtimeTrace(failure);
-  const items = $$(".mui-pipeline__stage", runtimeTrack);
-  $("#run-runtime").setAttribute("aria-busy", "true");
-  items.forEach((item) => item.removeAttribute("data-status"));
-  runtimeTrack.style.setProperty("--_pipeline-progress", "0");
-
-  for (const [index, stage] of trace.stages.entries()) {
-    if (runId !== runtimeRunId) return;
-    const item = items.find((node) => node.dataset.stage === stage.id);
-    if (stage.status !== "skipped") {
-      item.dataset.status = "active";
-      runtimeTrack.style.setProperty("--_pipeline-progress", String(index / (items.length - 1)));
-      await delay(300);
-    }
-    item.dataset.status = stage.status;
-  }
-
-  // La variante y el texto de cobertura se derivan del código `failure` (no de
-  // la prosa que devuelve el core) — el core queda intacto. En `es` el texto es
-  // byte-idéntico al valor previo de trace.auditCoverage.
-  const uncovered = failure !== "none" && !AUDITED_FAILURES.has(failure);
-  setAlert(
-    $("#runtime-result"),
-    trace.outcome === "success" ? "success" : uncovered ? "warning" : "danger",
-    t.runtimeResultTitle(trace.outcome),
-    t.runtimeResultDesc(failure, t.runtimeCoverage(failure)),
-  );
-  $("#run-runtime").removeAttribute("aria-busy");
-}
-
-$("#run-runtime").addEventListener("click", runRuntimeTrace);
-$("#reset-runtime").addEventListener("click", () => {
-  runtimeRunId += 1;
-  renderRuntimeRail();
-  setAlert($("#runtime-result"), "info", t.runtimeResetTitle, t.runtimeResetDesc);
-  $("#run-runtime").removeAttribute("aria-busy");
-});
-
-/* Artifact 05 (chrome): two static tabpanels — Tab A above is the untouched
-   failure walk; Tab B is the invocation plan. Tablist + keyboard nav lifted
-   from activateBoundaryFlow (Artifact 04), adapted to toggle which whole
-   panel is hidden instead of filtering nodes inside one shared panel. */
-const runtimeTabs = $$('[data-runtime-tab]');
-const runtimePanels = $$('.wb-runtime-panel');
-function activateRuntimeTab(tab) {
-  const target = tab.dataset.runtimeTab;
-  runtimeTabs.forEach((btn) => {
-    const selected = btn === tab;
-    btn.setAttribute("aria-selected", String(selected));
-    btn.tabIndex = selected ? 0 : -1;
-  });
-  runtimePanels.forEach((panel) => { panel.hidden = panel.dataset.runtimePanel !== target; });
-}
-runtimeTabs.forEach((tab, index) => {
-  tab.addEventListener("click", () => activateRuntimeTab(tab));
-  tab.addEventListener("keydown", (event) => {
-    let next = null;
-    if (event.key === "ArrowRight") next = (index + 1) % runtimeTabs.length;
-    if (event.key === "ArrowLeft") next = (index - 1 + runtimeTabs.length) % runtimeTabs.length;
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = runtimeTabs.length - 1;
-    if (next === null) return;
-    event.preventDefault();
-    runtimeTabs[next].focus();
-    activateRuntimeTab(runtimeTabs[next]);
-  });
-});
-
-/* Tab B: invocation plan (ADR#13 mirror). `wiring` stays DEFAULT_WIRING (same
-   constant the SSG uses to compute the default web/POST row at build time,
-   artifacts-core.js — no frozen snapshot on either side anymore) — the honest
-   stock-registry state (no rate limiter, no dispatcher, no rule provider
-   wired). Only `channel` toggles; SURFACES calls
-   the same channel PolicyGate calls 'web' by its own id 'http' (see
-   invocationPlan's comment in artifacts-core.js), hence the id→channel map
-   below. Presence label/badge duplicate gallery.content.mjs's
-   plan.presenceLabels/plan.roleLabels (SSG prose) on purpose — same split as
-   gateChip/runtimeResultTitle above: the core stays neutral (codes only), this
-   layer is the only one that knows language. Only "authorize"'s source
-   actually varies with this fixed wiring (see CHANNEL_POLICY in
-   artifacts-core.js) — the loop stays generic over all 11 steps anyway, so it
-   keeps working if that ever changes. */
-const PLAN_CHANNEL_OF_SURFACE = { cli: "cli", mcp: "mcp", http: "web" };
-const PLAN_PRESENCE_BADGE = { active: "mui-badge--success", conditional: "mui-badge--warning", dormant: "mui-badge--secondary", skipped: "" };
-const PLAN_PRESENCE_LABEL = {
-  es: { active: "Activo", conditional: "Condicional", dormant: "Dormido", skipped: "Omitido" },
-  en: { active: "Active", conditional: "Conditional", dormant: "Dormant", skipped: "Skipped" },
-};
-const runtimePlanRoot = $("#runtime-panel-plan");
-
-function renderInvocationPlan(channel) {
-  const plan = invocationPlan(channel, DEFAULT_WIRING);
-  for (const step of plan.steps) {
-    const row = $(`[data-step="${step.kind}"]`, runtimePlanRoot);
-    if (!row) continue;
-    const badge = $(".wb-runtime-plan-presence", row);
-    badge.className = `mui-badge wb-runtime-plan-presence ${PLAN_PRESENCE_BADGE[step.presence] ?? ""}`.trim();
-    badge.textContent = PLAN_PRESENCE_LABEL[lang][step.presence] ?? step.presence;
-    $(".wb-runtime-plan-source", row).textContent = pick(step.source);
-  }
-}
-
-function activateRuntimeChannel(button) {
-  $$('[data-runtime-channel]', runtimePlanRoot).forEach((btn) => {
-    const active = btn === button;
-    btn.setAttribute("aria-pressed", String(active));
-    btn.classList.toggle("mui-btn--primary", active);
-  });
-  renderInvocationPlan(PLAN_CHANNEL_OF_SURFACE[button.dataset.runtimeChannel] ?? "web");
-}
-$$('[data-runtime-channel]', runtimePlanRoot).forEach((button) => button.addEventListener("click", () => activateRuntimeChannel(button)));
+/* Artifact 05 (runtime x-ray): el driver (recorrido de fallo + plan de
+   invocación) se movió a artifacts/milpa-artifact.js (#hydrateRuntime, P2c) —
+   mismo criterio que el átomo (Artifact 09, nunca vivió acá). La sección
+   #runtime ahora hidrata vía <milpa-artifact id="runtime-artifact">. */
 
 /* Artifact 06: append-only events and projection */
 let processEvents = [];
@@ -1319,7 +1170,6 @@ function initBootGate() {
 renderGraph();
 resetGate();
 activateBoundaryFlow("boot", atlasTabs[0]);
-renderRuntimeRail();
 resetEvents();
 updateContrastLab();
 $("#force-write").disabled = true;

@@ -9,10 +9,12 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { RUNTIME } from "../artifacts/content/runtime.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
 import { htmlOpen, renderHead } from "./gen/page.mjs";
 import { buildLearnPages } from "./gen/learn.mjs";
 import { renderAtomoFallback } from "./gen/atomo.mjs";
+import { renderRuntimeFallback } from "./gen/runtime.mjs";
 import { buildGalleryPages } from "./gen/gallery.mjs";
 import { buildLabsPages } from "./gen/labs.mjs";
 
@@ -111,6 +113,74 @@ ${head}
 <p class="wb-intro">${ATOMO.intro[lang]}</p>
 <milpa-artifact id="atomo-artifact" lang="${lang}">
         ${renderAtomoFallback(lang, `${asset}/artifacts/#runtime`)}
+      </milpa-artifact>
+</main>
+<script src="${asset}/artifacts/artifacts-core.js" defer></script>
+<script src="${asset}/artifacts/milpa-artifact.js" defer></script>
+</body>
+</html>
+`;
+}
+
+/* SSG-lite del artifact #runtime (Artifact 05, graduado P2c — mismo patrón que
+   el átomo de arriba): site/runtime/index.html (es) + site/en/runtime/index.html
+   (en), desde la fuente bilingüe única artifacts/content/runtime.content.mjs. */
+
+function runtimeUrlFor(lang) {
+  return lang === "es" ? `${BASE}/runtime/` : `${BASE}/en/runtime/`;
+}
+
+function runtimePathFor(lang) {
+  return lang === "es" ? "site/runtime/index.html" : "site/en/runtime/index.html";
+}
+
+/* Misma profundidad relativa que assetPrefix() del átomo: site/runtime/index.html
+   (es) está a dos niveles de academy/; site/en/runtime/index.html (en) a tres. */
+function runtimeAssetPrefix(lang) {
+  return lang === "es" ? "../.." : "../../..";
+}
+
+function runtimeJsonld(lang) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    inLanguage: lang,
+    name: RUNTIME.title[lang],
+    description: RUNTIME.hero[lang],
+    about: RUNTIME.jsonld.about,
+    isBasedOn: RUNTIME.jsonld.isBasedOn,
+  });
+}
+
+/* a11y: exactly one h1 on this standalone page (mismo criterio que el átomo,
+   ver el comentario de page() arriba). RUNTIME.title renderiza como
+   <h1 id="runtime-title"> dentro de renderRuntimeFallback()'s wb-artifact__header;
+   RUNTIME.hero es la tagline estilo manifiesto que dobla como meta description
+   y renderiza h2 (wb-hero), no un segundo top-level heading. */
+function runtimePage(lang) {
+  const asset = runtimeAssetPrefix(lang);
+  const head = renderHead({
+    lang,
+    title: `${RUNTIME.title[lang]} · Milpa`,
+    description: RUNTIME.hero[lang],
+    canonical: runtimeUrlFor(lang),
+    alternates: { es: runtimeUrlFor("es"), en: runtimeUrlFor("en"), "x-default": runtimeUrlFor("es") },
+    jsonld: runtimeJsonld(lang),
+    extraHead: [
+      `<link rel="icon" href="${asset}/assets/milpa-app-icon.svg" type="image/svg+xml">`,
+      `<link rel="stylesheet" href="${asset}/artifacts/artifacts.css">`,
+      gtagBootstrap(lang, "runtime"),
+      `<script src="${asset}/analytics.js" defer></script>`,
+    ].join("\n"),
+  });
+  return `${htmlOpen(lang, "wb-doc")}
+${head}
+<body>
+<main>
+<h2 class="wb-hero">${RUNTIME.hero[lang]}</h2>
+<p class="wb-intro">${RUNTIME.intro[lang]}</p>
+<milpa-artifact id="runtime-artifact" lang="${lang}">
+        ${renderRuntimeFallback(lang)}
       </milpa-artifact>
 </main>
 <script src="${asset}/artifacts/artifacts-core.js" defer></script>
@@ -365,6 +435,7 @@ ${renderPortalFooter(lang)}
 const SITEMAP_PAGES = [
   { es: portalUrlFor("es"), en: portalUrlFor("en") },
   { es: urlFor("es"), en: urlFor("en") },
+  { es: runtimeUrlFor("es"), en: runtimeUrlFor("en") },
   ...GALLERY_PAGES.sitemapPages,
   ...LABS_PAGES.sitemapPages,
   ...LEARN.sitemapPages,
@@ -468,6 +539,12 @@ function emitSite() {
   }
 
   for (const lang of LANGS) {
+    const out = runtimePathFor(lang);
+    mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
+    writeFileSync(path.join(ROOT, out), runtimePage(lang), "utf8");
+  }
+
+  for (const lang of LANGS) {
     const out = portalPathFor(lang);
     mkdirSync(path.join(ROOT, path.dirname(out)), { recursive: true });
     writeFileSync(path.join(ROOT, out), portalPage(lang), "utf8");
@@ -495,6 +572,7 @@ function emitSite() {
     "gen-site: emitted",
     [
       ...LANGS.map(pathFor),
+      ...LANGS.map(runtimePathFor),
       ...LANGS.map(portalPathFor),
       `${LEARN.pages.length} learn pages (units + index, es/en)`,
       ...GALLERY_PAGES.pages.map((p) => p.path),

@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { GALLERY } from "../artifacts/content/gallery.content.mjs";
+import { RUNTIME } from "../artifacts/content/runtime.content.mjs";
 // Script clásico (globalThis.AcademyCore), importado por side effect — mismo
 // patrón que gen/gallery.mjs y artifacts-core.test.mjs.
 import "../artifacts/artifacts-core.js";
@@ -310,8 +311,10 @@ test("runtime Tab B: el plan de invocación de 11 pasos + las 4 etiquetas de pre
    el mismo patrón que el drift-guard real de ADR#13 (InvocationPipelineDriftTest
    en PHP), un nivel arriba. */
 test("runtime Tab B drift-guard: las filas servidas (generadas + hand-frozen) coinciden byte a byte con invocationPlan('web', DEFAULT_WIRING)", () => {
-  const runtimeArtifact = GALLERY.artifacts.find((a) => a.id === "runtime");
-  const { roleLabels, presenceLabels } = runtimeArtifact.plan;
+  // P2c: RUNTIME.plan (antes GALLERY.artifacts.find((a) => a.id === "runtime").plan)
+  // — la prosa se graduó a artifacts/content/runtime.content.mjs, mismo criterio
+  // que el átomo; el stub que queda en GALLERY.artifacts ya no lleva .plan.
+  const { roleLabels, presenceLabels } = RUNTIME.plan;
   const plan = invocationPlan("web", DEFAULT_WIRING);
   assert.equal(plan.steps.length, 11, "invocationPlan('web', DEFAULT_WIRING) debe tener 11 pasos");
 

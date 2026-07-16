@@ -21,6 +21,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/atomo/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/runtime/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/runtime/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/runtime/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/runtime/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/runtime/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/runtime/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/artifacts/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/artifacts/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/artifacts/"/>

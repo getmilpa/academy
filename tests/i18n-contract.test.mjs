@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { ATOMO } from "../artifacts/content/atomo.content.mjs";
+import { RUNTIME } from "../artifacts/content/runtime.content.mjs";
 import { GALLERY } from "../artifacts/content/gallery.content.mjs";
 import { LABS_SHELL } from "../labs/labs.content.mjs";
 import { PORTAL } from "../content/portal.content.mjs";
@@ -145,6 +146,7 @@ test("translation completeness: every leaf string has es and en", () => {
     }
   }
   walk(ATOMO, "ATOMO");
+  walk(RUNTIME, "RUNTIME");
   walk(GALLERY, "GALLERY");
   walk(LABS_SHELL, "LABS_SHELL");
   walk(catalog.tracks, "catalog.tracks");
@@ -257,8 +259,16 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      plan.steps se ELIMINÓ de GALLERY: ya no es un snapshot congelado a mano,
      gen/gallery.mjs computa las 11 filas llamando a invocationPlan("web",
      DEFAULT_WIRING) en build-time. Ver tests/site-contract.test.mjs para el
-     drift-guard que reemplaza esta cobertura de fidelidad). */
-  assert.equal(leaves.length, 451, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     drift-guard que reemplaza esta cobertura de fidelidad).
+     P2c (graduación del runtime a <milpa-artifact>, mismo criterio que el
+     átomo): 451 → 384 (-67 — toda la prosa del artifact "runtime" se movió a
+     artifacts/content/runtime.content.mjs (RUNTIME); el stub que queda en
+     GALLERY.artifacts sólo aporta { id, kind, component }, igual que el stub
+     de atomo. RUNTIME (70 hojas, incluidas hero/intro/sourcesSummary nuevas
+     de la página standalone) ya lo cubre el walk de completeness de arriba;
+     su fidelidad contra artifacts/index.html se cubre por muestra
+     representativa en el test de content-parity de abajo, igual que ATOMO). */
+  assert.equal(leaves.length, 384, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
      artifacts[9] su <section> se autoró en artifacts/index.html (además de
      emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los
@@ -289,6 +299,10 @@ test("gallery es content-parity: every GALLERY es leaf appears in the GENERATED 
   // El átomo (Artifact 09) trae su prosa desde ATOMO — muestra representativa.
   assert.ok(galleryEs.includes(ATOMO.title.es) && galleryEs.includes(ATOMO.atomCard.name), "atomo prose missing (es)");
   assert.ok(galleryEn.includes(ATOMO.title.en), "atomo prose missing (en)");
+  // El runtime (Artifact 05, graduado P2c) trae su prosa desde RUNTIME —
+  // misma muestra representativa que el átomo.
+  assert.ok(galleryEs.includes(RUNTIME.title.es) && galleryEs.includes(RUNTIME.lesson.title.es), "runtime prose missing (es)");
+  assert.ok(galleryEn.includes(RUNTIME.title.en), "runtime prose missing (en)");
 });
 
 test("gallery hook-audit: every id-hook artifacts.js queries exists in the generated pages (es/en)", () => {
@@ -658,14 +672,18 @@ test("sitemap.xml lists the portal (home) as well as the atom, per language", ()
 /* Task 5: la galería + el shell de labs suman 2 páginas nuevas × 2 idiomas al
    sitemap (36 → 40 URLs) y una entrada por idioma a cada llms.txt, sin cruzar
    idiomas (es → /artifacts/ + /labs/; en → /en/artifacts/ + /en/labs/).
-   Ola Superficies: 4 lecciones nuevas × 2 idiomas (40 → 48 URLs). */
-test("sitemap: exactly 48 URLs, incl. gallery + labs per language", () => {
+   Ola Superficies: 4 lecciones nuevas × 2 idiomas (40 → 48 URLs).
+   P2c: el runtime standalone (site/runtime/, mismo patrón que el átomo) suma
+   1 página nueva × 2 idiomas (48 → 50 URLs). */
+test("sitemap: exactly 50 URLs, incl. gallery + labs + runtime per language", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
-  assert.equal((sm.match(/<loc>/g) || []).length, 48, "sitemap must list exactly 48 URLs (portal+atom+gallery+labs+20 learn, ×2 langs)");
+  assert.equal((sm.match(/<loc>/g) || []).length, 50, "sitemap must list exactly 50 URLs (portal+atom+runtime+gallery+labs+20 learn, ×2 langs)");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/labs\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/labs\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/runtime\/<\/loc>/);
+  assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/runtime\/<\/loc>/);
 });
 
 test("llms.txt links the gallery + labs per language, without crossing languages", () => {
