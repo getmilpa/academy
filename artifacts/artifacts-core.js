@@ -377,42 +377,78 @@ function runtimeTrace(failure = "none") {
    ver InvocationStep::toArray() y el criterio de aceptación "settings_update
    --channel=web" en el spec). Modela un tool ESCANEADO fijo tipo settings_update:
    mutating:false, sin scopes declarados, sin clamps, sin tool.requiresConfirmation
-   ni policy.require_confirmation_for_mutating aplicable — así el resultado
-   demuestra honestidad de presencia (Active/Conditional/Dormant/Skipped) sin
-   necesitar un catálogo de tools completo. `channel` usa las llaves reales de
-   PolicyGate ('web'|'cli'|'mcp'; un canal desconocido cae al fallback
-   "untrusted" de PolicyGate::UNKNOWN_CHANNEL_POLICY: require_auth=true) — el eje
-   SURFACES cli/mcp/http del resto de la galería llama 'http' al mismo canal que
-   PolicyGate llama 'web'. `wiring` espeja RegistryWiring: { rateLimiter,
-   dispatcher, ruleProvider } booleans (ausencia de wiring → Skipped, NUNCA
-   Conditional — Enmienda 3). `steps[].kind` usa el kebab-case propio de esta
-   galería (alineado 1:1 con los ids de RUNTIME_STAGES, para que una UI futura
-   pueda unir plan↔rail por id); el enum PHP real serializa snake_case
-   (rate_limit, plan_mode, emit_executing, contain_exception) — mismo concepto,
-   codificación JS-neutra distinta, ver comentario de MODULE_CATALOG arriba sobre
-   por qué los ids se preservan neutros. role/presence SÍ son idénticos byte a
-   byte a InvocationStepRole::value / StepPresence::value (guard/transform/
-   branch/hook/execution/boundary/outcome; active/conditional/dormant/skipped). */
+   — así el resultado demuestra honestidad de presencia (Active/Conditional/
+   Dormant/Skipped) sin necesitar un catálogo de tools completo. `channel` usa
+   las llaves reales de PolicyGate ('web'|'cli'|'mcp'|'telegram'; un canal
+   desconocido cae al fallback "untrusted" de PolicyGate::UNKNOWN_CHANNEL_POLICY:
+   require_auth=true) — el eje SURFACES cli/mcp/http del resto de la galería
+   llama 'http' al mismo canal que PolicyGate llama 'web'. `wiring` espeja
+   RegistryWiring: { rateLimiter, dispatcher, ruleProvider } booleans (ausencia
+   de wiring → Skipped, NUNCA Conditional — Enmienda 3); `ruleProvider` NO
+   cambia ninguna presencia (Authorize siempre corre) — solo la cláusula de
+   DB-rules dentro de su `source`, espejando que PolicyGate::resolveAuthorize()
+   SIEMPRE agrega esa cláusula, con o sin provider. `steps[].kind` usa el
+   kebab-case propio de esta galería (alineado 1:1 con los ids de RUNTIME_STAGES,
+   para que una UI futura pueda unir plan↔rail por id); el enum PHP real
+   serializa snake_case (rate_limit, plan_mode, emit_executing,
+   contain_exception) — mismo concepto, codificación JS-neutra distinta, ver
+   comentario de MODULE_CATALOG arriba sobre por qué los ids se preservan
+   neutros. role/presence SÍ son idénticos byte a byte a
+   InvocationStepRole::value / StepPresence::value (guard/transform/branch/
+   hook/execution/boundary/outcome; active/conditional/dormant/skipped). */
 const CHANNEL_POLICY = Object.freeze({
   // cli: PolicyGate solo declara allow_all:true; require_auth cae a su default false.
   cli: { requireAuth: false, allowAll: true },
   mcp: { requireAuth: true, allowAll: false },
   web: { requireAuth: true, allowAll: false },
+  // telegram: PolicyGate declara require_confirmation_for_mutating:true (require_auth
+  // cae a su default false) — con mutating=false (nuestro tool escaneado) la regla
+  // EXISTE pero no puede dispararse: Confirm sigue Dormant, cambia la justificación.
+  telegram: { requireAuth: false, allowAll: false, requireConfirmationForMutating: true },
 });
 
-function authorizeSource(channel) {
-  const policy = CHANNEL_POLICY[channel] ?? { requireAuth: true, allowAll: false };
+function channelPolicy(channel) {
+  return CHANNEL_POLICY[channel] ?? { requireAuth: true, allowAll: false };
+}
+
+function authorizeSource(channel, hasRuleProvider) {
+  const policy = channelPolicy(channel);
+  const dbRules = { es: hasRuleProvider ? "DB rules: activas" : "DB rules: skipped (no provider)" };
+  dbRules.en = hasRuleProvider ? "DB rules: active" : "DB rules: skipped (no provider)";
   const es = [
     `canal '${channel}': require_auth=${policy.requireAuth}, allow_all=${policy.allowAll}`,
     ...(policy.allowAll ? ["allow_all: god-mode — nunca bloquea"] : []),
     "tool sin scopes declarados",
+    dbRules.es,
   ].join("; ");
   const en = [
     `channel '${channel}': require_auth=${policy.requireAuth}, allow_all=${policy.allowAll}`,
     ...(policy.allowAll ? ["allow_all: god-mode — never blocks"] : []),
     "tool declares no scopes",
+    dbRules.en,
   ].join("; ");
   return { es, en };
+}
+
+/* confirmSource: espejo de InvocationPlanBuilder::resolveConfirm() para nuestro
+   tool escaneado (requiresConfirmation:false, mutating:false) — la presencia es
+   SIEMPRE Dormant (ninguna combinación la dispara), pero la JUSTIFICACIÓN honesta
+   depende del canal: si la channel policy declara require_confirmation_for_mutating
+   (hoy: telegram), la regla EXISTE pero mutating=false la hace imposible; si no,
+   ninguna de las dos rutas del PHP (tool.requiresConfirmation /
+   policy.require_confirmation_for_mutating) aplica siquiera. */
+function confirmSource(channel) {
+  const policy = channelPolicy(channel);
+  if (policy.requireConfirmationForMutating) {
+    return {
+      es: "la regla existe (require_confirmation_for_mutating) pero mutating=false la hace imposible que dispare",
+      en: "the rule exists (require_confirmation_for_mutating) but mutating=false makes it impossible to fire",
+    };
+  }
+  return {
+    es: "ni tool.requiresConfirmation ni la política del canal exigen confirmación para este tool",
+    en: "neither tool.requiresConfirmation nor the channel policy require confirmation for this tool",
+  };
 }
 
 function rateLimitSource(hasRateLimiter) {
@@ -442,6 +478,7 @@ const AUDIT_SOURCE = Object.freeze({
 function invocationPlan(channel, wiring = {}) {
   const hasRateLimiter = !!wiring.rateLimiter;
   const hasDispatcher = !!wiring.dispatcher;
+  const hasRuleProvider = !!wiring.ruleProvider;
 
   const steps = [
     {
@@ -458,7 +495,7 @@ function invocationPlan(channel, wiring = {}) {
     },
     {
       kind: "authorize", role: "guard", presence: "active", blocking: true, mutates: false, wraps: null,
-      source: authorizeSource(channel),
+      source: authorizeSource(channel, hasRuleProvider),
     },
     {
       kind: "rate-limit", role: "guard", presence: hasRateLimiter ? "active" : "skipped", blocking: true, mutates: false, wraps: null,
@@ -473,10 +510,7 @@ function invocationPlan(channel, wiring = {}) {
     },
     {
       kind: "confirm", role: "branch", presence: "dormant", blocking: false, mutates: false, wraps: null,
-      source: {
-        es: "ni tool.requiresConfirmation ni la política del canal exigen confirmación para este tool",
-        en: "neither tool.requiresConfirmation nor the channel policy require confirmation for this tool",
-      },
+      source: confirmSource(channel),
     },
     {
       kind: "emit-executing", role: "hook", presence: hasDispatcher ? "active" : "skipped", blocking: true, mutates: false, wraps: null,

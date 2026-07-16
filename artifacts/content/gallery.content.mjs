@@ -491,8 +491,8 @@ export const GALLERY = {
             kind: "authorize", role: "guard", presence: "active",
             label: { es: "Autorizar", en: "Authorize" },
             source: {
-              es: "canal 'web': require_auth=true, allow_all=false; tool sin scopes declarados",
-              en: "channel 'web': require_auth=true, allow_all=false; tool declares no scopes",
+              es: "canal 'web': require_auth=true, allow_all=false; tool sin scopes declarados; DB rules: skipped (no provider)",
+              en: "channel 'web': require_auth=true, allow_all=false; tool declares no scopes; DB rules: skipped (no provider)",
             },
           },
           {

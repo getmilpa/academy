@@ -128,6 +128,39 @@ test("invocationPlan authorize source reflects channel policy (cli god-mode vs w
   assert.match(mcp.source.en, /require_auth=true/);
 });
 
+/* Review finding (Important): PolicyGate::resolveAuthorize() SIEMPRE agrega una
+   cláusula de DB-rules ("DB rules: activas" o "DB rules: skipped (no provider)"),
+   con o sin provider — nunca la omite. El mirror la omitía por completo y
+   wiring.ruleProvider se aceptaba pero nunca se leía (mismo output true/false). */
+test("invocationPlan authorize source always carries a DB-rules clause that differs with wiring.ruleProvider", () => {
+  const withProvider = invocationPlan("web", { ruleProvider: true }).steps.find((step) => step.kind === "authorize");
+  const withoutProvider = invocationPlan("web", { ruleProvider: false }).steps.find((step) => step.kind === "authorize");
+
+  assert.match(withProvider.source.es, /DB rules: activas/);
+  assert.match(withProvider.source.en, /DB rules: active/);
+  assert.match(withoutProvider.source.es, /DB rules: skipped \(no provider\)/);
+  assert.match(withoutProvider.source.en, /DB rules: skipped \(no provider\)/);
+  assert.notEqual(withProvider.source.es, withoutProvider.source.es);
+  assert.notEqual(withProvider.source.en, withoutProvider.source.en);
+});
+
+/* Review finding (Minor): 'telegram' es un canal REAL de PolicyGate::$channelPolicies
+   (require_confirmation_for_mutating:true) que faltaba en CHANNEL_POLICY — caía al
+   fallback de canal desconocido. La presencia de Confirm sigue Dormant (mutating:false
+   la hace imposible en cualquier canal), pero la JUSTIFICACIÓN debe nombrar la regla
+   real que existe para telegram, distinta de la genérica "ninguna ruta aplica". */
+test("invocationPlan on telegram channel keeps Confirm dormant but with the mutating=false-makes-it-impossible justification", () => {
+  const telegram = invocationPlan("telegram", {}).steps.find((step) => step.kind === "confirm");
+  const web = invocationPlan("web", {}).steps.find((step) => step.kind === "confirm");
+
+  assert.equal(telegram.presence, "dormant");
+  assert.match(telegram.source.es, /mutating=false/);
+  assert.match(telegram.source.es, /imposible/);
+  assert.match(telegram.source.en, /mutating=false/);
+  assert.match(telegram.source.en, /impossible/);
+  assert.notEqual(telegram.source.es, web.source.es);
+});
+
 test("verification rejects self-decision by construction", () => {
   const result = decideVerification({
     requester: "agent:bot-severo",
