@@ -23,13 +23,13 @@ const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, reduceM
 const STRINGS = {
   es: {
     applied: "aplicada",
-    deniedStatus: (scope) => `denegado: falta ${scope} (solo MCP aplica scopes)`,
+    deniedStatus: (scope) => `denegado: falta ${scope} (MCP y HTTP exigen scopes; coa no)`,
     noteDeniedAuthorize: (scope) => `denegado: falta ${scope}`,
     noteDeniedAudit: "lo denegado también se registra",
   },
   en: {
     applied: "applied",
-    deniedStatus: (scope) => `denied: missing ${scope} (only MCP enforces scopes)`,
+    deniedStatus: (scope) => `denied: missing ${scope} (MCP and HTTP enforce scopes; coa doesn't)`,
     noteDeniedAuthorize: (scope) => `denied: missing ${scope}`,
     noteDeniedAudit: "denials are logged too",
   },

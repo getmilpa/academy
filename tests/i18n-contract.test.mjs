@@ -704,8 +704,8 @@ test("llms.txt links the gallery + labs per language, without crossing languages
    agente que interactúa con la página) ships las DOS versiones, no solo español. */
 test("milpa-artifact.js ships bilingual runtime strings, not just es", () => {
   const source = readFileSync(new URL("../artifacts/milpa-artifact.js", import.meta.url), "utf8");
-  const esStrings = ["aplicada", "solo MCP aplica scopes", "lo denegado también se registra"];
-  const enStrings = ["applied", "only MCP enforces scopes", "denials are logged too"];
+  const esStrings = ["aplicada", "MCP y HTTP exigen scopes; coa no", "lo denegado también se registra"];
+  const enStrings = ["applied", "MCP and HTTP enforce scopes; coa doesn't", "denials are logged too"];
   for (const needle of [...esStrings, ...enStrings]) {
     assert.ok(source.includes(needle), `runtime string table missing: ${needle}`);
   }

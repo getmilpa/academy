@@ -217,19 +217,19 @@ test("HTTP surface derives verb, path and status from mutating + name", () => {
   assert.equal(r.path, "/crear/tarea");
   assert.equal(r.statusCode, 201);
 });
-test("removing the scope denies MCP but not CLI or HTTP (the audited asymmetry)", () => {
+test("removing the scope denies MCP and HTTP but not CLI (the trusted-surface asymmetry)", () => {
   assert.equal(projectOperation(OP, "mcp", { scopeGranted: false }).outcome, "denied");
+  assert.equal(projectOperation(OP, "http", { scopeGranted: false }).outcome, "denied");
   assert.equal(projectOperation(OP, "cli", { scopeGranted: false }).outcome, "success");
-  assert.equal(projectOperation(OP, "http", { scopeGranted: false }).outcome, "success");
 });
 test("a denied projection skips execution but still audits", () => {
   const s = Object.fromEntries(projectOperation(OP, "mcp", { scopeGranted: false }).stages.map((x) => [x.id, x.status]));
   assert.equal(s.authorize, "denied"); assert.equal(s.execute, "skipped"); assert.equal(s.audit, "complete");
 });
-test("scopesEnforced is true only for MCP", () => {
+test("scopesEnforced is true for MCP and HTTP, false for CLI (trusted-local)", () => {
   assert.equal(projectOperation(OP, "mcp").scopesEnforced, true);
+  assert.equal(projectOperation(OP, "http").scopesEnforced, true);
   assert.equal(projectOperation(OP, "cli").scopesEnforced, false);
-  assert.equal(projectOperation(OP, "http").scopesEnforced, false);
 });
 test("projectOperation emits neutral codes, no locale prose", () => {
   const denied = projectOperation(OP, "mcp", { scopeGranted: false });

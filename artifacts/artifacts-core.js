@@ -85,7 +85,7 @@ function deriveHttpPath(name) {
 }
 
 function projectOperation(op, surface, { scopeGranted = true } = {}) {
-  const scopesEnforced = surface === "mcp";
+  const scopesEnforced = surface === "mcp" || surface === "http";
   const denied = !scopeGranted && scopesEnforced;
   const missingScope = op.scopes?.[0] ?? "scope";
 
