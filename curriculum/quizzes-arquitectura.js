@@ -467,6 +467,62 @@
         }
       ]
     },
+    "arquitectura/plan-invocacion": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-plan-invocacion-01",
+          prompt: {
+            es: "El canal telegram declara `require_confirmation_for_mutating:true` en su PolicyGate, pero `settings_update` trae `mutating:false` en su `#[Tool]`. ¿Por qué `coa:tools inspect` marca el paso Confirm como Dormant y no como Activo en ese canal?",
+            en: "The telegram channel declares `require_confirmation_for_mutating:true` in its PolicyGate, but `settings_update` carries `mutating:false` in its `#[Tool]`. Why does `coa:tools inspect` mark the Confirm step as Dormant, not Active, on that channel?"
+          },
+          options: [
+            { id: "a", text: { es: "Porque la regla existe en la policy del canal, pero el propio `mutating:false` del tool la vuelve estáticamente imposible de disparar para esta invocación.", en: "Because the rule exists in the channel's policy, but the tool's own `mutating:false` makes it statically impossible to fire for this invocation." } },
+            { id: "b", text: { es: "Porque telegram nunca exige confirmación; el campo `require_confirmation_for_mutating` no tiene ningún efecto real en el plan.", en: "Because telegram never requires confirmation; the `require_confirmation_for_mutating` field has no real effect on the plan." } },
+            { id: "c", text: { es: "Porque Dormant es un error del inspector: cualquier canal con `require_confirmation_for_mutating` debería marcar Confirm como Activo sin importar el tool.", en: "Because Dormant is an inspector bug: any channel with `require_confirmation_for_mutating` should mark Confirm as Active regardless of the tool." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "InvocationPlanBuilder describe lo que `call()` haría con ESTE tool: aunque la policy de telegram declara la regla, `mutating:false` hace que ninguna combinación la dispare. Por eso Confirm queda Dormant — la regla existe pero no puede activarse — en vez de Activo o Omitido, que describirían otra cosa.",
+            en: "InvocationPlanBuilder describes what `call()` would do with THIS tool: even though telegram's policy declares the rule, `mutating:false` means no combination ever fires it. That's why Confirm stays Dormant — the rule exists but cannot activate — instead of Active or Skipped, which would describe something else entirely."
+          }
+        },
+        {
+          id: "arquitectura-plan-invocacion-02",
+          prompt: {
+            es: "Alguien afirma que `ctx.mode='plan'` y `coa:tools inspect` son intercambiables porque «los dos evitan ejecutar el tool». ¿Cuál es la diferencia arquitectónica correcta entre ambos?",
+            en: "Someone claims `ctx.mode='plan'` and `coa:tools inspect` are interchangeable because \"both avoid executing the tool.\" What is the correct architectural difference between the two?"
+          },
+          options: [
+            { id: "a", text: { es: "`ctx.mode='plan'` es una rama dentro de una llamada real que resuelve y valida el tool antes de detenerse; el InvocationPlan no invoca ninguna llamada, solo anota la presencia de cada paso para tool+canal+wiring.", en: "`ctx.mode='plan'` is a branch inside a real call that resolves and validates the tool before stopping; the InvocationPlan invokes no call at all, it only annotates each step's presence for tool+channel+wiring." } },
+            { id: "b", text: { es: "Son idénticos: ambos ejecutan resolve, validate y authorize contra el tool real y solo cambia el nombre del comando.", en: "They're identical: both execute resolve, validate and authorize against the real tool, and only the command's name changes." } },
+            { id: "c", text: { es: "`ctx.mode='plan'` es la radiografía completa del wiring del host; `coa:tools inspect` es la rama que se detiene antes de ejecutar dentro de una llamada.", en: "`ctx.mode='plan'` is the full x-ray of the host's wiring; `coa:tools inspect` is the branch that stops before executing inside a call." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "El modo plan sigue siendo una invocación: resuelve y valida el tool real antes de bifurcar sin ejecutar. El InvocationPlan es de solo lectura — recorre `InvocationStepKind` y anota Active/Conditional/Dormant/Skipped sin invocar el callback ni mutar nada, para cualquier tool+canal+wiring que se le pida.",
+            en: "Plan mode is still an invocation: it resolves and validates the real tool before branching away from execution. The InvocationPlan is read-only — it walks `InvocationStepKind` and annotates Active/Conditional/Dormant/Skipped without invoking the callback or mutating anything, for whatever tool+channel+wiring it's asked about."
+          }
+        },
+        {
+          id: "arquitectura-plan-invocacion-03",
+          prompt: {
+            es: "Un borrador de documentación afirma que `ToolRegistry::call()` audita absolutamente todos los caminos terminales, incluyendo confirmación pendiente y veto. Al correr `coa:tools inspect`, ¿qué revela `AUDIT_SOURCE` sobre esa afirmación?",
+            en: "A documentation draft claims `ToolRegistry::call()` audits absolutely every terminal path, including pending confirmation and veto. Running `coa:tools inspect`, what does `AUDIT_SOURCE` reveal about that claim?"
+          },
+          options: [
+            { id: "a", text: { es: "Que la afirmación es correcta: `tool.executed`/`tool.failed` cubren cualquier salida, incluidas plan-mode, confirm y veto.", en: "That the claim is correct: `tool.executed`/`tool.failed` cover every outcome, including plan-mode, confirm and veto." } },
+            { id: "b", text: { es: "Que es un modelo aspiracional: `AUDIT_SOURCE` audita validate-fail, authz-fail, rate-limit, cache-hit y éxito/fallo de execute, pero declara explícitamente que NO audita resolve-miss, plan-mode, confirm ni veto.", en: "That it's an aspirational model: `AUDIT_SOURCE` audits validate-fail, authz-fail, rate-limit, cache-hit and execute success/failure, but explicitly declares it does NOT audit resolve-miss, plan-mode, confirm or veto." } },
+            { id: "c", text: { es: "Que basta con agregar veto a la lista de eventos auditados en la documentación, sin tocar el código, porque `inspect` reflejará el cambio automáticamente.", en: "That it's enough to add veto to the documented list of audited events, without touching the code, because `inspect` will reflect the change automatically." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "ADR#13 exige que la inspección describa lo que el runtime EJECUTA de verdad, no una aspiración. `AUDIT_SOURCE` nombra sus huecos honestos —resolve-miss, plan-mode, confirm y veto no dejan evento— en vez de afirmar una cobertura total que el código todavía no tiene.",
+            en: "ADR#13 requires the inspection to describe what the runtime actually EXECUTES, not an aspiration. `AUDIT_SOURCE` names its honest gaps —resolve-miss, plan-mode, confirm and veto leave no event— instead of claiming a total coverage the code doesn't actually have."
+          }
+        }
+      ]
+    },
     "disena/capas-visuales": {
       passScore: 3,
       questions: [

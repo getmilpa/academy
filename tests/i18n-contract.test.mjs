@@ -442,7 +442,7 @@ test("unit page (representative en twin): lang, English content, reciprocal href
   assert.ok(html.includes('id="lessonQuiz" data-unit-key="fundamentos/contratos-grafo"'));
 });
 
-test("every unit page (19 × es/en) has lang, canonical, {es,en,x-default} hreflang and JSON-LD LearningResource", () => {
+test("every unit page (20 × es/en) has lang, canonical, {es,en,x-default} hreflang and JSON-LD LearningResource", () => {
   for (const { track, unit } of unitEntries) {
     for (const lang of ["es", "en"]) {
       const label = `${lang} ${track.id}/${unit.id}`;
@@ -474,7 +474,7 @@ test("learn index (es/en): lang, canonical, reciprocal hreflang, JSON-LD ItemLis
     assert.equal(ld.inLanguage, lang);
     assert.equal(ld.itemListElement.length, catalog.tracks.length);
     assert.ok((html.match(/ac-track-card/g) || []).length >= catalog.tracks.length);
-    assert.match(html, /id="globalProgress">0\/19</);
+    assert.match(html, /id="globalProgress">0\/20</);
     assert.match(html, /id="tracksTitle"/);
   }
   assert.match(learnIndexEs, /Rutas públicas/);
@@ -674,10 +674,11 @@ test("sitemap.xml lists the portal (home) as well as the atom, per language", ()
    idiomas (es → /artifacts/ + /labs/; en → /en/artifacts/ + /en/labs/).
    Ola Superficies: 4 lecciones nuevas × 2 idiomas (40 → 48 URLs).
    P2c: el runtime standalone (site/runtime/, mismo patrón que el átomo) suma
-   1 página nueva × 2 idiomas (48 → 50 URLs). */
-test("sitemap: exactly 50 URLs, incl. gallery + labs + runtime per language", () => {
+   1 página nueva × 2 idiomas (48 → 50 URLs).
+   ADR#13 (plan-invocacion): 1 lección nueva × 2 idiomas (50 → 52 URLs). */
+test("sitemap: exactly 52 URLs, incl. gallery + labs + runtime per language", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
-  assert.equal((sm.match(/<loc>/g) || []).length, 50, "sitemap must list exactly 50 URLs (portal+atom+runtime+gallery+labs+20 learn, ×2 langs)");
+  assert.equal((sm.match(/<loc>/g) || []).length, 52, "sitemap must list exactly 52 URLs (portal+atom+runtime+gallery+labs+20 learn, ×2 langs)");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/labs\/<\/loc>/);

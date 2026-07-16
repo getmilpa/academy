@@ -234,7 +234,7 @@
       eyebrow: { es: "Para profundizar", en: "Go deeper" },
       level: { es: "Intermedio a senior", en: "Intermediate to senior" },
       audience: { es: "Arquitectos y maintainers", en: "Architects and maintainers" },
-      durationMinutes: 275,
+      durationMinutes: 310,
       summary: { es: "Sigue límites, estado y decisiones desde el mapa conceptual hasta la evidencia ejecutable.", en: "Trace boundaries, state and decisions from the conceptual map to executable evidence." },
       prerequisites: ["fundamentos"],
       units: [
@@ -409,6 +409,30 @@
           ],
           sources: [{ label: { es: "Devtools", en: "Devtools" }, href: "https://github.com/getmilpa/devtools" }],
           lastVerified: verifiedAt
+        },
+        {
+          id: "plan-invocacion",
+          title: { es: "La ley visible del pipeline de tools", en: "The tool pipeline, made inspectable" },
+          durationMinutes: 35,
+          objectives: [
+            { es: "Leer la invocación de un tool como un InvocationPlan inspeccionable, no como once pasos idénticos", en: "Read a tool's invocation as an inspectable InvocationPlan, not as eleven identical steps" },
+            { es: "Distinguir Dormant (la regla existe pero no puede dispararse) de Skipped (el subsistema no está conectado)", en: "Tell Dormant (the rule exists but cannot fire) apart from Skipped (the subsystem isn't wired)" }
+          ],
+          understand: [
+            { es: "ADR#13 parte de una tesis simple: primero vuelve visible la ley que ya gobierna. ToolRegistry::call() siempre ejecutó resolver, validar, autorizar, confirmar, ejecutar y auditar en ese orden; lo que faltaba era poder verlo sin leer el código fuente. coa:tools inspect construye un InvocationPlan que describe, paso por paso, lo que call() REALMENTE haría con un tool, un canal y un wiring dados — nunca invoca el callback ni muta nada.", en: "ADR#13 starts from a simple thesis: first make the law that already governs visible. ToolRegistry::call() always ran resolve, validate, authorize, confirm, execute and audit in that order; what was missing was a way to see it without reading the source. coa:tools inspect builds an InvocationPlan that describes, step by step, what call() would REALLY do with a given tool, channel and wiring — it never invokes the callback nor mutates anything." },
+            { es: "El plan es el contraparte de solo lectura del modo plan. ctx.mode='plan' es una rama dentro de UNA llamada real: el tool se resuelve, se valida y se detiene antes de ejecutar — sigue siendo una invocación. El InvocationPlan no invoca nada: recorre los pasos de InvocationStepKind y anota su presencia (Active, Conditional, Dormant, Skipped) para esa combinación de tool+canal+wiring, como una radiografía completa del cableado en vez de un ensayo de una sola llamada.", en: "The plan is the read-only counterpart of plan mode. ctx.mode='plan' is a branch inside ONE real call: the tool is resolved, validated and stopped before executing — it is still an invocation. The InvocationPlan invokes nothing: it walks the InvocationStepKind steps and marks each one's presence (Active, Conditional, Dormant, Skipped) for that tool+channel+wiring combination, like a full x-ray of the wiring instead of a rehearsal of a single call." },
+            { es: "Dormant y Skipped se ven parecidos en la tabla pero significan cosas distintas. Confirm es Dormant para settings_update (mutating:false, sin requiresConfirmation): incluso en telegram, cuyo PolicyGate declara require_confirmation_for_mutating:true, la regla EXISTE pero el propio #[Tool] la vuelve estáticamente imposible de disparar para este tool. Rate limit y Emit executing en cambio son Skipped cuando el host no conectó un rateLimiter o un dispatcher — no es que la regla sea imposible, es que el subsistema simplemente no está cableado; instalarlo basta para que pasen a Active.", en: "Dormant and Skipped look similar in the table but mean different things. Confirm is Dormant for settings_update (mutating:false, no requiresConfirmation): even on telegram, whose PolicyGate declares require_confirmation_for_mutating:true, the rule EXISTS but the tool's own #[Tool] makes it statically impossible to fire for this tool. Rate limit and Emit executing, in contrast, are Skipped when the host never wired a rateLimiter or a dispatcher — the rule isn't impossible, the subsystem simply isn't connected; wiring it in is enough to flip them to Active." },
+            { es: "La honestidad corta también hacia la auditoría. AUDIT_SOURCE declara qué audita tool.executed/tool.failed — validate-fail, authz-fail, rate-limit, cache-hit, éxito y fallo de execute — y qué NO audita: resolve-miss, plan-mode, confirm, veto. Un inspect que describiera cobertura total sería un modelo aspiracional; ADR#13 exige que el plan describa lo que el runtime EJECUTA de verdad, huecos incluidos.", en: "The honesty cuts into audit coverage too. AUDIT_SOURCE declares what tool.executed/tool.failed actually audit — validate-fail, authz-fail, rate-limit, cache-hit, execute success and failure — and what it does NOT audit: resolve-miss, plan-mode, confirm, veto. An inspect that claimed full coverage would be an aspirational model; ADR#13 requires the plan to describe what the runtime actually EXECUTES, gaps included." }
+          ],
+          see: { label: { es: "Abrir la Radiografía del runtime — pestaña Plan de invocación", en: "Open the X-ray of the runtime — Invocation plan tab" }, href: "../artifacts/#runtime", note: { es: "Cambia de canal (coa, MCP, POST) y observa cómo Confirm permanece Dormant mientras solo cambia su justificación; Rate limit y Emit executing pasan de Omitido a Activo únicamente cuando el wiring del host los conecta.", en: "Switch channel (coa, MCP, POST) and watch Confirm stay Dormant while only its justification changes; Rate limit and Emit executing flip from Skipped to Active only when the host's wiring connects them." } },
+          do: { label: { es: "Inspeccionar la ley que gobierna una tool (comando del host)", en: "Inspect the law governing a tool (host command)" }, href: "../artifacts/#runtime", commands: ["php coa coa:tools inspect settings_update --channel=web", "php coa coa:tools inspect settings_update --channel=web --json"] },
+          verify: [
+            { es: "Explica por qué Confirm marca Dormant y no Activo para un tool con mutating:false, incluso en un canal que exige confirmación para mutaciones.", en: "Explain why Confirm marks Dormant, not Active, for a tool with mutating:false, even on a channel that requires confirmation for mutations." },
+            { es: "Distingue el modo plan — una llamada real que se detiene antes de ejecutar — del InvocationPlan, que no ejecuta ninguna llamada.", en: "Tell plan mode — a real call that stops before executing — apart from the InvocationPlan, which executes no call at all." },
+            { es: "Comprueba que coa:tools inspect nunca fabrica un actor: una invocación anónima muestra el principal en null, no un usuario inventado.", en: "Confirm that coa:tools inspect never fabricates an actor: an anonymous invocation shows the principal as null, not a made-up user." }
+          ],
+          sources: [{ label: { es: "Milpa Tool Runtime", en: "Milpa Tool Runtime" }, href: "https://github.com/getmilpa/tool-runtime" }],
+          lastVerified: "2026-07-16"
         }
       ]
     },
