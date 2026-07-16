@@ -382,8 +382,16 @@ export const GALLERY = {
       },
       title: { es: "Radiografía del runtime", en: "Runtime x-ray" },
       lede: {
-        es: "El tubo de cinco pasos es una buena entrada. La implementación real agrega límites que importan para seguridad, costos, confirmación e intercepción.",
-        en: "The five-step pipe is a good entry point. The real implementation adds boundaries that matter for security, cost, confirmation, and interception.",
+        es: "El recorrido de once pasos es una buena entrada. La implementación real agrega límites que importan para seguridad, costos, confirmación e intercepción.",
+        en: "The eleven-step walk is a good entry point. The real implementation adds boundaries that matter for security, cost, confirmation, and interception.",
+      },
+      /* Task P2b: dos pestañas — Tab A (este recorrido de fallo, SIN CAMBIOS) y
+         Tab B (plan de invocación, ADR#13 mirror). tabsAria/tabs siguen el mismo
+         patrón que atlas (index.html L306-312). */
+      tabsAria: { es: "Vistas del runtime", en: "Runtime views" },
+      tabs: {
+        failure: { es: "Recorrido de fallo", en: "Failure walk" },
+        plan: { es: "Plan de invocación", en: "Invocation plan" },
       },
       scenarioLabel: { es: "Salida a inspeccionar", en: "Output to inspect" },
       /* <option> del <select id="runtime-scenario"> (value = neutro estable). */
@@ -421,6 +429,129 @@ export const GALLERY = {
         { output: { es: "Veto puro", en: "Pure veto" }, callback: { es: "No", en: "No" }, audit: { es: "hueco conocido", en: "known gap" } },
         { output: { es: "Callback / throw", en: "Callback / throw" }, callback: { es: "Sí", en: "Yes" }, audit: { es: "executed / failed", en: "executed / failed" } },
       ],
+      /* Tab B — Plan de invocación (ADR#13 mirror, P2b). Los 11 renglones son el
+         resultado CONGELADO de invocationPlan("web", {}) (artifacts-core.js): el
+         canal por defecto que la SSG sirve estático es 'web' (mismo canal que
+         SURFACES llama 'http' — ver el comentario de invocationPlan en
+         artifacts-core.js), con el wiring por defecto del host de stock
+         (rateLimiter/dispatcher/ruleProvider ausentes). kind/role/presence son
+         códigos neutros (idénticos a los que emite invocationPlan/RUNTIME_STAGES);
+         label/source son la prosa {es,en}. El toggle de canal (coa/MCP/POST)
+         vuelve a llamar invocationPlan(channel, wiring) del lado del cliente y
+         sólo repinta lo que cambió — con este wiring fijo, únicamente el source
+         de "authorize" varía por canal (ver CHANNEL_POLICY); el resto se
+         mantiene, y el driver lo recorre genérico por si eso cambia. */
+      plan: {
+        tableAria: { es: "Plan de invocación de once pasos", en: "Eleven-step invocation plan" },
+        tableHeaders: {
+          step: { es: "Paso", en: "Step" },
+          role: { es: "Rol", en: "Role" },
+          presence: { es: "Presencia", en: "Presence" },
+          source: { es: "Fuente", en: "Source" },
+        },
+        presenceLabels: {
+          active: { es: "Activo", en: "Active" },
+          conditional: { es: "Condicional", en: "Conditional" },
+          dormant: { es: "Dormido", en: "Dormant" },
+          skipped: { es: "Omitido", en: "Skipped" },
+        },
+        /* La honestidad de presencia (Enmienda 3 del ADR#13): Dormido y Omitido
+           no son sinónimos — un lector sin JS debe poder distinguirlos. */
+        presenceGloss: {
+          dormant: { es: "la regla existe pero no puede dispararse", en: "the rule exists but can't fire" },
+          skipped: { es: "el subsistema no está conectado", en: "the subsystem isn't wired in" },
+        },
+        roleLabels: {
+          guard: { es: "Guardia", en: "Guard" },
+          transform: { es: "Transformación", en: "Transform" },
+          branch: { es: "Bifurcación", en: "Branch" },
+          hook: { es: "Gancho", en: "Hook" },
+          execution: { es: "Ejecución", en: "Execution" },
+          boundary: { es: "Límite", en: "Boundary" },
+          outcome: { es: "Resultado", en: "Outcome" },
+        },
+        channelLabel: { es: "Canal de invocación", en: "Invocation channel" },
+        steps: [
+          {
+            kind: "resolve", role: "guard", presence: "active",
+            label: { es: "Resolver", en: "Resolve" },
+            source: { es: "búsqueda en el registry", en: "registry lookup" },
+          },
+          {
+            kind: "validate", role: "guard", presence: "active",
+            label: { es: "Validar", en: "Validate" },
+            source: { es: "el tool declara inputSchema", en: "tool declares inputSchema" },
+          },
+          {
+            kind: "clamp", role: "transform", presence: "skipped",
+            label: { es: "Acotar", en: "Clamp" },
+            source: { es: "el tool no declara clamps", en: "tool declares no clamps" },
+          },
+          {
+            kind: "authorize", role: "guard", presence: "active",
+            label: { es: "Autorizar", en: "Authorize" },
+            source: {
+              es: "canal 'web': require_auth=true, allow_all=false; tool sin scopes declarados",
+              en: "channel 'web': require_auth=true, allow_all=false; tool declares no scopes",
+            },
+          },
+          {
+            kind: "rate-limit", role: "guard", presence: "skipped",
+            label: { es: "Rate limit", en: "Rate limit" },
+            source: {
+              es: "wiring del host: rateLimiter ausente; costo mutating?5:1 (mutating=false → costo 1)",
+              en: "host wiring: rateLimiter absent; cost mutating?5:1 (mutating=false → cost 1)",
+            },
+          },
+          {
+            kind: "plan-mode", role: "branch", presence: "conditional",
+            label: { es: "Modo plan", en: "Plan mode" },
+            source: {
+              es: "dispara si ctx.mode es 'plan'; valor actual: execute",
+              en: "fires if ctx.mode is 'plan'; current value: execute",
+            },
+          },
+          {
+            kind: "confirm", role: "branch", presence: "dormant",
+            label: { es: "Confirmar", en: "Confirm" },
+            source: {
+              es: "ni tool.requiresConfirmation ni la política del canal exigen confirmación para este tool",
+              en: "neither tool.requiresConfirmation nor the channel policy require confirmation for this tool",
+            },
+          },
+          {
+            kind: "emit-executing", role: "hook", presence: "skipped",
+            label: { es: "Emitir executing", en: "Emit executing" },
+            source: {
+              es: "wiring del host: dispatcher ausente (ancla + cache/veto)",
+              en: "host wiring: dispatcher absent (anchor + cache/veto)",
+            },
+          },
+          {
+            kind: "execute", role: "execution", presence: "active",
+            label: { es: "Ejecutar", en: "Execute" },
+            source: { es: "callback; se inyecta _ctx", en: "callback; _ctx injected" },
+          },
+          {
+            kind: "contain-exception", role: "boundary", presence: "active",
+            label: { es: "Contener excepción", en: "Contain exception" },
+            source: {
+              es: "envuelve execute; \\Throwable → INTERNAL_ERROR",
+              en: "wraps execute; \\Throwable → INTERNAL_ERROR",
+            },
+          },
+          {
+            kind: "audit", role: "outcome", presence: "active",
+            label: { es: "Auditar", en: "Audit" },
+            source: {
+              es: "audita: validate-fail, authz-fail, rate-limit, cache-hit, execute-éxito, execute-fallo; "
+                + "NO audita: resolve-miss, plan-mode, confirm, veto",
+              en: "audits: validate-fail, authz-fail, rate-limit, cache-hit, execute-success, execute-failure; "
+                + "does NOT audit: resolve-miss, plan-mode, confirm, veto",
+            },
+          },
+        ],
+      },
       lesson: {
         title: { es: "La garantía se lee por rama", en: "The guarantee reads per branch" },
         body: {

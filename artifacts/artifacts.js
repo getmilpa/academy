@@ -16,6 +16,7 @@ const {
   evaluatePlanting,
   evaluateThemePair,
   frontierProject,
+  invocationPlan,
   projectOperation,
   projectProcess,
   resolveModuleOrder,
@@ -823,6 +824,78 @@ $("#reset-runtime").addEventListener("click", () => {
   setAlert($("#runtime-result"), "info", t.runtimeResetTitle, t.runtimeResetDesc);
   $("#run-runtime").removeAttribute("aria-busy");
 });
+
+/* Artifact 05 (chrome): two static tabpanels — Tab A above is the untouched
+   failure walk; Tab B is the invocation plan. Tablist + keyboard nav lifted
+   from activateBoundaryFlow (Artifact 04), adapted to toggle which whole
+   panel is hidden instead of filtering nodes inside one shared panel. */
+const runtimeTabs = $$('[data-runtime-tab]');
+const runtimePanels = $$('.wb-runtime-panel');
+function activateRuntimeTab(tab) {
+  const target = tab.dataset.runtimeTab;
+  runtimeTabs.forEach((btn) => {
+    const selected = btn === tab;
+    btn.setAttribute("aria-selected", String(selected));
+    btn.tabIndex = selected ? 0 : -1;
+  });
+  runtimePanels.forEach((panel) => { panel.hidden = panel.dataset.runtimePanel !== target; });
+}
+runtimeTabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => activateRuntimeTab(tab));
+  tab.addEventListener("keydown", (event) => {
+    let next = null;
+    if (event.key === "ArrowRight") next = (index + 1) % runtimeTabs.length;
+    if (event.key === "ArrowLeft") next = (index - 1 + runtimeTabs.length) % runtimeTabs.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = runtimeTabs.length - 1;
+    if (next === null) return;
+    event.preventDefault();
+    runtimeTabs[next].focus();
+    activateRuntimeTab(runtimeTabs[next]);
+  });
+});
+
+/* Tab B: invocation plan (ADR#13 mirror). `wiring` stays the shipped default —
+   the honest stock-registry state (no rate limiter, no dispatcher, no rule
+   provider wired). Only `channel` toggles; SURFACES calls the same channel
+   PolicyGate calls 'web' by its own id 'http' (see invocationPlan's comment
+   in artifacts-core.js), hence the id→channel map below. Presence label/badge
+   duplicate gallery.content.mjs's plan.presenceLabels/plan.roleLabels (SSG
+   prose) on purpose — same split as gateChip/runtimeResultTitle above: the
+   core stays neutral (codes only), this layer is the only one that knows
+   language. Only "authorize"'s source actually varies with this fixed wiring
+   (see CHANNEL_POLICY in artifacts-core.js) — the loop stays generic over all
+   11 steps anyway, so it keeps working if that ever changes. */
+const PLAN_WIRING = Object.freeze({ rateLimiter: false, dispatcher: false, ruleProvider: false });
+const PLAN_CHANNEL_OF_SURFACE = { cli: "cli", mcp: "mcp", http: "web" };
+const PLAN_PRESENCE_BADGE = { active: "mui-badge--success", conditional: "mui-badge--warning", dormant: "mui-badge--secondary", skipped: "" };
+const PLAN_PRESENCE_LABEL = {
+  es: { active: "Activo", conditional: "Condicional", dormant: "Dormido", skipped: "Omitido" },
+  en: { active: "Active", conditional: "Conditional", dormant: "Dormant", skipped: "Skipped" },
+};
+const runtimePlanRoot = $("#runtime-panel-plan");
+
+function renderInvocationPlan(channel) {
+  const plan = invocationPlan(channel, PLAN_WIRING);
+  for (const step of plan.steps) {
+    const row = $(`[data-step="${step.kind}"]`, runtimePlanRoot);
+    if (!row) continue;
+    const badge = $(".wb-runtime-plan-presence", row);
+    badge.className = `mui-badge wb-runtime-plan-presence ${PLAN_PRESENCE_BADGE[step.presence] ?? ""}`.trim();
+    badge.textContent = PLAN_PRESENCE_LABEL[lang][step.presence] ?? step.presence;
+    $(".wb-runtime-plan-source", row).textContent = pick(step.source);
+  }
+}
+
+function activateRuntimeChannel(button) {
+  $$('[data-runtime-channel]', runtimePlanRoot).forEach((btn) => {
+    const active = btn === button;
+    btn.setAttribute("aria-pressed", String(active));
+    btn.classList.toggle("mui-btn--primary", active);
+  });
+  renderInvocationPlan(PLAN_CHANNEL_OF_SURFACE[button.dataset.runtimeChannel] ?? "web");
+}
+$$('[data-runtime-channel]', runtimePlanRoot).forEach((button) => button.addEventListener("click", () => activateRuntimeChannel(button)));
 
 /* Artifact 06: append-only events and projection */
 let processEvents = [];

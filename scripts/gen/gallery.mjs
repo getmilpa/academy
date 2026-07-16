@@ -511,6 +511,16 @@ function renderAtlas(a, lang) {
 
 /* ---- Artifact 05 · runtime ---------------------------------------------- */
 
+// Presencia → clase de mui-badge (esqueleto de estilo, paralelo a auditBadge de
+// abajo). skipped usa el mui-badge liso (sin modificador) — el mismo look
+// "sin log explícito" que ya usa Tab A para lo menos accionable.
+const PLAN_PRESENCE_BADGE = {
+  active: "mui-badge--success",
+  conditional: "mui-badge--warning",
+  dormant: "mui-badge--secondary",
+  skipped: "",
+};
+
 function renderRuntime(a, lang) {
   const options = a.scenarios
     .map((sc) => `              <option value="${sc.value}">${L(sc.label, lang)}</option>`)
@@ -528,6 +538,26 @@ function renderRuntime(a, lang) {
   const rows = a.tableRows
     .map((r, i) => `                <tr><td>${L(r.output, lang)}</td><td>${L(r.callback, lang)}</td><td><span class="${auditBadge[i]}">${L(r.audit, lang)}</span></td></tr>`)
     .join("\n");
+
+  // Tab B: el plan de invocación de 11 pasos, canal 'web' (POST/HTTP) por
+  // defecto — congelado en GALLERY (P2b), byte-idéntico a lo que
+  // invocationPlan("web", {}) computa (ver comentario junto a a.plan en
+  // gallery.content.mjs). El toggle de canal recalcula esto client-side.
+  const planRows = a.plan.steps
+    .map((step) => {
+      const badgeClass = ["mui-badge", "wb-runtime-plan-presence", PLAN_PRESENCE_BADGE[step.presence]]
+        .filter(Boolean)
+        .join(" ");
+      return `                <tr data-step="${step.kind}"><td>${L(step.label, lang)}</td><td>${L(a.plan.roleLabels[step.role], lang)}</td><td><span class="${badgeClass}">${L(a.plan.presenceLabels[step.presence], lang)}</span></td><td class="wb-runtime-plan-source">${L(step.source, lang)}</td></tr>`;
+    })
+    .join("\n");
+  const presenceLegend = ["dormant", "skipped"]
+    .map((code) => {
+      const badgeClass = ["mui-badge", PLAN_PRESENCE_BADGE[code]].filter(Boolean).join(" ");
+      return `            <li><span class="${badgeClass}">${L(a.plan.presenceLabels[code], lang)}</span> — ${L(a.plan.presenceGloss[code], lang)}</li>`;
+    })
+    .join("\n");
+
   return `${sectionOpen(a, lang, "runtime-title", true)}
         <header class="wb-artifact__header">
           <div class="wb-artifact__meta"><span class="mui-badge mui-badge--accent">${L(a.badges.index, lang)}</span><span class="mui-badge mui-badge--info">${L(a.badges.tag, lang)}</span></div>
@@ -535,6 +565,12 @@ function renderRuntime(a, lang) {
           <p>${L(a.lede, lang)}</p>
         </header>
 
+        <div class="mui-tabs wb-runtime-tabs" role="tablist" aria-label="${L(a.tabsAria, lang)}">
+          <button class="mui-tabs__tab" id="runtime-tab-failure" type="button" role="tab" aria-selected="true" aria-controls="runtime-panel-failure" data-runtime-tab="failure">${L(a.tabs.failure, lang)}</button>
+          <button class="mui-tabs__tab" id="runtime-tab-plan" type="button" role="tab" aria-selected="false" aria-controls="runtime-panel-plan" data-runtime-tab="plan" tabindex="-1">${L(a.tabs.plan, lang)}</button>
+        </div>
+
+        <div class="wb-runtime-panel" id="runtime-panel-failure" data-runtime-panel="failure" role="tabpanel" aria-labelledby="runtime-tab-failure" tabindex="0">
         <div class="wb-runtime-controls">
           <div class="mui-field">
             <label class="mui-field__label" for="runtime-scenario">${L(a.scenarioLabel, lang)}</label>
@@ -566,6 +602,31 @@ ${rows}
             </table>
           </div>
           </div>
+        </div>
+        </div>
+
+        <div class="wb-runtime-panel" id="runtime-panel-plan" data-runtime-panel="plan" role="tabpanel" aria-labelledby="runtime-tab-plan" tabindex="0" hidden>
+          <div class="wb-runtime-channels" role="group" aria-label="${L(a.plan.channelLabel, lang)}">
+            <span class="mui-field__label">${L(a.plan.channelLabel, lang)}</span>
+            <div class="wb-runtime-channels__buttons">
+              <button class="mui-btn mui-btn--sm" type="button" id="runtime-channel-cli" data-runtime-channel="cli" aria-pressed="false">coa</button>
+              <button class="mui-btn mui-btn--sm" type="button" id="runtime-channel-mcp" data-runtime-channel="mcp" aria-pressed="false">MCP</button>
+              <button class="mui-btn mui-btn--sm mui-btn--primary" type="button" id="runtime-channel-http" data-runtime-channel="http" aria-pressed="true">POST</button>
+            </div>
+          </div>
+
+          <div class="mui-table-wrap" role="region" aria-label="${L(a.plan.tableAria, lang)}" tabindex="0">
+            <table class="mui-table mui-table--compact wb-runtime-plan-table">
+              <thead><tr><th>${L(a.plan.tableHeaders.step, lang)}</th><th>${L(a.plan.tableHeaders.role, lang)}</th><th>${L(a.plan.tableHeaders.presence, lang)}</th><th>${L(a.plan.tableHeaders.source, lang)}</th></tr></thead>
+              <tbody id="runtime-plan-body">
+${planRows}
+              </tbody>
+            </table>
+          </div>
+
+          <ul class="wb-runtime-plan-legend">
+${presenceLegend}
+          </ul>
         </div>
 
         <div class="mui-callout mui-callout--warning wb-lesson" role="note"><span class="mui-callout__icon" aria-hidden="true">!</span><div class="mui-callout__content"><p class="mui-callout__title">${L(a.lesson.title, lang)}</p><p class="mui-callout__body">${L(a.lesson.body, lang)}</p></div></div>

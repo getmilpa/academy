@@ -248,8 +248,12 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      learn.academy/artifact/llms que viajan DENTRO de los 3 reportes congelados
      con error: el walk los ve como hojas y eso es correcto, son URLs por idioma).
      Ola Superficies (corte 2026-07-13): 420 → 429 (+9 hojas es del atlas — 3
-     nodos nuevos resolver/command/ai-gateway × badge/name/desc). */
-  assert.equal(leaves.length, 429, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     nodos nuevos resolver/command/ai-gateway × badge/name/desc).
+     P2b (Plan de invocación): 429 → 473 (+44 hojas es de la pestaña "Plan de
+     invocación" del runtime — tabsAria/tabs (3), plan.tableAria/tableHeaders
+     (5), presenceLabels/presenceGloss (6), roleLabels (7), channelLabel (1),
+     y los 11 pasos × {label,source} (22)). */
+  assert.equal(leaves.length, 473, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
      artifacts[9] su <section> se autoró en artifacts/index.html (además de
      emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los

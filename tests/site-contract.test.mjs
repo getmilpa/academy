@@ -265,6 +265,31 @@ test("la galería SSG muestra los 11 artifacts sin JS (chrome + 10 hidden + áto
   }
 });
 
+/* P2b — PE de la pestaña "Plan de invocación" (Tab B del runtime, Artifact 05):
+   los 11 pasos del plan para el canal por defecto (POST/web) ya viajan como
+   HTML real en la SSG — hydrate, not shell, a diferencia del carril de Tab A
+   (#runtime-rail), que sigue vacío hasta que JS lo monta. Un lector sin JS ve
+   los 11 <tr data-step> + las 4 etiquetas de presencia, incluida la
+   distinción honesta dormido/omitido del ADR#13, en ambos idiomas. */
+test("runtime Tab B: el plan de invocación de 11 pasos + las 4 etiquetas de presencia viajan estáticos, es/en", () => {
+  const steps = ["resolve", "validate", "clamp", "authorize", "rate-limit", "plan-mode", "confirm", "emit-executing", "execute", "contain-exception", "audit"];
+  const presenceLabel = {
+    es: ["Activo", "Condicional", "Dormido", "Omitido"],
+    en: ["Active", "Conditional", "Dormant", "Skipped"],
+  };
+  for (const [rel, lang] of [["site/artifacts/index.html", "es"], ["site/en/artifacts/index.html", "en"]]) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    assert.match(html, /<div class="wb-runtime-panel" id="runtime-panel-plan"[^>]*\shidden(?:\s|>)/, rel + ": el panel del plan debe arrancar oculto (JS lo revela)");
+    assert.equal((html.match(/<tr data-step="/g) || []).length, 11, rel + ": deben ser 11 <tr data-step>");
+    for (const step of steps) assert.match(html, new RegExp(`<tr data-step="${step}"`), rel + ": falta el paso " + step);
+    for (const label of presenceLabel[lang]) assert.ok(html.includes(`>${label}<`), rel + ": falta la etiqueta de presencia " + label);
+    // El toggle de canal (coa/MCP/POST) arranca en POST — el canal 'web' por defecto.
+    assert.match(html, /id="runtime-channel-http"[^>]*aria-pressed="true"/, rel + ": el canal POST debe arrancar activo");
+    assert.match(html, /id="runtime-channel-cli"[^>]*aria-pressed="false"/, rel + ": el canal coa debe arrancar inactivo");
+    assert.match(html, /id="runtime-channel-mcp"[^>]*aria-pressed="false"/, rel + ": el canal MCP debe arrancar inactivo");
+  }
+});
+
 /* Almácigo T2 — PE de frontera (Artifact 10): la lección se entiende SIN JS. La
    prosa del arco completo y — crucial — la FUGA (fila detenido marcada + panel de
    acople en rojo) ya son visibles en el HTML estático, ambos idiomas. El demo JS
