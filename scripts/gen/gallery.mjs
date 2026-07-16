@@ -23,6 +23,16 @@ import { renderHead, htmlOpen } from "./page.mjs";
 import { renderAtomoFallback } from "./atomo.mjs";
 import { GALLERY } from "../../artifacts/content/gallery.content.mjs";
 import { ATOMO } from "../../artifacts/content/atomo.content.mjs";
+// Script clásico (globalThis.AcademyCore) importado por side effect — mismo
+// patrón que artifacts/artifacts-core.test.mjs. ADR#13 ("inspection must
+// describe what the runtime actually executes, not a parallel model"):
+// Tab B YA NO carga un snapshot congelado a mano de invocationPlan("web", {}) —
+// esta SSG LLAMA a invocationPlan de verdad en build-time (ver renderRuntime
+// más abajo), así el HTML servido ES la salida computada, no una copia que
+// pueda derivar en silencio si alguien cambia artifacts-core.js y olvida
+// actualizar el contenido congelado.
+import "../../artifacts/artifacts-core.js";
+const { invocationPlan, RUNTIME_STAGES, DEFAULT_WIRING } = globalThis.AcademyCore;
 
 const LANGS = ["es", "en"];
 const BASE_URL = { fn: null };
@@ -521,6 +531,13 @@ const PLAN_PRESENCE_BADGE = {
   skipped: "",
 };
 
+// step.kind (invocationPlan) e id (RUNTIME_STAGES) son el mismo código
+// kebab-case (ver el comentario de invocationPlan en artifacts-core.js) — este
+// mapa solo resuelve la etiqueta {es,en} del paso ("Resolver"/"Resolve") desde
+// la ÚNICA fuente que ya la tiene (RUNTIME_STAGES, la misma que pinta Tab A);
+// no hay una segunda copia de esas etiquetas en ningún lado.
+const PLAN_STEP_LABEL = new Map(RUNTIME_STAGES.map((stage) => [stage.id, stage.label]));
+
 function renderRuntime(a, lang) {
   const options = a.scenarios
     .map((sc) => `              <option value="${sc.value}">${L(sc.label, lang)}</option>`)
@@ -540,15 +557,19 @@ function renderRuntime(a, lang) {
     .join("\n");
 
   // Tab B: el plan de invocación de 11 pasos, canal 'web' (POST/HTTP) por
-  // defecto — congelado en GALLERY (P2b), byte-idéntico a lo que
-  // invocationPlan("web", {}) computa (ver comentario junto a a.plan en
-  // gallery.content.mjs). El toggle de canal recalcula esto client-side.
-  const planRows = a.plan.steps
+  // defecto. ADR#13 al pie de la letra: esto YA NO lee un snapshot congelado a
+  // mano — LLAMA a invocationPlan("web", DEFAULT_WIRING) acá mismo, en
+  // build-time, así el HTML servido es la salida real de la función, no una
+  // copia que pueda derivar en silencio (el "modelo paralelo" que el ADR
+  // prohíbe). El toggle de canal recalcula lo mismo client-side
+  // (artifacts.js) con la MISMA función core — un solo cómputo, dos runtimes.
+  const planRows = invocationPlan("web", DEFAULT_WIRING).steps
     .map((step) => {
       const badgeClass = ["mui-badge", "wb-runtime-plan-presence", PLAN_PRESENCE_BADGE[step.presence]]
         .filter(Boolean)
         .join(" ");
-      return `                <tr data-step="${step.kind}"><td>${L(step.label, lang)}</td><td>${L(a.plan.roleLabels[step.role], lang)}</td><td><span class="${badgeClass}">${L(a.plan.presenceLabels[step.presence], lang)}</span></td><td class="wb-runtime-plan-source">${L(step.source, lang)}</td></tr>`;
+      const label = PLAN_STEP_LABEL.get(step.kind);
+      return `                <tr data-step="${step.kind}"><td>${L(label, lang)}</td><td>${L(a.plan.roleLabels[step.role], lang)}</td><td><span class="${badgeClass}">${L(a.plan.presenceLabels[step.presence], lang)}</span></td><td class="wb-runtime-plan-source">${L(step.source, lang)}</td></tr>`;
     })
     .join("\n");
   const presenceLegend = ["dormant", "skipped"]

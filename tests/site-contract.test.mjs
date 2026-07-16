@@ -4,6 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { GALLERY } from "../artifacts/content/gallery.content.mjs";
+// Script clásico (globalThis.AcademyCore), importado por side effect — mismo
+// patrón que gen/gallery.mjs y artifacts-core.test.mjs.
+import "../artifacts/artifacts-core.js";
+const { invocationPlan, DEFAULT_WIRING } = globalThis.AcademyCore;
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // catalog.js es UMD; se carga con require (cjs-module-lexer no ve sus exports).
@@ -287,6 +292,57 @@ test("runtime Tab B: el plan de invocación de 11 pasos + las 4 etiquetas de pre
     assert.match(html, /id="runtime-channel-http"[^>]*aria-pressed="true"/, rel + ": el canal POST debe arrancar activo");
     assert.match(html, /id="runtime-channel-cli"[^>]*aria-pressed="false"/, rel + ": el canal coa debe arrancar inactivo");
     assert.match(html, /id="runtime-channel-mcp"[^>]*aria-pressed="false"/, rel + ": el canal MCP debe arrancar inactivo");
+  }
+});
+
+/* Drift-guard de Tab B (hardening post-P2b, ADR#13 aplicado al artifact mismo):
+   "inspection must describe what the runtime actually executes, not a parallel
+   model" — este artifact enseña esa doctrina, así que no puede tener un modelo
+   paralelo silencioso adentro. site/[en/]artifacts/index.html YA salen
+   computados de invocationPlan("web", DEFAULT_WIRING) en build-time
+   (gen/gallery.mjs, ya no leen un snapshot congelado) — pero artifacts/
+   index.html sigue siendo una fuente hand-mantenida (el generador reproduce SU
+   DOM, no al revés) y NO puede computarse. Este test parsea las 11 filas
+   servidas en los 3 archivos y las compara BYTE A BYTE contra la salida fresca
+   de invocationPlan('web', DEFAULT_WIRING): si alguien toca authorizeSource/
+   confirmSource/etc. en artifacts-core.js y olvida re-generar (o, para
+   artifacts/index.html, olvida actualizar a mano), este test se pone rojo —
+   el mismo patrón que el drift-guard real de ADR#13 (InvocationPipelineDriftTest
+   en PHP), un nivel arriba. */
+test("runtime Tab B drift-guard: las filas servidas (generadas + hand-frozen) coinciden byte a byte con invocationPlan('web', DEFAULT_WIRING)", () => {
+  const runtimeArtifact = GALLERY.artifacts.find((a) => a.id === "runtime");
+  const { roleLabels, presenceLabels } = runtimeArtifact.plan;
+  const plan = invocationPlan("web", DEFAULT_WIRING);
+  assert.equal(plan.steps.length, 11, "invocationPlan('web', DEFAULT_WIRING) debe tener 11 pasos");
+
+  const rowRe = /<tr data-step="([^"]+)"><td>[\s\S]*?<\/td><td>([\s\S]*?)<\/td><td><span[^>]*>([\s\S]*?)<\/span><\/td><td class="wb-runtime-plan-source">([\s\S]*?)<\/td><\/tr>/g;
+
+  function parseRows(html) {
+    const rows = new Map();
+    for (const m of html.matchAll(rowRe)) {
+      rows.set(m[1], { role: m[2], presence: m[3], source: m[4] });
+    }
+    return rows;
+  }
+
+  const targets = [
+    { rel: "site/artifacts/index.html", lang: "es", generated: true },
+    { rel: "site/en/artifacts/index.html", lang: "en", generated: true },
+    { rel: "artifacts/index.html", lang: "es", generated: false },
+  ];
+
+  for (const { rel, lang } of targets) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    const rows = parseRows(html);
+    assert.equal(rows.size, 11, `${rel}: deben parsearse 11 <tr data-step> del plan`);
+
+    for (const step of plan.steps) {
+      const row = rows.get(step.kind);
+      assert.ok(row, `${rel}: falta la fila data-step="${step.kind}"`);
+      assert.equal(row.role, roleLabels[step.role][lang], `${rel} [${step.kind}]: role desincronizado del invocationPlan real`);
+      assert.equal(row.presence, presenceLabels[step.presence][lang], `${rel} [${step.kind}]: presence desincronizada del invocationPlan real`);
+      assert.equal(row.source, step.source[lang], `${rel} [${step.kind}]: source desincronizado del invocationPlan real (modelo paralelo detectado)`);
+    }
   }
 });
 

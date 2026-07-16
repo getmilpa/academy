@@ -407,6 +407,15 @@ const CHANNEL_POLICY = Object.freeze({
   telegram: { requireAuth: false, allowAll: false, requireConfirmationForMutating: true },
 });
 
+/* El wiring "de stock" honesto (host recién instalado, sin nada conectado
+   todavía): ni rate limiter, ni dispatcher de eventos, ni rule provider de DB.
+   Es EL default que sirve la SSG estático para el canal 'web' (hydrate-not-shell,
+   ver gen/gallery.mjs) y el que arranca el toggle de canal client-side
+   (artifacts.js) — una sola constante, no un literal duplicado en cada
+   consumidor (eso es precisamente lo que ADR#13 llama un "modelo paralelo que
+   puede derivar" — este archivo no puede tener uno de esos adentro). */
+const DEFAULT_WIRING = Object.freeze({ rateLimiter: false, dispatcher: false, ruleProvider: false });
+
 function channelPolicy(channel) {
   return CHANNEL_POLICY[channel] ?? { requireAuth: true, allowAll: false };
 }
@@ -732,6 +741,7 @@ globalThis.AcademyCore = Object.freeze({
   projectOperation,
   runtimeTrace,
   invocationPlan,
+  DEFAULT_WIRING,
   decideVerification,
   projectProcess,
   hexToRgb,

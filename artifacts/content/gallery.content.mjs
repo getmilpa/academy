@@ -429,18 +429,25 @@ export const GALLERY = {
         { output: { es: "Veto puro", en: "Pure veto" }, callback: { es: "No", en: "No" }, audit: { es: "hueco conocido", en: "known gap" } },
         { output: { es: "Callback / throw", en: "Callback / throw" }, callback: { es: "Sí", en: "Yes" }, audit: { es: "executed / failed", en: "executed / failed" } },
       ],
-      /* Tab B — Plan de invocación (ADR#13 mirror, P2b). Los 11 renglones son el
-         resultado CONGELADO de invocationPlan("web", {}) (artifacts-core.js): el
-         canal por defecto que la SSG sirve estático es 'web' (mismo canal que
-         SURFACES llama 'http' — ver el comentario de invocationPlan en
-         artifacts-core.js), con el wiring por defecto del host de stock
-         (rateLimiter/dispatcher/ruleProvider ausentes). kind/role/presence son
-         códigos neutros (idénticos a los que emite invocationPlan/RUNTIME_STAGES);
-         label/source son la prosa {es,en}. El toggle de canal (coa/MCP/POST)
-         vuelve a llamar invocationPlan(channel, wiring) del lado del cliente y
-         sólo repinta lo que cambió — con este wiring fijo, únicamente el source
-         de "authorize" varía por canal (ver CHANNEL_POLICY); el resto se
-         mantiene, y el driver lo recorre genérico por si eso cambia. */
+      /* Tab B — Plan de invocación (ADR#13 mirror, P2b + hardening post-P2b).
+         Los 11 renglones YA NO viven acá congelados: gen/gallery.mjs llama a
+         invocationPlan("web", DEFAULT_WIRING) en build-time (artifacts-core.js)
+         y computa las filas desde esa salida real — así el HTML servido ES la
+         computación, no una copia que pueda derivar en silencio (ADR#13:
+         "inspection must describe what the runtime actually executes, not a
+         parallel model"). El canal por defecto es 'web' (mismo canal que
+         SURFACES llama 'http'); el wiring por defecto es el del host de stock
+         (rateLimiter/dispatcher/ruleProvider ausentes). El toggle de canal
+         (coa/MCP/POST) vuelve a llamar invocationPlan(channel, wiring) del lado
+         del cliente con la MISMA función — un solo cómputo, dos runtimes. Lo
+         que SÍ sigue acá: los labels de presentación (roleLabels/
+         presenceLabels/presenceGloss/tableAria/tableHeaders/channelLabel) —
+         prosa {es,en} pura, sin duplicar ningún dato que invocationPlan ya
+         calcula. `artifacts/index.html` (shell dev hand-mantenido, no
+         generado) sigue las mismas 11 filas a mano; tests/site-contract.
+         test.mjs trae un drift-guard que las compara byte a byte contra
+         invocationPlan('web', DEFAULT_WIRING) para que ese único punto de
+         fricción no pueda derivar en silencio. */
       plan: {
         tableAria: { es: "Plan de invocación de once pasos", en: "Eleven-step invocation plan" },
         tableHeaders: {
@@ -471,86 +478,9 @@ export const GALLERY = {
           outcome: { es: "Resultado", en: "Outcome" },
         },
         channelLabel: { es: "Canal de invocación", en: "Invocation channel" },
-        steps: [
-          {
-            kind: "resolve", role: "guard", presence: "active",
-            label: { es: "Resolver", en: "Resolve" },
-            source: { es: "búsqueda en el registry", en: "registry lookup" },
-          },
-          {
-            kind: "validate", role: "guard", presence: "active",
-            label: { es: "Validar", en: "Validate" },
-            source: { es: "el tool declara inputSchema", en: "tool declares inputSchema" },
-          },
-          {
-            kind: "clamp", role: "transform", presence: "skipped",
-            label: { es: "Acotar", en: "Clamp" },
-            source: { es: "el tool no declara clamps", en: "tool declares no clamps" },
-          },
-          {
-            kind: "authorize", role: "guard", presence: "active",
-            label: { es: "Autorizar", en: "Authorize" },
-            source: {
-              es: "canal 'web': require_auth=true, allow_all=false; tool sin scopes declarados; DB rules: skipped (no provider)",
-              en: "channel 'web': require_auth=true, allow_all=false; tool declares no scopes; DB rules: skipped (no provider)",
-            },
-          },
-          {
-            kind: "rate-limit", role: "guard", presence: "skipped",
-            label: { es: "Rate limit", en: "Rate limit" },
-            source: {
-              es: "wiring del host: rateLimiter ausente; costo mutating?5:1 (mutating=false → costo 1)",
-              en: "host wiring: rateLimiter absent; cost mutating?5:1 (mutating=false → cost 1)",
-            },
-          },
-          {
-            kind: "plan-mode", role: "branch", presence: "conditional",
-            label: { es: "Modo plan", en: "Plan mode" },
-            source: {
-              es: "dispara si ctx.mode es 'plan'; valor actual: execute",
-              en: "fires if ctx.mode is 'plan'; current value: execute",
-            },
-          },
-          {
-            kind: "confirm", role: "branch", presence: "dormant",
-            label: { es: "Confirmar", en: "Confirm" },
-            source: {
-              es: "ni tool.requiresConfirmation ni la política del canal exigen confirmación para este tool",
-              en: "neither tool.requiresConfirmation nor the channel policy require confirmation for this tool",
-            },
-          },
-          {
-            kind: "emit-executing", role: "hook", presence: "skipped",
-            label: { es: "Emitir executing", en: "Emit executing" },
-            source: {
-              es: "wiring del host: dispatcher ausente (ancla + cache/veto)",
-              en: "host wiring: dispatcher absent (anchor + cache/veto)",
-            },
-          },
-          {
-            kind: "execute", role: "execution", presence: "active",
-            label: { es: "Ejecutar", en: "Execute" },
-            source: { es: "callback; se inyecta _ctx", en: "callback; _ctx injected" },
-          },
-          {
-            kind: "contain-exception", role: "boundary", presence: "active",
-            label: { es: "Contener excepción", en: "Contain exception" },
-            source: {
-              es: "envuelve execute; \\Throwable → INTERNAL_ERROR",
-              en: "wraps execute; \\Throwable → INTERNAL_ERROR",
-            },
-          },
-          {
-            kind: "audit", role: "outcome", presence: "active",
-            label: { es: "Auditar", en: "Audit" },
-            source: {
-              es: "audita: validate-fail, authz-fail, rate-limit, cache-hit, execute-éxito, execute-fallo; "
-                + "NO audita: resolve-miss, plan-mode, confirm, veto",
-              en: "audits: validate-fail, authz-fail, rate-limit, cache-hit, execute-success, execute-failure; "
-                + "does NOT audit: resolve-miss, plan-mode, confirm, veto",
-            },
-          },
-        ],
+        // steps ya NO vive acá — ver el comentario de arriba. gen/gallery.mjs
+        // computa las 11 filas llamando a invocationPlan("web", DEFAULT_WIRING)
+        // (artifacts-core.js) en build-time.
       },
       lesson: {
         title: { es: "La garantía se lee por rama", en: "The guarantee reads per branch" },

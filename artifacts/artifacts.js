@@ -8,6 +8,7 @@ const {
   MODULE_CATALOG,
   RUNTIME_STAGES,
   SURFACES,
+  DEFAULT_WIRING,
   availableCapabilities,
   conceptualPipelineResult,
   coupleCheck,
@@ -855,18 +856,20 @@ runtimeTabs.forEach((tab, index) => {
   });
 });
 
-/* Tab B: invocation plan (ADR#13 mirror). `wiring` stays the shipped default —
-   the honest stock-registry state (no rate limiter, no dispatcher, no rule
-   provider wired). Only `channel` toggles; SURFACES calls the same channel
-   PolicyGate calls 'web' by its own id 'http' (see invocationPlan's comment
-   in artifacts-core.js), hence the id→channel map below. Presence label/badge
-   duplicate gallery.content.mjs's plan.presenceLabels/plan.roleLabels (SSG
-   prose) on purpose — same split as gateChip/runtimeResultTitle above: the
-   core stays neutral (codes only), this layer is the only one that knows
-   language. Only "authorize"'s source actually varies with this fixed wiring
-   (see CHANNEL_POLICY in artifacts-core.js) — the loop stays generic over all
-   11 steps anyway, so it keeps working if that ever changes. */
-const PLAN_WIRING = Object.freeze({ rateLimiter: false, dispatcher: false, ruleProvider: false });
+/* Tab B: invocation plan (ADR#13 mirror). `wiring` stays DEFAULT_WIRING (same
+   constant the SSG uses to compute the default web/POST row at build time,
+   artifacts-core.js — no frozen snapshot on either side anymore) — the honest
+   stock-registry state (no rate limiter, no dispatcher, no rule provider
+   wired). Only `channel` toggles; SURFACES calls
+   the same channel PolicyGate calls 'web' by its own id 'http' (see
+   invocationPlan's comment in artifacts-core.js), hence the id→channel map
+   below. Presence label/badge duplicate gallery.content.mjs's
+   plan.presenceLabels/plan.roleLabels (SSG prose) on purpose — same split as
+   gateChip/runtimeResultTitle above: the core stays neutral (codes only), this
+   layer is the only one that knows language. Only "authorize"'s source
+   actually varies with this fixed wiring (see CHANNEL_POLICY in
+   artifacts-core.js) — the loop stays generic over all 11 steps anyway, so it
+   keeps working if that ever changes. */
 const PLAN_CHANNEL_OF_SURFACE = { cli: "cli", mcp: "mcp", http: "web" };
 const PLAN_PRESENCE_BADGE = { active: "mui-badge--success", conditional: "mui-badge--warning", dormant: "mui-badge--secondary", skipped: "" };
 const PLAN_PRESENCE_LABEL = {
@@ -876,7 +879,7 @@ const PLAN_PRESENCE_LABEL = {
 const runtimePlanRoot = $("#runtime-panel-plan");
 
 function renderInvocationPlan(channel) {
-  const plan = invocationPlan(channel, PLAN_WIRING);
+  const plan = invocationPlan(channel, DEFAULT_WIRING);
   for (const step of plan.steps) {
     const row = $(`[data-step="${step.kind}"]`, runtimePlanRoot);
     if (!row) continue;

@@ -252,8 +252,13 @@ test("gallery es-fidelity: every es leaf appears verbatim in artifacts/index.htm
      P2b (Plan de invocación): 429 → 473 (+44 hojas es de la pestaña "Plan de
      invocación" del runtime — tabsAria/tabs (3), plan.tableAria/tableHeaders
      (5), presenceLabels/presenceGloss (6), roleLabels (7), channelLabel (1),
-     y los 11 pasos × {label,source} (22)). */
-  assert.equal(leaves.length, 473, `GALLERY es-leaf count drifted: found ${leaves.length}`);
+     y los 11 pasos × {label,source} (22)).
+     Hardening post-P2b (ADR#13 aplicado al artifact mismo): 473 → 451 (-22 —
+     plan.steps se ELIMINÓ de GALLERY: ya no es un snapshot congelado a mano,
+     gen/gallery.mjs computa las 11 filas llamando a invocationPlan("web",
+     DEFAULT_WIRING) en build-time. Ver tests/site-contract.test.mjs para el
+     drift-guard que reemplaza esta cobertura de fidelidad). */
+  assert.equal(leaves.length, 451, `GALLERY es-leaf count drifted: found ${leaves.length}`);
   /* Task 2 (Almácigo) des-scopeó la exclusión de frontera: al promoverlo a
      artifacts[9] su <section> se autoró en artifacts/index.html (además de
      emitirse por el SSG), así que sus hojas es aparecen verbatim como las de los
