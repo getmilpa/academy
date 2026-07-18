@@ -231,6 +231,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/plan-invocacion/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/procedencia-firmada/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/procedencia-firmada/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/procedencia-firmada/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/procedencia-firmada/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/procedencia-firmada/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/procedencia-firmada/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/learn/disena/capas-visuales/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/capas-visuales/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/capas-visuales/"/>

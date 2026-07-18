@@ -31,6 +31,7 @@ Milpa es un framework de PHP cuyo rasgo distintivo es que abre pipelines plugabl
 - [El contrato visual se ejecuta](https://academy.milpa.lat/learn/arquitectura/contrato-ejecutable/): Arquitectura auditable
 - [El plan antes del disco](https://academy.milpa.lat/learn/arquitectura/plan-disco/): Arquitectura auditable
 - [La ley visible del pipeline de tools](https://academy.milpa.lat/learn/arquitectura/plan-invocacion/): Arquitectura auditable
+- [Procedencia firmada: quién puede escribir la ley](https://academy.milpa.lat/learn/arquitectura/procedencia-firmada/): Arquitectura auditable
 - [Las seis capas](https://academy.milpa.lat/learn/disena/capas-visuales/): Diseña con Milpa
 - [Design da lenguaje; Academy da conducta](https://academy.milpa.lat/learn/disena/composicion-app/): Diseña con Milpa
 - [De candidato local a patrón público](https://academy.milpa.lat/learn/disena/promocion-patron/): Diseña con Milpa

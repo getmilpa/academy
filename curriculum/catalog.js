@@ -433,6 +433,28 @@
           ],
           sources: [{ label: { es: "Milpa Tool Runtime", en: "Milpa Tool Runtime" }, href: "https://github.com/getmilpa/tool-runtime" }],
           lastVerified: "2026-07-16"
+        },
+        {
+          id: "procedencia-firmada",
+          title: { es: "Procedencia firmada: quién puede escribir la ley", en: "Signed provenance: who may write the law" },
+          durationMinutes: 25,
+          objectives: [
+            { es: "Distinguir autenticidad (quién firmó la ley) de integridad (los hashes cuadran)", en: "Tell authenticity (who signed the law) apart from integrity (the hashes match)" },
+            { es: "Reconocer el fail-open de un self-check que confía su raíz en el working tree, y anclarlo a la línea committeada", en: "Spot the fail-open of a self-check that roots its trust in the working tree, and anchor it to the committed line" }
+          ],
+          understand: [
+            { es: "Integridad no es autenticidad. La integridad prueba que los hashes son consistentes entre sí — pero un actor con escritura recomputa los hashes y pasa. La autenticidad prueba PROCEDENCIA: la ley la escribió alguien con autoridad para escribirla, y eso se demuestra con la FIRMA de una autoridad desplegada, no con contenido recomputable. Se confía la identidad DURABLE de la autoridad (su llave primaria/master), no un subkey de firma que rota.", en: "Integrity isn't authenticity. Integrity proves the hashes are self-consistent — but an actor with write access recomputes the hashes and passes. Authenticity proves PROVENANCE: the law was written by someone with the authority to write it, and that is shown by the SIGNATURE of a deployed authority, not by recomputable content. You trust the authority's DURABLE identity (its primary/master key), not a rotating sign subkey." },
+            { es: "El fail-open del self-check: una compuerta que lee su raíz de confianza — la lista de autoridad y la frontera desde la que verifica — del WORKING TREE puede ser neutralizada por el mismísimo commit bajo revisión, que reescribe la lista para incluirse o vacía el rango que se verifica. El arreglo es anclar a la línea COMMITTEADA (leer la raíz de una referencia confiable, no del árbol de trabajo mutable) y validar que la frontera sea un ancestro real: el commit juzgado no puede mover el suelo sobre el que se le juzga.", en: "The self-check fail-open: a gate that reads its trust root — the authority list and the boundary it verifies from — from the WORKING TREE can be neutralized by the very commit under review, which rewrites the list to include itself or empties the range being verified. The fix is to anchor to the COMMITTED line (read the root from a trusted reference, not the mutable working tree) and to validate the boundary is a real ancestor: the commit being judged can't move the ground it's judged on." },
+            { es: "Un self-check no tiene raíz de confianza fuera de banda: lee todo del repo que revisa. Por eso el PRODUCTOR (la compuerta del propio repo) es fail-closed ENRAIZADO EN su línea confiable — caza manipulación del working tree y de ramas de propuesta, pero un actor que YA controla esa línea puede reescribir la raíz. El muro ABSOLUTO es el CONSUMIDOR, cuya raíz de confianza vive FUERA del workspace, inalcanzable para los commits que autoriza. Nombra el alcance con honestidad: no declares absoluto donde solo tienes enraizado.", en: "A self-check has no out-of-band trust root: it reads everything from the repo it inspects. So the PRODUCER (the repo's own gate) is fail-closed ROOTED AT its trusted line — it catches working-tree and proposal-branch tampering, but an actor who ALREADY controls that line can rewrite the root. The ABSOLUTE wall is the CONSUMER, whose trust root lives OUTSIDE the workspace, unreachable by the commits it authorizes. Name the scope honestly: don't claim absolute where you only have rooted." }
+          ],
+          see: { label: { es: "Ver la verdad anclada", en: "See the anchored truth" }, href: "../artifacts/#atlas", note: { es: "El atlas muestra que la ley que gobierna es el contrato que corre, no el que quedó escrito en el árbol de trabajo: la misma disciplina que hace a una compuerta de autenticidad leer la línea committeada en vez del working tree.", en: "The atlas shows that the governing law is the contract that runs, not the one left written in the working tree: the same discipline that makes an authenticity gate read the committed line instead of the working tree." } },
+          do: { label: { es: "Verificar la procedencia de un commit", en: "Verify a commit's provenance" }, href: "https://github.com/getmilpa/governance", commands: ["git verify-commit HEAD", "git show -s --format=%GP HEAD"] },
+          verify: [
+            { es: "Explica por qué recomputar los hashes prueba integridad pero no autenticidad.", en: "Explain why recomputing the hashes proves integrity but not authenticity." },
+            { es: "Di qué gana un self-check al leer su raíz de confianza de la línea committeada en vez del working tree — y qué sigue sin poder garantizar.", en: "Say what a self-check gains by reading its trust root from the committed line instead of the working tree — and what it still can't guarantee." }
+          ],
+          sources: [{ label: { es: "Milpa Governance — el motor de gobernanza-como-contrato", en: "Milpa Governance — the governance-as-contract engine" }, href: "https://github.com/getmilpa/governance" }],
+          lastVerified: "2026-07-18"
         }
       ]
     },

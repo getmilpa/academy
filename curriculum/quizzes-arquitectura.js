@@ -523,6 +523,62 @@
         }
       ]
     },
+    "arquitectura/procedencia-firmada": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-procedencia-firmada-01",
+          prompt: {
+            es: "Un actor con escritura sobre los archivos de gobernanza reescribe el contrato y recomputa todos los `sha256` para que queden consistentes entre sí. ¿Qué verificación lo caza y por qué?",
+            en: "An actor with write access to the governance files rewrites the contract and recomputes every `sha256` so they stay self-consistent. Which check catches them, and why?"
+          },
+          options: [
+            { id: "a", text: { es: "La integridad: los hashes recomputados no cuadrarán entre sí.", en: "Integrity: the recomputed hashes won't be self-consistent." } },
+            { id: "b", text: { es: "La autenticidad: la firma de una autoridad desplegada prueba QUIÉN escribió la ley; recomputar hashes solo prueba consistencia interna, que el atacante ya satisfizo.", en: "Authenticity: the signature of a deployed authority proves WHO wrote the law; recomputing hashes only proves internal consistency, which the attacker already satisfied." } },
+            { id: "c", text: { es: "Ninguna: si los hashes son consistentes, el contrato es confiable.", en: "Neither: if the hashes are consistent, the contract is trustworthy." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "La integridad y la autenticidad responden preguntas distintas. La integridad prueba que el contenido es consistente consigo mismo — algo que cualquiera con escritura recomputa. La autenticidad prueba PROCEDENCIA: que lo firmó alguien con autoridad, vía una firma que el atacante no puede producir. Sin la firma, un contrato íntegro puede ser una mentira coherente.",
+            en: "Integrity and authenticity answer different questions. Integrity proves the content is consistent with itself — something anyone with write access recomputes. Authenticity proves PROVENANCE: that someone with authority signed it, via a signature the attacker can't produce. Without the signature, an integral contract can be a coherent lie."
+          }
+        },
+        {
+          id: "arquitectura-procedencia-firmada-02",
+          prompt: {
+            es: "Una compuerta de autenticidad lee su lista de autoridad y su frontera del WORKING TREE. Un solo commit sin firma se agrega a la lista de autoridad (o fija la frontera en HEAD, vaciando el rango que se verifica) y pasa. ¿Qué cierra este fail-open?",
+            en: "An authenticity gate reads its authority list and its boundary from the WORKING TREE. A single unsigned commit adds itself to the authority list (or sets the boundary to HEAD, emptying the verified range) and passes. What closes this fail-open?"
+          },
+          options: [
+            { id: "a", text: { es: "Recomputar los hashes más seguido para cazar la deriva antes.", en: "Recompute the hashes more often to catch drift sooner." } },
+            { id: "b", text: { es: "Anclar la compuerta a la línea COMMITTEADA — leer la lista de autoridad y la frontera de una referencia confiable como `main`, no del working tree — y validar que la frontera sea ancestro estricto de HEAD, para que el commit juzgado no pueda mover su propio suelo.", en: "Anchor the gate to the COMMITTED line — read the authority list and boundary from a trusted reference like `main`, not the working tree — and validate the boundary is a strict ancestor of HEAD, so the commit under review can't move its own ground." } },
+            { id: "c", text: { es: "Firmar los archivos del working tree antes de correr la compuerta.", en: "Sign the working-tree files before running the gate." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "El fail-open nace de confiar el suelo que el commit bajo revisión puede reescribir. Al leer la raíz de confianza de la línea committeada (no del working tree mutable) y exigir que la frontera sea un ancestro real, el commit juzgado queda dentro del rango que se verifica y ya no puede excluirse ni autoautorizarse.",
+            en: "The fail-open comes from trusting ground the commit under review can rewrite. By reading the trust root from the committed line (not the mutable working tree) and requiring the boundary to be a real ancestor, the commit being judged stays inside the verified range and can no longer exclude or self-authorize itself."
+          }
+        },
+        {
+          id: "arquitectura-procedencia-firmada-03",
+          prompt: {
+            es: "Ya anclada, la compuerta del propio repo (el productor) todavía pasa para un atacante que YA controla la línea confiable que lee. ¿Está rota, y dónde vive entonces la garantía absoluta?",
+            en: "Even anchored, the repo's own gate (the producer) still passes for an attacker who ALREADY controls the trusted line it reads. Is it broken, and where does the absolute guarantee live?"
+          },
+          options: [
+            { id: "a", text: { es: "Está rota: un self-check debería ser absoluto.", en: "It's broken: a self-check should be absolute." } },
+            { id: "b", text: { es: "Es el límite irreducible de un self-check: no tiene raíz fuera de banda, así que es fail-closed enraizado en su línea (caza tamper de working-tree y de rama). El muro absoluto es el CONSUMIDOR, cuya raíz vive FUERA del workspace, inalcanzable para los commits que autoriza.", en: "It's the irreducible limit of a self-check: it has no out-of-band root, so it's fail-closed rooted at its line (catching working-tree and branch tampering). The absolute wall is the CONSUMER, whose trust root lives OUTSIDE the workspace, unreachable by the commits it authorizes." } },
+            { id: "c", text: { es: "No hay garantía absoluta posible: la procedencia no se puede hacer cumplir.", en: "No absolute guarantee is possible: provenance can't be enforced." } }
+          ],
+          answer: "b",
+          explanation: {
+            es: "Un self-check lee todo del repo que revisa, así que no puede resistir a quien ya controla ese repo — y decirlo es honestidad, no derrota. La garantía absoluta la da el consumidor, que pinea su raíz de confianza fuera del workspace: los commits que autoriza no pueden tocarla. Productor enraizado, consumidor absoluto.",
+            en: "A self-check reads everything from the repo it inspects, so it can't resist someone who already controls that repo — and saying so is honesty, not defeat. The absolute guarantee comes from the consumer, which pins its trust root outside the workspace: the commits it authorizes can't touch it. Producer rooted, consumer absolute."
+          }
+        }
+      ]
+    },
     "disena/capas-visuales": {
       passScore: 3,
       questions: [

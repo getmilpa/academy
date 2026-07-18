@@ -41,7 +41,7 @@ test("el catálogo público tiene cuatro rutas completas y IDs estables", () => 
       assert.match(unit.lastVerified, /^\d{4}-\d{2}-\d{2}$/);
     }
   }
-  assert.equal(unitKeys.size, 20);
+  assert.equal(unitKeys.size, 21);
 });
 
 test("las prerrequisitos forman un grafo válido y acíclico", () => {
