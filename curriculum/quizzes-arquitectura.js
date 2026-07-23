@@ -746,6 +746,118 @@
           }
         }
       ]
+    },
+    "arquitectura/admision-en-el-edge": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-admision-en-el-edge-01",
+          prompt: {
+            es: "Un servicio en modo worker recibe el triple de su capacidad. El gate de admisión dentro de la app reporta CERO rechazos, pero los clientes ven latencias de 3–5 s. ¿Qué explica mejor el cero rechazos?",
+            en: "A service in worker mode receives triple its capacity. The in-app admission gate reports ZERO rejections, but clients see 3–5 s latencies. What best explains the zero rejections?"
+          },
+          options: [
+            { id: "a", text: { es: "La cola de sobrecarga se forma upstream, en el servidor, esperando un worker libre; el gate vive downstream y nunca ve ese exceso.", en: "The overload queue forms upstream, at the server, waiting for a free worker; the gate lives downstream and never sees that excess." } },
+            { id: "b", text: { es: "El gate está deshabilitado; en modo worker el rate limit no aplica.", en: "The gate is disabled; in worker mode the rate limit doesn't apply." } },
+            { id: "c", text: { es: "La base de datos absorbe el exceso sin rechazar, por eso el gate no necesita actuar.", en: "The database absorbs the excess without rejecting, so the gate doesn't need to act." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "El backpressure solo lo puede dar quien ve la cola. En modo worker la cola es upstream (en el servidor); el gate, dentro del worker, solo ve lo ya admitido. Por eso registra cero rechazos mientras la latencia trepa: no está roto, está en el lugar equivocado para esa función.",
+            en: "Backpressure can only come from whoever sees the queue. In worker mode the queue is upstream (at the server); the gate, inside the worker, only sees what was already admitted. That's why it records zero rejections while latency climbs: it isn't broken, it's in the wrong place for that function."
+          }
+        },
+        {
+          id: "arquitectura-admision-en-el-edge-02",
+          prompt: {
+            es: "Vas a añadir backpressure a un backend con pool de workers sin dejar de proteger las conexiones a la base de datos. ¿Qué arreglo respeta ambas funciones?",
+            en: "You're adding backpressure to a worker-pool backend without dropping database-connection protection. Which arrangement respects both functions?"
+          },
+          options: [
+            { id: "a", text: { es: "Un rechazo rápido (503/429 + Retry-After) en el reverse-proxy del edge, y mantener el cap de in-flight de la app para acotar las conexiones de lo que ya pasó el edge.", en: "A fast reject (503/429 + Retry-After) at the edge reverse-proxy, and keep the app's in-flight cap to bound connections for what already passed the edge." } },
+            { id: "b", text: { es: "Subir el cap de in-flight del gate de la app hasta que empiece a rechazar bajo carga.", en: "Raise the app gate's in-flight cap until it starts rejecting under load." } },
+            { id: "c", text: { es: "Quitar el gate de la app y confiar solo en el edge, que ya rechaza el exceso.", en: "Remove the app gate and rely only on the edge, which already rejects the excess." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Son dos funciones en dos lugares. El edge da backpressure porque ve la cola; el gate de la app protege el pool de conexiones de un pico ya admitido. Subir el cap no arregla el backpressure (la cola sigue upstream), y quitar el gate deja al motor sin protección: pasado el edge, una ráfaga admitida vuelve a chocar contra max_connections.",
+            en: "Two functions in two places. The edge gives backpressure because it sees the queue; the app gate protects the connection pool from an already-admitted spike. Raising the cap doesn't fix backpressure (the queue is still upstream), and removing the gate leaves the engine unprotected: past the edge, an admitted burst hits max_connections again."
+          }
+        },
+        {
+          id: "arquitectura-admision-en-el-edge-03",
+          prompt: {
+            es: "Un equipo llama a su gate de admisión de la aplicación 'nuestro degradado gracioso'. Tras medirlo bajo overload, ¿cuál es la corrección más precisa?",
+            en: "A team calls its in-app admission gate 'our graceful degradation'. After measuring it under overload, what's the most precise correction?"
+          },
+          options: [
+            { id: "a", text: { es: "El gate de la app es protección del recurso (acota las conexiones a la BD); el degradado gracioso —el backpressure con Retry-After— vive en el edge, que ve la cola.", en: "The app gate is resource protection (it bounds DB connections); graceful degradation —the backpressure with Retry-After— lives at the edge, which sees the queue." } },
+            { id: "b", text: { es: "El gate de la app ES el degradado gracioso; solo necesita un TTL más largo.", en: "The app gate IS graceful degradation; it just needs a longer TTL." } },
+            { id: "c", text: { es: "Degradado gracioso y protección del recurso son el mismo mecanismo con dos nombres.", en: "Graceful degradation and resource protection are the same mechanism under two names." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Confundir las dos funciones es el error de fondo. El gate de la app nunca fue el degradado gracioso: es la barrera que protege el pool de conexiones. El degradado gracioso es dar backpressure al cliente, y eso exige ver la cola —el edge. Nombrar cada función por lo que hace evita pedirle a una capa lo que solo la otra puede dar.",
+            en: "Conflating the two functions is the underlying error. The app gate never was graceful degradation: it's the barrier that protects the connection pool. Graceful degradation is giving the client backpressure, and that requires seeing the queue —the edge. Naming each function for what it does keeps you from asking one layer for what only the other can give."
+          }
+        }
+      ]
+    },
+    "arquitectura/evidencia-bajo-carga": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-evidencia-bajo-carga-01",
+          prompt: {
+            es: "El contador de ocupación de un gate pasa todos sus tests unitarios y un benchmark de 20 s. En producción, tras un par de minutos de carga sostenida, la base de datos se satura de conexiones. ¿Qué condición del benchmark habría revelado el defecto?",
+            en: "A gate's occupancy counter passes all its unit tests and a 20 s benchmark. In production, after a couple of minutes of sustained load, the database saturates with connections. Which benchmark condition would have revealed the defect?"
+          },
+          options: [
+            { id: "a", text: { es: "Sostener la carga por encima del TTL de seguridad del contador: el TTL fijo lo resetea a mitad de vuelo y readmite de más, algo que solo emerge pasado ese umbral de tiempo.", en: "Sustaining load beyond the counter's safety TTL: the fixed TTL resets it mid-flight and over-admits, which only emerges past that time threshold." } },
+            { id: "b", text: { es: "Aumentar el número de aserciones del test unitario del contador.", en: "Increasing the number of assertions in the counter's unit test." } },
+            { id: "c", text: { es: "Correr el mismo benchmark de 20 s más veces para reducir el ruido.", en: "Running the same 20 s benchmark more times to reduce noise." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "El defecto es temporal: el TTL expira con slots en vuelo y el contador recuenta desde cero. Un test de lógica y un benchmark corto nunca cruzan el TTL, así que no pueden verlo. Más aserciones o más repeticiones cortas no ayudan; solo la carga sostenida por encima del umbral lo exhibe.",
+            en: "The defect is temporal: the TTL expires with slots in flight and the counter recounts from zero. A logic test and a short benchmark never cross the TTL, so they can't see it. More assertions or more short repetitions don't help; only load sustained beyond the threshold exhibits it."
+          }
+        },
+        {
+          id: "arquitectura-evidencia-bajo-carga-02",
+          prompt: {
+            es: "Bajo carga, la base de datos rechaza conexiones aunque el cap de in-flight del gate es menor que max_connections. Al revisar el código, la resolución de tenant —una consulta a la BD— corre ANTES del gate. ¿Cuál es el diagnóstico?",
+            en: "Under load, the database refuses connections even though the gate's in-flight cap is below max_connections. Reviewing the code, tenant resolution —a DB query— runs BEFORE the gate. What's the diagnosis?"
+          },
+          options: [
+            { id: "a", text: { es: "El gate no puede proteger un recurso que la petición ya tocó: la consulta de tenant abre conexión antes de la admisión, así que la carga golpea la BD sin límite.", en: "The gate can't protect a resource the request already touched: the tenant query opens a connection before admission, so load hits the DB unbounded." } },
+            { id: "b", text: { es: "El cap de in-flight está mal calculado; hay que subirlo por encima de max_connections.", en: "The in-flight cap is miscalculated; it must be raised above max_connections." } },
+            { id: "c", text: { es: "La resolución de tenant no usa conexiones; el problema tiene que estar en otro lado.", en: "Tenant resolution doesn't use connections; the problem must be elsewhere." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "La admisión debe preceder a TODO trabajo que consuma el recurso escaso. Si una consulta corre antes del gate, cada petición abre conexión antes de que el gate opine, y el cap deja de acotar el uso real. El arreglo es mover la admisión antes del primer acceso a la BD (y liberar el slot pase lo que pase).",
+            en: "Admission must precede ALL work that consumes the scarce resource. If a query runs before the gate, every request opens a connection before the gate weighs in, and the cap stops bounding real usage. The fix is to move admission before the first DB access (and release the slot no matter what)."
+          }
+        },
+        {
+          id: "arquitectura-evidencia-bajo-carga-03",
+          prompt: {
+            es: "Un benchmark refuta la hipótesis de que 'la máquina de capacidad ya degrada gracioso'. ¿Cuál es la lectura correcta del resultado?",
+            en: "A benchmark refutes the hypothesis that 'the capacity machine already degrades gracefully'. What's the correct reading of the result?"
+          },
+          options: [
+            { id: "a", text: { es: "Es el valor del experimento: reveló un comportamiento que la hipótesis no explicaba. La herramienta de validación más útil es la que observa lo que el resto de las pruebas no puede.", en: "That's the value of the experiment: it revealed a behavior the hypothesis didn't explain. The most useful validation tool is the one that observes what the rest of the tests can't." } },
+            { id: "b", text: { es: "Es un fracaso del benchmark: si refuta la hipótesis, el diseño de la prueba estaba mal.", en: "It's a benchmark failure: if it refutes the hypothesis, the test design was wrong." } },
+            { id: "c", text: { es: "Hay que repetir el benchmark hasta que confirme la hipótesis original.", en: "You should rerun the benchmark until it confirms the original hypothesis." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Un experimento no existe para confirmar lo que ya creíamos, sino para revelar lo que aún no explicamos. Un resultado que refuta la hipótesis cómoda no es un fracaso de la prueba: es exactamente su valor. Repetir hasta 'confirmar' invierte el propósito de la evidencia.",
+            en: "An experiment doesn't exist to confirm what we already believed, but to reveal what we don't yet explain. A result that refutes the comfortable hypothesis isn't a test failure: it's precisely its value. Rerunning until it 'confirms' inverts the purpose of evidence."
+          }
+        }
+      ]
     }
   });
 })();

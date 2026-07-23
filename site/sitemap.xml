@@ -241,6 +241,26 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/procedencia-firmada/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/admision-en-el-edge/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/admision-en-el-edge/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/admision-en-el-edge/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/admision-en-el-edge/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/admision-en-el-edge/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/admision-en-el-edge/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/evidencia-bajo-carga/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/evidencia-bajo-carga/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/evidencia-bajo-carga/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/evidencia-bajo-carga/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/evidencia-bajo-carga/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/evidencia-bajo-carga/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/learn/disena/capas-visuales/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/capas-visuales/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/capas-visuales/"/>

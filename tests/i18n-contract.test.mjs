@@ -474,7 +474,7 @@ test("learn index (es/en): lang, canonical, reciprocal hreflang, JSON-LD ItemLis
     assert.equal(ld.inLanguage, lang);
     assert.equal(ld.itemListElement.length, catalog.tracks.length);
     assert.ok((html.match(/ac-track-card/g) || []).length >= catalog.tracks.length);
-    assert.match(html, /id="globalProgress">0\/21</);
+    assert.match(html, /id="globalProgress">0\/23</);
     assert.match(html, /id="tracksTitle"/);
   }
   assert.match(learnIndexEs, /Rutas públicas/);
@@ -676,10 +676,11 @@ test("sitemap.xml lists the portal (home) as well as the atom, per language", ()
    P2c: el runtime standalone (site/runtime/, mismo patrón que el átomo) suma
    1 página nueva × 2 idiomas (48 → 50 URLs).
    ADR#13 (plan-invocacion): 1 lección nueva × 2 idiomas (50 → 52 URLs).
-   GOV-7 (procedencia-firmada): 1 lección nueva × 2 idiomas (52 → 54 URLs). */
-test("sitemap: exactly 54 URLs, incl. gallery + labs + runtime per language", () => {
+   GOV-7 (procedencia-firmada): 1 lección nueva × 2 idiomas (52 → 54 URLs).
+   Almácigo capacidad (admision-en-el-edge + evidencia-bajo-carga): 2 lecciones nuevas × 2 idiomas (54 → 58 URLs). */
+test("sitemap: exactly 58 URLs, incl. gallery + labs + runtime per language", () => {
   const sm = readFileSync(new URL("../site/sitemap.xml", import.meta.url), "utf8");
-  assert.equal((sm.match(/<loc>/g) || []).length, 54, "sitemap must list exactly 54 URLs (portal+atom+runtime+gallery+labs+21 learn, ×2 langs)");
+  assert.equal((sm.match(/<loc>/g) || []).length, 58, "sitemap must list exactly 58 URLs (portal+atom+runtime+gallery+labs+23 learn, ×2 langs)");
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/en\/artifacts\/<\/loc>/);
   assert.match(sm, /<loc>https:\/\/academy\.milpa\.lat\/labs\/<\/loc>/);
