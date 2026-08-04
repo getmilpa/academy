@@ -503,6 +503,29 @@
             { label: { es: "Radiografía del runtime (Academy)", en: "Runtime x-ray (Academy)" }, href: "../artifacts/#runtime" }
           ],
           lastVerified: "2026-07-23"
+        },
+        {
+          id: "cero-por-ceguera",
+          title: { es: "El cero que nadie midió", en: "The zero nobody measured" },
+          durationMinutes: 20,
+          objectives: [
+            { es: "Distinguir un cero medido de un cero producido por mirar donde el dato no puede estar.", en: "Tell a measured zero apart from a zero produced by looking where the datum cannot be." },
+            { es: "Usar el control como lo único que separa esas dos cosas, y auditar primero los datos que confirman lo que ya creías.", en: "Use the control as the only thing that separates those two, and audit first the data that confirm what you already believed." }
+          ],
+          understand: [
+            { es: "Un sistema midió tres veces si un sub-agente escribía su plan antes de trabajar, y las tres veces reportó cero. Sobre ese cero se escribió una conclusión cómoda: pedirle algo a un agente no cambia lo que hace. El cero era real como número y falso como hecho. El registro de herramientas era uno solo por proceso y descartaba por NOMBRE lo ya registrado; la herramienta de planear no es una herramienta cualquiera, es un cierre atado a una sesión concreta. El padre registraba la suya primero, la del hijo se descartaba como duplicada, y el hijo terminaba escribiendo en el cuaderno del padre. Las tres mediciones consultaron el cuaderno del hijo —un lugar donde ese hecho no podía aparecer— y leyeron vacío. Ninguna estaba mal escrita: estaban mal fundadas. Nadie preguntó si el archivo consultado es un lugar donde el dato pueda existir.", en: "A system measured three times whether a sub-agent wrote its plan before working, and all three times it reported zero. On that zero a comfortable conclusion was written: asking an agent for something doesn't change what it does. The zero was real as a number and false as a fact. The tool registry was a single one per process and discarded by NAME anything already registered; the planning tool isn't just any tool, it's a closure bound to one specific session. The parent registered its own first, the child's was discarded as a duplicate, and the child ended up writing in the parent's notebook. All three measurements consulted the child's notebook —a place where that fact could not appear— and read empty. None was badly written: they were badly grounded. Nobody asked whether the file being consulted is a place where the datum can exist." },
+            { es: "Lo que salvó la serie fue el control. En el brazo sin la petición, cero sub-agentes planearon — y ahí el cero sí era cero. La diferencia entre los brazos era real; lo que estaba mal era su nivel absoluto. Un control no sólo mide el efecto: es lo único que distingue un cero medido de un cero por ceguera, porque un instrumento ciego devuelve el mismo vacío en todos los brazos. Y queda el corolario que hace cara la lección: el número malo se sostuvo dos días porque CONFIRMABA lo que la casa ya creía. Se auditó el instrumento el día que un mecanismo nuevo no disparó, no el día que el dato llegó. Un dato que contradice tu hipótesis se revisa solo; uno que la confirma es el que menos se audita — y por eso es el que más caro sale.", en: "What saved the series was the control. In the arm without the request, zero sub-agents planned —and there the zero really was zero. The difference between arms was real; what was wrong was its absolute level. A control doesn't only measure the effect: it's the only thing that distinguishes a measured zero from a blind one, because a blind instrument returns the same emptiness in every arm. And the corollary that makes the lesson expensive: the bad number survived two days because it CONFIRMED what the house already believed. The instrument was audited the day a new mechanism failed to fire, not the day the datum arrived. A datum that contradicts your hypothesis gets reviewed on its own; the one that confirms it is the least audited —and therefore the costliest." }
+          ],
+          see: { label: { es: "Abrir la radiografía del runtime", en: "Open the runtime x-ray" }, href: "../artifacts/#runtime", note: { es: "La radiografía enseña que cada camino de una operación deja su propio rastro — y que preguntarle al rastro equivocado devuelve un vacío que se lee igual que un hecho.", en: "The x-ray shows each path of an operation leaves its own trace — and that asking the wrong trace returns an emptiness that reads exactly like a fact." } },
+          do: { label: { es: "Antes de creerle a un cero, escribe el caso que lo volvería distinto de cero y compruébalo", en: "Before believing a zero, write the case that would make it non-zero and check it" }, href: "https://github.com/getmilpa/framework", commands: [] },
+          verify: [
+            { es: "Toma una métrica de tu sistema que hoy reporte cero y di dónde tendría que aparecer el dato si fuera distinto de cero. Si no lo puedes señalar, la métrica no está midiendo.", en: "Take a metric in your system that reports zero today and say where the datum would appear if it weren't zero. If you can't point at it, the metric isn't measuring." },
+            { es: "Explica por qué un instrumento ciego es indistinguible de un efecto nulo sin un brazo de control.", en: "Explain why a blind instrument is indistinguishable from a null effect without a control arm." }
+          ],
+          sources: [
+            { label: { es: "Milpa Framework — el registro por sesión del sub-agente", en: "Milpa Framework — the sub-agent's per-session registry" }, href: "https://github.com/getmilpa/framework" }
+          ],
+          lastVerified: "2026-08-04"
         }
       ]
     },

@@ -261,6 +261,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/evidencia-bajo-carga/"/>
   </url>
   <url>
+    <loc>https://academy.milpa.lat/learn/arquitectura/cero-por-ceguera/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/cero-por-ceguera/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/cero-por-ceguera/"/>
+  </url>
+  <url>
+    <loc>https://academy.milpa.lat/en/learn/arquitectura/cero-por-ceguera/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/arquitectura/cero-por-ceguera/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/arquitectura/cero-por-ceguera/"/>
+  </url>
+  <url>
     <loc>https://academy.milpa.lat/learn/disena/capas-visuales/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://academy.milpa.lat/learn/disena/capas-visuales/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://academy.milpa.lat/en/learn/disena/capas-visuales/"/>

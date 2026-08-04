@@ -858,6 +858,62 @@
           }
         }
       ]
+    },
+    "arquitectura/cero-por-ceguera": {
+      passScore: 3,
+      questions: [
+        {
+          id: "arquitectura-cero-por-ceguera-01",
+          prompt: {
+            es: "Una métrica lleva tres mediciones seguidas reportando cero, y la conclusión que se escribió encima confirma lo que el equipo ya creía. ¿Cuál es la primera pregunta que hay que hacerle a ese cero?",
+            en: "A metric has reported zero three measurements in a row, and the conclusion written on top of it confirms what the team already believed. What is the first question to ask that zero?"
+          },
+          options: [
+            { id: "a", text: { es: "¿Dónde tendría que aparecer el dato si fuera distinto de cero? Si no se puede señalar el lugar, la métrica no está midiendo: está leyendo un vacío.", en: "Where would the datum appear if it were not zero? If you cannot point at the place, the metric is not measuring: it is reading an emptiness." } },
+            { id: "b", text: { es: "¿Cuántas corridas más hacen falta para que el cero sea estadísticamente significativo?", en: "How many more runs are needed for the zero to be statistically significant?" } },
+            { id: "c", text: { es: "Ninguna: tres mediciones coincidentes son evidencia suficiente.", en: "None: three matching measurements are evidence enough." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Un instrumento ciego devuelve cero con la misma cara que un efecto nulo, y repetirlo lo confirma sin agregar información. Lo que separa las dos cosas es poder señalar el lugar concreto donde el hecho aparecería. Tres mediciones sobre el mismo lugar equivocado son una sola medición equivocada, tres veces.",
+            en: "A blind instrument returns zero looking exactly like a null effect, and repeating it confirms without adding information. What separates the two is being able to point at the concrete place where the fact would appear. Three measurements over the same wrong place are one wrong measurement, three times."
+          }
+        },
+        {
+          id: "arquitectura-cero-por-ceguera-02",
+          prompt: {
+            es: "Un experimento con dos brazos usa un instrumento que resulta estar ciego: consulta un archivo donde el hecho no puede aparecer. ¿Qué parte del resultado sobrevive?",
+            en: "A two-arm experiment uses an instrument that turns out to be blind: it consults a file where the fact cannot appear. What part of the result survives?"
+          },
+          options: [
+            { id: "a", text: { es: "Nada del nivel absoluto, pero la comparación entre brazos puede sobrevivir si el brazo de control da un cero que sí es cero por otra vía.", en: "Nothing of the absolute level, but the between-arms comparison can survive if the control arm yields a zero that really is zero by another route." } },
+            { id: "b", text: { es: "Todo, porque los dos brazos usaron el mismo instrumento y el sesgo se cancela.", en: "Everything, because both arms used the same instrument and the bias cancels out." } },
+            { id: "c", text: { es: "Sólo el brazo de tratamiento, que es el que llevaba la intervención.", en: "Only the treatment arm, which is the one carrying the intervention." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "«El mismo sesgo en los dos brazos se cancela» es falso cuando el sesgo es ceguera: un instrumento ciego devuelve el mismo vacío en todos los brazos, así que borra la diferencia en vez de conservarla. El control es lo único que permite distinguir un cero medido de un cero por ceguera.",
+            en: "«The same bias in both arms cancels out» is false when the bias is blindness: a blind instrument returns the same emptiness in every arm, so it erases the difference instead of preserving it. The control is the only thing that lets you tell a measured zero from a blind one."
+          }
+        },
+        {
+          id: "arquitectura-cero-por-ceguera-03",
+          prompt: {
+            es: "De dos resultados que llegan hoy —uno contradice tu hipótesis y otro la confirma—, ¿cuál merece la auditoría del instrumento?",
+            en: "Of two results arriving today —one contradicts your hypothesis and one confirms it— which deserves the instrument audit?"
+          },
+          options: [
+            { id: "a", text: { es: "El que la confirma: el que contradice ya se va a revisar solo, porque incomoda. El que confirma se acepta sin mirar y por eso sale más caro cuando está mal.", en: "The one that confirms it: the contradicting one will get reviewed on its own, because it is uncomfortable. The confirming one is accepted unexamined, and that is why it costs more when wrong." } },
+            { id: "b", text: { es: "El que la contradice: un resultado inesperado es más probable que venga de un error.", en: "The contradicting one: an unexpected result is more likely to come from an error." } },
+            { id: "c", text: { es: "Los dos por igual, con el mismo procedimiento y el mismo tiempo.", en: "Both equally, with the same procedure and the same time." } }
+          ],
+          answer: "a",
+          explanation: {
+            es: "Auditar por igual suena justo y no lo es: el resultado incómodo YA recibe escrutinio por su cuenta, así que el esfuerzo marginal rinde más donde nadie iba a mirar. Un dato que confirma lo que ya creías es el que menos se audita — y por eso es el que más caro sale.",
+            en: "Auditing equally sounds fair and is not: the uncomfortable result ALREADY gets scrutiny on its own, so marginal effort pays off more where nobody was going to look. A datum that confirms what you already believed is the least audited — and therefore the costliest."
+          }
+        }
+      ]
     }
   });
 })();
