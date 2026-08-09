@@ -21,6 +21,11 @@
 > *Una lección que enseña un comando muerto no es documentación vieja: es una lección que
 > califica como correcta una respuesta falsa.*
 
+> **El rediseño y sus frames:** [`ROADMAP.md`](ROADMAP.md) — apunta a las actas del greenhouse que
+> lo gobiernan, incluido el freno explícito contra construir un LMS antes de que exista la unidad
+> pedagógica.
+
+
 
 Repo hermano del framework y del design system (patrón D13: divergir para
 converger). Consume `@milpa/design` **publicado, por versión** (CDN pinned) —
