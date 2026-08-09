@@ -6,6 +6,22 @@
 > de webinar y **artifacts interactivos** para aprender arquitectura de
 > sistemas jugando, con los contratos de verdad.
 
+> [!WARNING]
+> **Estado, medido el 2026-08-09.** Esta academia se escribió **antes de que existiera
+> `milpa/framework`**, y el framework se movió debajo de ella. De los **14 comandos `coa` que
+> enseña, 12 ya no existen** —verificado corriéndolos contra una app instalada hoy— y todavía
+> nombra **25 veces** un paquete que Packagist marca como retirado.
+>
+> **No se está reparando: se está rediseñando**, junto con el roadmap nuevo que sí conoce a
+> `milpa/framework`. Repararla pieza por pieza sería pagar dos veces por lo mismo.
+>
+> Mientras tanto, la distinción que importa: **la arquitectura que explica sigue siendo válida —
+> los comandos concretos, no.** Verifícalos con `php bin/coa list` en tu propia app.
+>
+> *Una lección que enseña un comando muerto no es documentación vieja: es una lección que
+> califica como correcta una respuesta falsa.*
+
+
 Repo hermano del framework y del design system (patrón D13: divergir para
 converger). Consume `@milpa/design` **publicado, por versión** (CDN pinned) —
 cero build, cero dependencias de runtime.

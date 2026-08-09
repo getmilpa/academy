@@ -307,6 +307,10 @@ function renderPortalHero(lang, asset) {
         <p class="mui-section__kicker">${PORTAL.hero.kicker[lang]}</p>
         <h1 id="academyTitle">${PORTAL.hero.h1[lang]}</h1>
         <p class="ac-overview__lede">${PORTAL.hero.lede[lang]}</p>
+        <div class="mui-callout mui-callout--warning" role="note">
+          <span class="mui-callout__icon" aria-hidden="true">!</span>
+          <div class="mui-callout__content"><p class="mui-callout__body">${PORTAL.notice[lang]}</p></div>
+        </div>
         <div class="mui-callout mui-callout--tip ac-overview__mantra" role="note">
           <span class="mui-callout__icon" aria-hidden="true">✓</span>
           <div class="mui-callout__content"><p class="mui-callout__body">“${PORTAL.hero.thesis[lang]}”</p></div>

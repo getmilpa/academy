@@ -44,6 +44,28 @@ export const PORTAL = {
     statsAriaLabel: { es: "Resumen del currículo", en: "Curriculum summary" },
   },
 
+  /* AVISO DE ESTADO — medido, no decorativo (greenhouse docs/spec-fundacion.md).
+     Esta academia se escribió ANTES de que existiera `milpa/framework`, y el catálogo
+     de comandos se movió debajo de ella. Los números son de una medición real: se
+     corrieron los 14 comandos que enseña contra una app instalada hoy y 12 no existen.
+     Se declara en vez de repararse porque la academia entra a rediseño con el roadmap
+     nuevo — y una lección que enseña un comando muerto no es una doc vieja: es una
+     lección que califica como correcta una respuesta falsa. */
+  notice: {
+    es: "Esta academia se escribió antes de que existiera <code>milpa/framework</code>, y el "
+      + "framework se movió debajo de ella. <strong>Medido hoy: de los 14 comandos que enseña, "
+      + "12 ya no existen</strong>, y todavía nombra un paquete que Packagist marca como "
+      + "retirado. Está entrando a rediseño junto con el roadmap nuevo. Mientras tanto: "
+      + "<strong>la arquitectura que explica sigue siendo válida; los comandos concretos, no</strong> — "
+      + "verifícalos con <code>php bin/coa list</code> en tu app.",
+    en: "This academy was written before <code>milpa/framework</code> existed, and the framework "
+      + "moved underneath it. <strong>Measured today: of the 14 commands it teaches, 12 no longer "
+      + "exist</strong>, and it still names a package Packagist marks as abandoned. A redesign is "
+      + "starting alongside the new roadmap. Until then: <strong>the architecture it explains still "
+      + "holds; the concrete commands do not</strong> — check them with <code>php bin/coa list</code> "
+      + "in your own app.",
+  },
+
   hero: {
     kicker: {
       es: "Currículo público · arquitectura verificable",
