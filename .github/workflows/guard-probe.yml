@@ -1,0 +1,30 @@
+name: Guard probe
+
+# Temporary. Creates a tag using the workflow's own GITHUB_TOKEN so a ruleset can be
+# measured against an automatic publisher rather than a human one.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create the tag with GITHUB_TOKEN
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set +e
+          out=$(gh api -X POST "repos/${{ github.repository }}/git/refs" \
+            -f ref="refs/tags/$TAG" -f sha="${{ github.sha }}" 2>&1)
+          code=$?
+          echo "exit=$code"
+          echo "$out"
+          exit 0
