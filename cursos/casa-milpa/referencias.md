@@ -1,3 +1,5 @@
+**Español** · [English](en/referencias.md)
+
 # Glosario y referencias del curso
 
 ## Vocabulario

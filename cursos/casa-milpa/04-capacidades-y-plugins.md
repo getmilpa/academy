@@ -1,3 +1,5 @@
+**Español** · [English](en/04-capacidades-y-plugins.md)
+
 # Hacer crecer la casa con capacidades y plugins
 
 **Resultado:** distinguirás código instalado, declarado, activo y expuesto, y adoptarás sólo lo necesario para el taller.

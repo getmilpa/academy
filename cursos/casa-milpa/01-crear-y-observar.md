@@ -1,3 +1,5 @@
+**Español** · [English](en/01-crear-y-observar.md)
+
 # Crear y observar una casa
 
 **Resultado:** tendrás una aplicación que arranca y sabrás preguntar por su estado antes de modificarla.

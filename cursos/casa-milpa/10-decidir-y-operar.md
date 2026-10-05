@@ -1,3 +1,5 @@
+**Español** · [English](en/10-decidir-y-operar.md)
+
 # Decidir y operar una casa que evoluciona
 
 **Resultado:** registrarás una decisión con límites de evidencia y distinguirás las actualizaciones de paquetes de las del template.

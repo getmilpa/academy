@@ -1,3 +1,5 @@
+**Español** · [English](en/00-entender-milpa.md)
+
 # Entender Milpa antes de instalar
 
 **Resultado:** podrás explicar para qué sirve una casa, cómo se relaciona con la familia Milpa y qué problemas debes resolver en tu dominio.

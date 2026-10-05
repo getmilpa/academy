@@ -1,3 +1,5 @@
+**Español** · [English](en/02-fundar.md)
+
 # Fundar la casa y declarar sus autoridades
 
 **Resultado:** tu casa tendrá dominio, objetivo, fronteras y un acta que permita leer la decisión de fundación.

@@ -1,3 +1,5 @@
+**Español** · [English](en/03-arquitectura.md)
+
 # Leer la arquitectura de una casa
 
 **Resultado:** podrás seguir una llamada y ubicar dónde declarar, implementar, autorizar y verificar su comportamiento.

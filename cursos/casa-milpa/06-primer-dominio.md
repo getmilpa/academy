@@ -1,3 +1,5 @@
+**Español** · [English](en/06-primer-dominio.md)
+
 # Implementar el primer dominio
 
 **Resultado:** operarás cuatro capacidades del taller desde la terminal, con estado durable y pruebas de sus reglas.

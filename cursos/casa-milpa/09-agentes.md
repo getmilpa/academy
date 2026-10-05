@@ -1,3 +1,5 @@
+**Español** · [English](en/09-agentes.md)
+
 # Incorporar un agente sin delegar la autoridad humana
 
 **Resultado:** entenderás qué puede delegarse, cómo se gobierna una sesión y cómo leer sus pausas. Ejecutar un modelo es una rama opcional del curso.
