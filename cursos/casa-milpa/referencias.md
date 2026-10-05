@@ -34,9 +34,9 @@ El curso se elaboró leyendo la documentación y el código de los repositorios 
 
 | Tema | Fuente |
 | --- | --- |
-| Punto de partida y límites de extensión | [README de framework](../../README.md) |
-| Versiones y cambios del template | [CHANGELOG de framework](../../CHANGELOG.md) |
-| Aportar documentación y preservar el arranque | [CONTRIBUTING](../../CONTRIBUTING.md) |
+| Punto de partida y límites de extensión | [README de framework](https://github.com/getmilpa/framework/blob/main/README.md) |
+| Versiones y cambios del template | [CHANGELOG de framework](https://github.com/getmilpa/framework/blob/main/CHANGELOG.md) |
+| Aportar documentación y preservar el arranque | [CONTRIBUTING](https://github.com/getmilpa/framework/blob/main/CONTRIBUTING.md) |
 | Relato de origen y filosofía de diseño | [Constitución del sistema de diseño](https://github.com/getmilpa/milpa-design/blob/main/DESIGN.md) |
 | Contratos comunes | [milpa/core](https://github.com/getmilpa/core/blob/main/README.md) |
 | Operación y perfil de efectos | [milpa/command](https://github.com/getmilpa/command/blob/main/README.md) |

@@ -4,10 +4,10 @@
 
 ## Instalar el ejemplo en tu casa
 
-Trabaja desde la raíz de `mi-taller`, con la casa fundada y `milpa/data` instalado. Necesitas tener disponible el directorio de este curso, por ejemplo desde el checkout de `milpa/framework` que estás leyendo. Establece su ruta real:
+Trabaja desde la raíz de `mi-taller`, con la casa fundada y `milpa/data` instalado. Necesitas tener disponible el directorio de este curso, por ejemplo desde un clon de `getmilpa/academy` (`git clone https://github.com/getmilpa/academy.git`) hecho fuera de `mi-taller`. Establece su ruta real:
 
 ```bash
-export CURSO_ROOT='/ruta/al/repositorio/framework/docs/curso'
+export CURSO_ROOT='/ruta/al/repositorio/academy/cursos/casa-milpa'
 test -f "$CURSO_ROOT/ejemplos/prestamos/src/Plugins/Prestamos/Prestamos.php"
 ```
 

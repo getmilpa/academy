@@ -33,7 +33,7 @@ Lee en orden la primera vez. Cada unidad incluye un punto de comprobación: si e
 
 ## Cómo usar los ejemplos
 
-El [ejemplo completo](ejemplos/prestamos/README.md) vive en `docs/curso/ejemplos/prestamos`. Es material didáctico: **no se carga al arrancar el template**. Lo copiarás explícitamente a la casa que crees en la unidad 06. Así el punto de partida de Milpa sigue siendo pequeño y el dominio pertenece a la casa del alumno.
+El [ejemplo completo](ejemplos/prestamos/README.md) vive en `cursos/casa-milpa/ejemplos/prestamos`, dentro del repositorio [`getmilpa/academy`](https://github.com/getmilpa/academy). Es material didáctico: **no se carga al arrancar el template**. Lo copiarás explícitamente a la casa que crees en la unidad 06. Así el punto de partida de Milpa sigue siendo pequeño y el dominio pertenece a la casa del alumno.
 
 Los comandos con `--sign` autorizan una llamada concreta con tu clave. Las lecturas no lo necesitan. Los comandos de laboratorio que muestran claves o tokens usan valores propios del alumno; no hay credenciales compartidas en este repositorio.
 
