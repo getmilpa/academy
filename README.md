@@ -25,6 +25,17 @@
 > lo gobiernan, incluido el freno explícito contra construir un LMS antes de que exista la unidad
 > pedagógica.
 
+> [!NOTE]
+> **Vigente y medido: el curso [«Construir y fundar una casa Milpa»](cursos/casa-milpa/README.md).**
+> Es la única pieza de este repo a la que el aviso de arriba **no** alcanza: sus comandos se
+> corrieron el 2026-10-04 contra una casa nueva de `milpa/framework` 0.55.1 y
+> `milpa/app-runtime` 0.207.2, y [`mantenimiento.md`](cursos/casa-milpa/mantenimiento.md) dice
+> qué se comprobó, qué quedó fuera y cómo repetirlo. Todo lo demás —`learn/`, `labs/`,
+> `artifacts/`, `webinars/`, `docs/`— sigue en rediseño.
+>
+> Idioma: **español**. Todavía no hay versión en inglés. Es Markdown en este repo; no se publica
+> en `academy.milpa.lat`.
+
 
 
 Repo hermano del framework y del design system (patrón D13: divergir para
@@ -37,6 +48,7 @@ cero build, cero dependencias de runtime.
 index.html            Tablero de rutas y continuidad de aprendizaje
 academy.css/js        Composición y comportamiento de la portada
 ARCHITECTURE.md        Mapa de límites, flujos, ownership y extensión privada
+cursos/               Cursos en Markdown; hoy uno: casa-milpa (vigente, en español)
 curriculum/           Catálogo, 71 preguntas, calificación y progreso validado
 learn/                Lector curricular sobre el layout mui-docs
 labs/                 4 prácticas con validadores de salida testeables
@@ -68,6 +80,7 @@ npm test        # catálogo, quizzes, progreso, labs, artifacts y contratos
 
 | Pieza | Audiencia |
 |---|---|
+| [`cursos/casa-milpa/`](./cursos/casa-milpa/README.md) | Ingenieros que fundan su primera casa — **vigente**, en español |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Maintainers y agentes que extienden Academy |
 | [`docs/QUE-ES-MILPA.md`](./docs/QUE-ES-MILPA.md) | Todos (y agentes) |
 | [`docs/GUION-WEBINAR-JUNIORS.md`](./docs/GUION-WEBINAR-JUNIORS.md) | Quien da el webinar |

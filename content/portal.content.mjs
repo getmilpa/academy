@@ -57,13 +57,19 @@ export const PORTAL = {
       + "12 ya no existen</strong>, y todavía nombra un paquete que Packagist marca como "
       + "retirado. Está entrando a rediseño junto con el roadmap nuevo. Mientras tanto: "
       + "<strong>la arquitectura que explica sigue siendo válida; los comandos concretos, no</strong> — "
-      + "verifícalos con <code>php bin/coa list</code> en tu app.",
+      + "verifícalos con <code>php bin/coa list</code> en tu app. "
+      + "<strong>Lo que sí está vigente:</strong> el curso "
+      + "<a href=\"https://github.com/getmilpa/academy/tree/main/cursos/casa-milpa\" hreflang=\"es\">Construir y fundar una casa Milpa</a>, "
+      + "comprobado el 2026-10-04 con <code>milpa/framework</code> 0.55.1.",
     en: "This academy was written before <code>milpa/framework</code> existed, and the framework "
       + "moved underneath it. <strong>Measured today: of the 14 commands it teaches, 12 no longer "
       + "exist</strong>, and it still names a package Packagist marks as abandoned. A redesign is "
       + "starting alongside the new roadmap. Until then: <strong>the architecture it explains still "
       + "holds; the concrete commands do not</strong> — check them with <code>php bin/coa list</code> "
-      + "in your own app.",
+      + "in your own app. "
+      + "<strong>What is current:</strong> the course "
+      + "<a href=\"https://github.com/getmilpa/academy/tree/main/cursos/casa-milpa\" hreflang=\"es\">Construir y fundar una casa Milpa</a> "
+      + "(in Spanish), checked on 2026-10-04 against <code>milpa/framework</code> 0.55.1.",
   },
 
   hero: {
