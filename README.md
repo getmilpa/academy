@@ -33,8 +33,10 @@
 > qué se comprobó, qué quedó fuera y cómo repetirlo. Todo lo demás —`learn/`, `labs/`,
 > `artifacts/`, `webinars/`, `docs/`— sigue en rediseño.
 >
-> Idioma: **español**. Todavía no hay versión en inglés. Es Markdown en este repo; no se publica
-> en `academy.milpa.lat`.
+> Idiomas: **español** ([`cursos/casa-milpa/`](cursos/casa-milpa/README.md)) e **inglés**
+> ([`cursos/casa-milpa/en/`](cursos/casa-milpa/en/README.md)). El inglés es traducción del español;
+> los comandos, las rutas y el código del ejemplo son los mismos en los dos. Es Markdown en este
+> repo; no se publica en `academy.milpa.lat`.
 
 
 
@@ -48,7 +50,7 @@ cero build, cero dependencias de runtime.
 index.html            Tablero de rutas y continuidad de aprendizaje
 academy.css/js        Composición y comportamiento de la portada
 ARCHITECTURE.md        Mapa de límites, flujos, ownership y extensión privada
-cursos/               Cursos en Markdown; hoy uno: casa-milpa (vigente, en español)
+cursos/               Cursos en Markdown; hoy uno: casa-milpa (vigente, español e inglés en en/)
 curriculum/           Catálogo, 71 preguntas, calificación y progreso validado
 learn/                Lector curricular sobre el layout mui-docs
 labs/                 4 prácticas con validadores de salida testeables
@@ -80,7 +82,7 @@ npm test        # catálogo, quizzes, progreso, labs, artifacts y contratos
 
 | Pieza | Audiencia |
 |---|---|
-| [`cursos/casa-milpa/`](./cursos/casa-milpa/README.md) | Ingenieros que fundan su primera casa — **vigente**, en español |
+| [`cursos/casa-milpa/`](./cursos/casa-milpa/README.md) | Ingenieros que fundan su primera casa — **vigente**, en español y en [inglés](./cursos/casa-milpa/en/README.md) |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Maintainers y agentes que extienden Academy |
 | [`docs/QUE-ES-MILPA.md`](./docs/QUE-ES-MILPA.md) | Todos (y agentes) |
 | [`docs/GUION-WEBINAR-JUNIORS.md`](./docs/GUION-WEBINAR-JUNIORS.md) | Quien da el webinar |
