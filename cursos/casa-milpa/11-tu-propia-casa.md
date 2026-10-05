@@ -1,3 +1,5 @@
+**Español** · [English](en/11-tu-propia-casa.md)
+
 # Construir tu propia casa y cerrar el recorrido
 
 **Resultado:** transferirás el método a un dominio nuevo y otra persona podrá evaluar lo que construiste.

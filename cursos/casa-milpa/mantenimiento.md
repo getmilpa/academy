@@ -1,3 +1,5 @@
+**Español** · [English](en/mantenimiento.md)
+
 # Evidencia y mantenimiento del curso
 
 Este archivo permite revisar qué se comprobó, qué quedó fuera y cómo repetir la comprobación cuando cambien Milpa o los ejemplos. La ejecución del autor demuestra una ruta técnica reproducible; la evaluación de comprensión de un alumno nuevo requiere además la prueba de transferencia de la unidad 11.

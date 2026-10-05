@@ -1,3 +1,5 @@
+**Español** · [English](en/README.md)
+
 # Construir y fundar una casa Milpa
 
 Este curso acompaña a un ingeniero desde su primera lectura de Milpa hasta una casa fundada que opera un dominio propio. Al terminar podrás explicar qué decidiste construir, qué queda fuera, dónde vive cada responsabilidad y qué evidencia demuestra que tus operaciones funcionan. El recorrido utiliza PHP y Composer; puedes seguirlo sin un proveedor de modelos, una base de datos externa ni un cliente MCP.

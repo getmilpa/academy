@@ -1,3 +1,5 @@
+**Español** · [English](en/05-dominio-y-evidencia.md)
+
 # Delimitar el dominio y la evidencia
 
 **Resultado:** tendrás una pregunta que puede refutarse, reglas pequeñas y un orden de construcción justificado.

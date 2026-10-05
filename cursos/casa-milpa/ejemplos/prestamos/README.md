@@ -1,3 +1,5 @@
+**Español** · [English](../../en/ejemplos/prestamos/README.md)
+
 # Ejemplo de una casa de préstamos
 
 Este código se copia a una casa creada por el alumno. No forma parte de los plugins que el template activa. Sigue primero las unidades [02](../../02-fundar.md), [04](../../04-capacidades-y-plugins.md) y [06](../../06-primer-dominio.md).

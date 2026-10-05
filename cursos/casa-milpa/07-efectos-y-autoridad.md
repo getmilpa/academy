@@ -1,3 +1,5 @@
+**Español** · [English](en/07-efectos-y-autoridad.md)
+
 # Gobernar los efectos y la autoridad
 
 **Resultado:** podrás revisar el techo de una operación y distinguir identidad, permisos, consentimiento e intención.

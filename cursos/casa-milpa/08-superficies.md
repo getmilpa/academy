@@ -1,3 +1,5 @@
+**Español** · [English](en/08-superficies.md)
+
 # Elegir las superficies de la casa
 
 **Resultado:** expondrás una lectura HTTP con acceso comprobado y entenderás qué significa que una operación aparezca en CLI, TUI o MCP.
